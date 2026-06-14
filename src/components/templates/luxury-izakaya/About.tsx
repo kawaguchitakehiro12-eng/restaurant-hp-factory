@@ -1,54 +1,44 @@
-import { FadeIn, ParallaxText } from "@/components/ui/FadeIn";
-import { ParallaxImage } from "@/components/ui/ParallaxImage";
+import { BrandImage } from "@/components/ui/BrandImage";
+import { FadeIn } from "@/components/ui/FadeIn";
+import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { aboutImage, store } from "@/data/luxury-izakaya";
+import type { LuxuryIzakayaData } from "@/types/luxury-izakaya";
 
-export function About() {
+type AboutProps = {
+  store: LuxuryIzakayaData["store"];
+  aboutImage: string;
+};
+
+export function About({ store, aboutImage }: AboutProps) {
   return (
-    <section id="about" className="section-luxury relative">
-      <div className="mx-auto max-w-5xl px-6 sm:px-10 md:px-16">
-        <SectionHeading
-          label="About"
-          title="店舗紹介"
-          subtitle="西麻布の静けさに、和の美意識を宿す"
-        />
+    <Section id="about">
+      <SectionHeading
+        label="About"
+        title="店舗紹介"
+        subtitle="西麻布の静けさに、和の美意識を宿す"
+      />
 
-        <div className="mt-20 grid items-center gap-16 md:mt-32 md:grid-cols-[1.1fr_0.9fr] md:gap-24 lg:gap-32">
-          <FadeIn direction="left" zoom className="relative md:mt-12">
-            <ParallaxImage
-              src={aboutImage}
-              alt="板前の手仕事"
-              aspectClass="aspect-[3/4]"
-              sizes="(max-width: 768px) 100vw, 45vw"
-            />
-          </FadeIn>
+      <div className="mt-14 grid items-start gap-12 sm:mt-20 md:grid-cols-2 md:gap-16 lg:gap-24">
+        <FadeIn direction="left">
+          <BrandImage
+            src={aboutImage}
+            alt="板前の手仕事"
+            aspectClass="aspect-[3/4]"
+            sizes="(max-width: 768px) 100vw, 45vw"
+          />
+        </FadeIn>
 
-          <ParallaxText speed={0.2}>
-            <FadeIn direction="right" delay={0.15} className="flex flex-col gap-12 md:gap-16">
-              <p className="font-mincho text-base leading-[2.6] tracking-[0.12em] text-ink-muted sm:text-lg">
-                {store.concept}
-              </p>
+        <FadeIn direction="right" delay={0.1} className="flex flex-col gap-10 sm:gap-12 md:pt-8">
+          <p className="font-mincho text-[15px] leading-[2.5] tracking-[0.1em] text-ink-muted sm:text-base">
+            {store.concept}
+          </p>
 
-              <div className="flex flex-col gap-6">
-                <span className="h-px w-10 bg-gold/30" aria-hidden />
-                <p className="font-mincho text-xs tracking-[0.4em] text-ink-muted/60">
-                  {store.seats}
-                </p>
-                <p className="font-mincho text-xs tracking-[0.3em] text-ink-muted/60">
-                  {store.access}
-                </p>
-              </div>
-
-              <p
-                className="self-end font-mincho text-3xl tracking-[0.5em] text-ink/30"
-                style={{ writingMode: "vertical-rl" }}
-              >
-                一期一会
-              </p>
-            </FadeIn>
-          </ParallaxText>
-        </div>
+          <div className="flex flex-col gap-4 border-t border-gold/15 pt-8">
+            <p className="font-mincho text-xs tracking-[0.3em] text-ink-muted/60">{store.seats}</p>
+            <p className="font-mincho text-xs tracking-[0.25em] text-ink-muted/60">{store.access}</p>
+          </div>
+        </FadeIn>
       </div>
-    </section>
+    </Section>
   );
 }

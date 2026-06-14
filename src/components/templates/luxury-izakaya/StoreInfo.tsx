@@ -1,47 +1,50 @@
 import { FadeIn } from "@/components/ui/FadeIn";
 import { ReserveLink } from "@/components/ui/ReserveLink";
+import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { store } from "@/data/luxury-izakaya";
+import type { StoreInfo } from "@/types/luxury-izakaya";
 
-const infoItems = [
+type StoreInfoSectionProps = {
+  store: StoreInfo;
+};
+
+const infoItems = (store: StoreInfo) => [
   { label: "住所", value: store.address },
   { label: "電話", value: store.phone },
   { label: "営業", value: store.hours.dinner },
   { label: "定休", value: store.hours.closed },
 ];
 
-export function StoreInfo() {
+export function StoreInfo({ store }: StoreInfoSectionProps) {
   return (
-    <section id="info" className="section-luxury">
-      <div className="mx-auto max-w-3xl px-6 sm:px-10 md:px-16">
-        <SectionHeading
-          label="Information"
-          title="店舗情報"
-          subtitle="完全予約制"
-        />
+    <Section id="info" narrow>
+      <SectionHeading
+        label="Information"
+        title="店舗情報"
+        subtitle="完全予約制"
+      />
 
-        <FadeIn className="mt-20 sm:mt-28">
-          <dl className="flex flex-col">
-            {infoItems.map((item) => (
-              <div
-                key={item.label}
-                className="grid grid-cols-[72px_1fr] gap-6 border-b border-ink/8 py-7 sm:grid-cols-[100px_1fr] sm:py-9"
-              >
-                <dt className="font-mincho text-[11px] tracking-[0.4em] text-gold/60">
-                  {item.label}
-                </dt>
-                <dd className="font-mincho text-sm leading-[2] tracking-[0.1em] text-ink/70">
-                  {item.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
+      <FadeIn className="mt-14 sm:mt-20">
+        <dl>
+          {infoItems(store).map((item) => (
+            <div
+              key={item.label}
+              className="grid grid-cols-[64px_1fr] gap-4 border-b border-ink/8 py-6 sm:grid-cols-[88px_1fr] sm:py-7"
+            >
+              <dt className="font-mincho text-[11px] tracking-[0.35em] text-gold/55">
+                {item.label}
+              </dt>
+              <dd className="font-mincho text-sm leading-[2] tracking-[0.08em] text-ink/70">
+                {item.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
 
-          <div id="reservation" className="mt-16 sm:mt-24">
-            <ReserveLink href={store.reservationUrl} variant="section" />
-          </div>
-        </FadeIn>
-      </div>
-    </section>
+        <div id="reservation" className="mt-10 sm:mt-14">
+          <ReserveLink href={store.reservationUrl} variant="section" />
+        </div>
+      </FadeIn>
+    </Section>
   );
 }

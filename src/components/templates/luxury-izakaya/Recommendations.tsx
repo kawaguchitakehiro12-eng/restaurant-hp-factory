@@ -1,81 +1,46 @@
-"use client";
-
-import Image from "next/image";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import { FadeIn } from "@/components/ui/FadeIn";
+import { BrandImage } from "@/components/ui/BrandImage";
+import { FadeIn, StaggerContainer, StaggerItem } from "@/components/ui/FadeIn";
+import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { recommendations } from "@/data/luxury-izakaya";
+import type { MenuItem } from "@/types/luxury-izakaya";
 
-function DishCard({
-  item,
-  index,
-}: {
-  item: (typeof recommendations)[0];
-  index: number;
-}) {
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.06, 1, 1.04]);
-  const y = useTransform(scrollYProgress, [0, 1], ["4%", "-4%"]);
+type RecommendationsProps = {
+  recommendations: MenuItem[];
+};
 
+export function Recommendations({ recommendations }: RecommendationsProps) {
   return (
-    <motion.article
-      ref={ref}
-      initial={{ opacity: 0, y: 48 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{
-        duration: 1.1,
-        delay: index * 0.15,
-        ease: [0.16, 1, 0.3, 1],
-      }}
-      className="group w-[82vw] shrink-0 md:w-auto"
-    >
-      <div className="relative aspect-[3/4] overflow-hidden">
-        <motion.div style={{ scale, y }} className="absolute inset-0">
-          <Image
-            src={item.image}
-            alt={item.name}
-            fill
-            className="cinematic-image object-cover"
-            sizes="(max-width: 768px) 82vw, 33vw"
-          />
-        </motion.div>
-        <div className="image-warm-overlay absolute inset-0" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-7 sm:p-8">
-          <p className="font-en text-sm italic tracking-wider text-gold/80">{item.price}</p>
-          <h3 className="mt-2 font-mincho text-lg tracking-[0.25em] text-washi sm:text-xl">
-            {item.name}
-          </h3>
-        </div>
-      </div>
-    </motion.article>
-  );
-}
+    <Section id="recommendations">
+      <SectionHeading label="Seasonal" title="おすすめ料理" />
 
-export function Recommendations() {
-  return (
-    <section id="recommendations" className="section-luxury">
-      <div className="mx-auto max-w-5xl px-6 sm:px-10 md:px-16">
-        <SectionHeading label="Seasonal" title="おすすめ料理" />
+      <StaggerContainer className="mt-14 flex flex-col gap-16 sm:mt-20 sm:gap-20 md:grid md:grid-cols-3 md:gap-10 lg:gap-12">
+        {recommendations.map((item) => (
+          <StaggerItem key={item.name}>
+            <article className="flex flex-col gap-5">
+              <BrandImage
+                src={item.image}
+                alt={item.name}
+                aspectClass="aspect-[4/5]"
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+              <div className="flex flex-col gap-2 px-0.5">
+                <p className="font-en text-sm italic tracking-wider text-gold/70">
+                  {item.price}
+                </p>
+                <h3 className="font-mincho text-base tracking-[0.2em] text-ink sm:text-lg">
+                  {item.name}
+                </h3>
+              </div>
+            </article>
+          </StaggerItem>
+        ))}
+      </StaggerContainer>
 
-        <div className="mt-20 -mx-6 flex gap-6 overflow-x-auto px-6 pb-2 scrollbar-hide sm:mt-28 sm:gap-8 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0">
-          {recommendations.map((item, index) => (
-            <DishCard key={item.name} item={item} index={index} />
-          ))}
-        </div>
-
-        <FadeIn delay={0.3} className="mt-20 text-center">
-          <p className="font-mincho text-[10px] tracking-[0.4em] text-ink-muted/50">
-            仕入れにより内容が変わる場合がございます
-          </p>
-        </FadeIn>
-      </div>
-    </section>
+      <FadeIn delay={0.15} className="mt-14 text-center sm:mt-20">
+        <p className="font-mincho text-[10px] tracking-[0.35em] text-ink-muted/45">
+          仕入れにより内容が変わる場合がございます
+        </p>
+      </FadeIn>
+    </Section>
   );
 }

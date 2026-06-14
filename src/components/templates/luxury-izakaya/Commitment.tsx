@@ -1,51 +1,53 @@
+import { BrandImage } from "@/components/ui/BrandImage";
 import { StaggerContainer, StaggerItem } from "@/components/ui/FadeIn";
-import { ParallaxImage } from "@/components/ui/ParallaxImage";
+import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { commitments } from "@/data/luxury-izakaya";
+import type { Commitment } from "@/types/luxury-izakaya";
 
-export function Commitment() {
+type CommitmentProps = {
+  commitments: Commitment[];
+};
+
+export function Commitment({ commitments }: CommitmentProps) {
   return (
-    <section id="commitment" className="section-luxury bg-ink">
-      <div className="mx-auto max-w-5xl px-6 sm:px-10 md:px-16">
-        <SectionHeading
-          label="Commitment"
-          title="こだわり"
-          subtitle="素材・火・酒"
-          light
-        />
+    <Section id="commitment" className="bg-brown-dark">
+      <SectionHeading
+        label="Commitment"
+        title="こだわり"
+        subtitle="素材・火・酒"
+        light
+      />
 
-        <StaggerContainer className="mt-24 flex flex-col gap-32 md:mt-36 md:gap-48">
-          {commitments.map((item, index) => (
-            <StaggerItem key={item.number} zoom>
-              <div
-                className={`grid items-center gap-12 md:grid-cols-2 md:gap-20 lg:gap-28 ${
-                  index % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""
-                }`}
-              >
-                <ParallaxImage
-                  src={item.image}
-                  alt={item.title}
-                  aspectClass="aspect-[5/4]"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
+      <StaggerContainer className="mt-14 flex flex-col gap-20 sm:mt-20 sm:gap-28 md:gap-36">
+        {commitments.map((item, index) => (
+          <StaggerItem key={item.number}>
+            <div
+              className={`grid items-start gap-10 md:grid-cols-2 md:gap-16 lg:gap-20 ${
+                index % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""
+              }`}
+            >
+              <BrandImage
+                src={item.image}
+                alt={item.title}
+                aspectClass="aspect-[5/4]"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
 
-                <div className="flex flex-col gap-8 md:gap-10">
-                  <span className="font-mincho text-5xl text-gold/15 md:text-6xl">
-                    {item.number}
-                  </span>
-                  <h3 className="font-mincho text-2xl tracking-[0.3em] text-washi sm:text-3xl">
-                    {item.title}
-                  </h3>
-                  <p className="max-w-sm font-mincho text-sm leading-[2.4] tracking-[0.1em] text-washi/45">
-                    {item.description}
-                  </p>
-                  <span className="h-px w-8 bg-gold/25" aria-hidden />
-                </div>
+              <div className="flex flex-col gap-6 md:gap-8 md:pt-4">
+                <span className="font-mincho text-4xl text-gold/12 sm:text-5xl">
+                  {item.number}
+                </span>
+                <h3 className="font-mincho text-xl tracking-[0.25em] text-washi sm:text-2xl">
+                  {item.title}
+                </h3>
+                <p className="max-w-xs font-mincho text-[13px] leading-[2.4] tracking-[0.08em] text-washi/40 sm:text-sm">
+                  {item.description}
+                </p>
               </div>
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
-      </div>
-    </section>
+            </div>
+          </StaggerItem>
+        ))}
+      </StaggerContainer>
+    </Section>
   );
 }
