@@ -1,6 +1,15 @@
+import { toLuxuryIzakayaData } from "@/lib/stores/adapters";
+import { isPublished } from "@/lib/stores/helpers";
+import { getStoreBySlug } from "@/data/stores";
 import { LuxuryIzakayaPage } from "@/components/templates/luxury-izakaya/LuxuryIzakayaPage";
-import { luxuryIzakayaData } from "@/data/luxury-izakaya";
+import { notFound } from "next/navigation";
 
 export default function Home() {
-  return <LuxuryIzakayaPage data={luxuryIzakayaData} />;
+  const store = getStoreBySlug("shogetsu");
+
+  if (!store || !isPublished(store)) {
+    notFound();
+  }
+
+  return <LuxuryIzakayaPage data={toLuxuryIzakayaData(store)} />;
 }
