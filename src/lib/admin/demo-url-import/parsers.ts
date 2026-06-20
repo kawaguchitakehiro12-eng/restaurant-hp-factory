@@ -15,6 +15,15 @@ export type PartialImportData = {
   phone?: string;
   businessHours?: string;
   closedDays?: string;
+  access?: string;
+  budget?: string;
+  seats?: string;
+  paymentMethods?: string;
+  smokingPolicy?: string;
+  parking?: string;
+  reservationUrl?: string;
+  instagramUrl?: string;
+  officialUrl?: string;
   menus?: DemoImportedMenu[];
   photos?: DemoImportedPhoto[];
   notes?: string[];
@@ -280,4 +289,52 @@ export function parseTabelogHtml(html: string, baseUrl: string): PartialImportDa
   data.photos = data.photos!.slice(0, 25);
 
   return data;
+}
+
+function extractTableRow(html: string, label: string): string {
+  const re = new RegExp(
+    `${label}[\\s\\S]*?<td[^>]*>([\\s\\S]*?)<\\/td>`,
+    "i"
+  );
+  const match = html.match(re);
+  return match ? stripTags(match[1]).replace(/\s+/g, " ").trim() : "";
+}
+
+/** 食べログ詳細ページから追加項目を抽出 */
+export function parseTabelogExtraFields(html: string): Partial<PartialImportData> {
+  const fields: Partial<PartialImportData> = {};
+
+  const access = extractTableRow(html, "交通手段") || extractTableRow(html, "アクセス");
+  if (access) fields.access = access;
+
+  const budget = extractTableRow(html, "予算");
+  if (budget) fields.budget = budget;
+
+  const seats = extractTableRow(html, "席数") || extractTableRow(html, "総席数");
+  if (seats) fields.seats = seats;
+
+  const payment = extractTableRow(html, "支払い方法") || extractTableRow(html, "カード");
+  if (payment) fields.paymentMethods = payment;
+
+  const smoking =
+    extractTableRow(html, "禁煙") ||
+    extractTableRow(html, "喫煙") ||
+    extractTableRow(html, "禁煙・喫煙");
+  if (smoking) fields.smokingPolicy = smoking;
+
+  const parking = extractTableRow(html, "駐車場");
+  if (parking) fields.parking = parking;
+
+  const reserve =
+    html.match(/href=["']([^"']*(?:reserve|yoyaku|booking|reservation)[^"']*)["']/i)?.[1] ??
+    html.match(/href=["'](https?:\/\/[^"']*tabelog[^"']*\/booking[^"']*)["']/i)?.[1];
+  if (reserve) {
+    fields.reservationUrl = reserve.startsWith("http") ? reserve : "";
+  }
+
+  const insta =
+    html.match(/href=["'](https?:\/\/(?:www\.)?instagram\.com\/[^"']+)["']/i)?.[1] ?? "";
+  if (insta) fields.instagramUrl = insta;
+
+  return fields;
 }

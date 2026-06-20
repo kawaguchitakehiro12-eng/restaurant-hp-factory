@@ -6,7 +6,15 @@ import type {
   DemoUrlImportResult,
 } from "@/types/demo-url-import";
 import { generateId, normalizeSlug } from "@/lib/admin/form-utils";
-import { suggestTemplateFromBusinessType } from "@/lib/admin/demo-url-import/business-type";
+import {
+  getCachedImport,
+  setCachedImport,
+} from "@/lib/admin/demo-url-import/import-cache";
+import {
+  mergeImportResult,
+  type DemoImportStreamEvent,
+} from "@/lib/admin/demo-url-import/import-service";
+import { suggestPhotoAssignment } from "@/lib/admin/demo-url-import/photo-assignment";
 import type { ContractTemplateId } from "@/types/demo";
 
 export function validateDemoUrlImportInput(input: DemoUrlImportInput): string | null {
@@ -35,24 +43,95 @@ export function displayOrEmpty(value: string | undefined): string {
   return trimmed ? trimmed : "（未取得 — 公開時はサンプル表示）";
 }
 
-export { genreToBusinessType, suggestTemplateFromBusinessType } from "@/lib/admin/demo-url-import/business-type";
+export {
+  genreToBusinessType,
+  suggestTemplateFromBusinessType,
+  suggestTemplateFromGenre,
+  getTemplateLabelFromGenre,
+} from "@/lib/admin/demo-url-import/business-type";
 
-/** クライアントからスクレイピングAPIを呼び出す */
-export async function fetchDemoImportFromUrls(
-  input: DemoUrlImportInput
+export { suggestPhotoAssignment } from "@/lib/admin/demo-url-import/photo-assignment";
+
+/** キャッシュ付き・段階表示対応のURL取得 */
+export async function fetchDemoImportStream(
+  input: DemoUrlImportInput,
+  handlers: {
+    onPhase?: (message: string) => void;
+    onPartial: (result: DemoUrlImportResult) => void;
+    onComplete: (result: DemoUrlImportResult) => void;
+    onError: (message: string) => void;
+  }
 ): Promise<DemoUrlImportResult> {
-  const res = await fetch("/api/admin/demo-import", {
+  const cached = getCachedImport(input);
+  if (cached) {
+    handlers.onPhase?.("保存済みデータを読み込みました（24時間以内）");
+    const result = { ...cached, fromCache: true, importPhase: "complete" as const };
+    handlers.onPartial(result);
+    handlers.onComplete(result);
+    return result;
+  }
+
+  const res = await fetch("/api/admin/demo-import/stream", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
   });
 
-  if (!res.ok) {
+  if (!res.ok || !res.body) {
     const body = (await res.json().catch(() => null)) as { error?: string } | null;
     throw new Error(body?.error ?? "情報の取得に失敗しました");
   }
 
-  return res.json() as Promise<DemoUrlImportResult>;
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let current: DemoUrlImportResult | null = null;
+  let finalResult: DemoUrlImportResult | null = null;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n\n");
+    buffer = lines.pop() ?? "";
+
+    for (const chunk of lines) {
+      const line = chunk.trim();
+      if (!line.startsWith("data: ")) continue;
+      const event = JSON.parse(line.slice(6)) as DemoImportStreamEvent;
+
+      if (event.type === "phase") {
+        handlers.onPhase?.(event.message);
+      } else if (event.type === "partial") {
+        current = mergeImportResult(current, input, event.data, event.phase);
+        handlers.onPartial(current);
+      } else if (event.type === "complete") {
+        finalResult = event.result;
+        setCachedImport(input, event.result);
+        handlers.onComplete(event.result);
+      } else if (event.type === "error") {
+        handlers.onError(event.message);
+        throw new Error(event.message);
+      }
+    }
+  }
+
+  if (!finalResult) throw new Error("情報の取得に失敗しました");
+  return finalResult;
+}
+
+/** @deprecated 一括取得（後方互換） */
+export async function fetchDemoImportFromUrls(
+  input: DemoUrlImportInput
+): Promise<DemoUrlImportResult> {
+  return fetchDemoImportStream(input, {
+    onPartial: () => {},
+    onComplete: () => {},
+    onError: (msg) => {
+      throw new Error(msg);
+    },
+  });
 }
 
 function photoUrlById(
@@ -91,6 +170,7 @@ export function applyImportToForm(
     .filter((g): g is NonNullable<typeof g> => g !== null);
 
   const empty = createEmptyDemoContent();
+  const templateId = result.suggestedTemplateId as ContractTemplateId;
 
   return {
     ...current,
@@ -100,7 +180,7 @@ export function applyImportToForm(
     sourceUrl,
     address: result.address || current.address,
     phone: result.phone || current.phone,
-    templateId: suggestTemplateFromBusinessType(result.businessType) as ContractTemplateId,
+    templateId,
     content: {
       ...empty,
       basicInfo: {
@@ -109,8 +189,9 @@ export function applyImportToForm(
         phone: result.phone,
         businessHours: result.businessHours,
         closedDays: result.closedDays,
+        access: result.access,
         instagramUrl: result.instagramUrl,
-        reservationUrl: result.officialUrl,
+        reservationUrl: result.reservationUrl || result.officialUrl,
       },
       photos: {
         hero: photoUrlById(result.photos, assignment.hero),

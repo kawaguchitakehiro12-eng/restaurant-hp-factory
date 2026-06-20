@@ -33,12 +33,20 @@ export type DemoUrlImportResult = {
   storeName: string;
   genre: string;
   businessType: BusinessType;
+  suggestedTemplateId: import("@/types/demo").ContractTemplateId;
   address: string;
   phone: string;
   businessHours: string;
   closedDays: string;
+  access: string;
+  budget: string;
+  seats: string;
+  paymentMethods: string;
+  smokingPolicy: string;
+  parking: string;
   instagramUrl: string;
   officialUrl: string;
+  reservationUrl: string;
   menus: DemoImportedMenu[];
   photos: DemoImportedPhoto[];
   photoStats: DemoPhotoStats;
@@ -47,6 +55,11 @@ export type DemoUrlImportResult = {
   sourceUrls: DemoUrlImportInput;
   /** 取得元ごとのメモ（デバッグ・営業向け） */
   fetchNotes: string[];
+  /** キャッシュ利用時 */
+  fromCache?: boolean;
+  fetchedAt?: string;
+  /** 取得中フラグ（段階表示用） */
+  importPhase?: "store" | "photos-initial" | "photos-more" | "complete";
 };
 
 export type PhotoSlotKey = "hero" | "exterior" | "interior" | "food" | "gallery";

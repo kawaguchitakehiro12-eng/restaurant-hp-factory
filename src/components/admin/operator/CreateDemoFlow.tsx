@@ -9,7 +9,8 @@ import { useOperatorAdmin } from "@/components/admin/operator/OperatorAdminProvi
 import { CONTRACT_TEMPLATE_OPTIONS } from "@/lib/admin/contract-templates";
 import {
   applyImportToForm,
-  fetchDemoImportFromUrls,
+  fetchDemoImportStream,
+  suggestPhotoAssignment,
   validateDemoUrlImportInput,
 } from "@/lib/admin/demo-url-import";
 import { BUSINESS_TYPE_OPTIONS, SALES_STATUS_OPTIONS } from "@/lib/admin/demo-labels";
@@ -96,6 +97,9 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
   );
   const [importLoading, setImportLoading] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
+  const [importPhaseMessage, setImportPhaseMessage] = useState<string | null>(null);
+  const [assignmentTouched, setAssignmentTouched] = useState(false);
+  const [templateAutoSelected, setTemplateAutoSelected] = useState(false);
 
   const reset = useCallback(() => {
     setStep(0);
@@ -109,6 +113,9 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
     setPhotoAssignment(emptyPhotoAssignment());
     setImportLoading(false);
     setImportError(null);
+    setImportPhaseMessage(null);
+    setAssignmentTouched(false);
+    setTemplateAutoSelected(false);
   }, []);
 
   useEffect(() => {
@@ -172,19 +179,52 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
       return;
     }
     setImportError(null);
+    setImportPhaseMessage(null);
     setImportLoading(true);
+    setAssignmentTouched(false);
+    setTemplateAutoSelected(false);
+    setStep("import");
+
     try {
-      const result = await fetchDemoImportFromUrls(importUrls);
-      setImportResult(result);
-      setPhotoAssignment(emptyPhotoAssignment());
-      setStep("import");
+      await fetchDemoImportStream(importUrls, {
+        onPhase: (message) => setImportPhaseMessage(message),
+        onPartial: (result) => {
+          setImportResult(result);
+          if (!assignmentTouched) {
+            setPhotoAssignment(suggestPhotoAssignment(result.photos));
+          }
+        },
+        onComplete: (result) => {
+          setImportResult(result);
+          if (!assignmentTouched) {
+            setPhotoAssignment(suggestPhotoAssignment(result.photos));
+          }
+          setForm((prev) => ({
+            ...prev,
+            templateId: result.suggestedTemplateId,
+          }));
+          setTemplateAutoSelected(true);
+          setImportPhaseMessage(
+            result.fromCache
+              ? "保存済みデータを読み込みました"
+              : "取得完了 — 写真は自動配置済みです"
+          );
+        },
+        onError: (message) => setImportError(message),
+      });
     } catch (e) {
       setImportError(
         e instanceof Error ? e.message : "情報の取得に失敗しました"
       );
+      setStep((prev) => (prev === "import" && !importResult ? 0 : prev));
     } finally {
       setImportLoading(false);
     }
+  };
+
+  const handlePhotoAssignmentChange = (next: DemoPhotoAssignment) => {
+    setAssignmentTouched(true);
+    setPhotoAssignment(next);
   };
 
   const applyImportAndContinue = () => {
@@ -197,6 +237,10 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
   const handleNext = () => {
     if (step === "import") return;
     if (!validateStep(step)) return;
+    if (step === 1 && importResult && templateAutoSelected) {
+      setStep(3);
+      return;
+    }
     if (step < 3) setStep((step + 1) as FlowStep);
   };
 
@@ -266,7 +310,7 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
             </h2>
             {!completed && (
               <p className="admin-modal-message">
-                URLから店舗情報を取得し、5分で営業用デモHPを作成できます。
+                URLから店舗情報を取得し、最短2分で営業用デモHPを作成できます。
               </p>
             )}
           </div>
@@ -297,20 +341,33 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
               />
             )}
 
-            {step === "import" && importResult && (
+            {step === "import" && (importResult || importLoading) && (
               <>
-                <DemoImportReviewPanel result={importResult} />
-                <DemoPhotoAssignmentPanel
-                  photos={importResult.photos}
-                  photoStats={importResult.photoStats}
-                  assignment={photoAssignment}
-                  onChange={setPhotoAssignment}
-                />
+                {importResult ? (
+                  <>
+                    <DemoImportReviewPanel
+                      result={importResult}
+                      importPhaseMessage={importPhaseMessage}
+                    />
+                    <p className="admin-import-auto-assign-note">
+                      写真はルールベースで自動配置済みです。必要なら1〜2枚だけ差し替えてください。
+                    </p>
+                    <DemoPhotoAssignmentPanel
+                      photos={importResult.photos}
+                      photoStats={importResult.photoStats}
+                      assignment={photoAssignment}
+                      onChange={handlePhotoAssignmentChange}
+                    />
+                  </>
+                ) : (
+                  <p className="admin-import-phase-message">店舗情報を取得しています…</p>
+                )}
                 <div className="admin-import-continue-actions">
                   <button
                     type="button"
                     className="admin-btn admin-btn--secondary"
                     onClick={() => setStep(0)}
+                    disabled={importLoading}
                   >
                     URLを変更
                   </button>
@@ -318,6 +375,7 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
                     type="button"
                     className="admin-btn admin-btn--primary"
                     onClick={applyImportAndContinue}
+                    disabled={importLoading || !importResult}
                   >
                     この内容で次へ
                   </button>
@@ -430,7 +488,9 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
             {step === 2 && (
               <div className="admin-template-grid">
                 <p className="admin-template-grid-lead">
-                  提案イメージに合うテンプレートを選択してください。
+                  {templateAutoSelected
+                    ? "ジャンルからテンプレートを自動選択しました。変更する場合は選び直してください。"
+                    : "提案イメージに合うテンプレートを選択してください。"}
                 </p>
                 {CONTRACT_TEMPLATE_OPTIONS.map((t) => (
                   <button

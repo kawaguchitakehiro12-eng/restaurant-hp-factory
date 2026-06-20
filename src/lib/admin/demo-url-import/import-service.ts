@@ -5,23 +5,51 @@ import type {
   DemoUrlImportResult,
 } from "@/types/demo-url-import";
 import { generateId } from "@/lib/admin/form-utils";
-import { genreToBusinessType } from "@/lib/admin/demo-url-import/business-type";
+import {
+  genreToBusinessType,
+  suggestTemplateFromGenre,
+} from "@/lib/admin/demo-url-import/business-type";
 import { normalizeImageUrlForDedup } from "@/lib/admin/demo-url-import/image-filter";
 import {
   countPhotosBySource,
   crawlInstagram,
   crawlOfficialSite,
-  crawlTabelog,
+  crawlTabelogProgressive,
 } from "@/lib/admin/demo-url-import/source-crawlers";
 import type { PartialImportData } from "@/lib/admin/demo-url-import/parsers";
 
+export type DemoImportStreamEvent =
+  | { type: "phase"; message: string }
+  | {
+      type: "partial";
+      phase: "store" | "photos-initial" | "photos-more";
+      data: PartialImportData;
+    }
+  | { type: "complete"; result: DemoUrlImportResult }
+  | { type: "error"; message: string };
+
 function mergePartial(target: PartialImportData, source: PartialImportData): void {
-  if (source.storeName && !target.storeName) target.storeName = source.storeName;
-  if (source.genre && !target.genre) target.genre = source.genre;
-  if (source.address && !target.address) target.address = source.address;
-  if (source.phone && !target.phone) target.phone = source.phone;
-  if (source.businessHours && !target.businessHours) target.businessHours = source.businessHours;
-  if (source.closedDays && !target.closedDays) target.closedDays = source.closedDays;
+  const stringFields = [
+    "storeName",
+    "genre",
+    "address",
+    "phone",
+    "businessHours",
+    "closedDays",
+    "access",
+    "budget",
+    "seats",
+    "paymentMethods",
+    "smokingPolicy",
+    "parking",
+    "reservationUrl",
+    "instagramUrl",
+    "officialUrl",
+  ] as const;
+
+  for (const key of stringFields) {
+    if (source[key] && !target[key]) target[key] = source[key];
+  }
 
   if (source.menus?.length) {
     target.menus = target.menus ?? [];
@@ -45,18 +73,34 @@ function mergePartial(target: PartialImportData, source: PartialImportData): voi
 
   if (source.notes?.length) {
     target.notes = target.notes ?? [];
-    target.notes.push(...source.notes);
+    for (const note of source.notes) {
+      if (!target.notes.includes(note)) target.notes.push(note);
+    }
   }
 }
 
 function buildExtractedFields(data: PartialImportData): string[] {
   const fields: string[] = [];
-  if (data.storeName) fields.push("storeName");
-  if (data.genre) fields.push("genre");
-  if (data.address) fields.push("address");
-  if (data.phone) fields.push("phone");
-  if (data.businessHours) fields.push("businessHours");
-  if (data.closedDays) fields.push("closedDays");
+  const keys = [
+    "storeName",
+    "genre",
+    "address",
+    "phone",
+    "businessHours",
+    "closedDays",
+    "access",
+    "budget",
+    "seats",
+    "paymentMethods",
+    "smokingPolicy",
+    "parking",
+    "reservationUrl",
+    "instagramUrl",
+    "officialUrl",
+  ] as const;
+  for (const key of keys) {
+    if (data[key]) fields.push(key);
+  }
   if (data.menus?.length) fields.push("menus");
   if (data.photos?.length) fields.push("photos");
   return fields;
@@ -88,47 +132,14 @@ function estimateFromUrl(url: string): number {
   return 0;
 }
 
-/** サーバー側: URLから取得できる情報のみマージ（AI不使用） */
-export async function importDemoFromUrls(
-  input: DemoUrlImportInput
-): Promise<DemoUrlImportResult> {
-  const merged: PartialImportData = {
-    menus: [],
-    photos: [],
-    notes: [],
-  };
-
+export function buildImportResult(
+  merged: PartialImportData,
+  input: DemoUrlImportInput,
+  phase: DemoUrlImportResult["importPhase"] = "complete"
+): DemoUrlImportResult {
   const tabelog = input.tabelogUrl.trim();
   const instagram = input.instagramUrl.trim();
   const official = input.officialUrl?.trim() ?? "";
-
-  const tasks: Promise<void>[] = [];
-
-  if (tabelog) {
-    tasks.push(
-      crawlTabelog(tabelog).then((data) => {
-        mergePartial(merged, data);
-      })
-    );
-  }
-
-  if (official) {
-    tasks.push(
-      crawlOfficialSite(official).then((data) => {
-        mergePartial(merged, data);
-      })
-    );
-  }
-
-  if (instagram) {
-    tasks.push(
-      crawlInstagram(instagram).then((data) => {
-        mergePartial(merged, data);
-      })
-    );
-  }
-
-  await Promise.all(tasks);
 
   const photos = sortPhotosBySize(
     (merged.photos ?? []).map((p) => ({
@@ -141,36 +152,167 @@ export async function importDemoFromUrls(
   const menus = dedupeMenus(merged.menus ?? []);
   const genre = merged.genre ?? "";
   const businessType = genreToBusinessType(genre);
-
   const extractedFields = buildExtractedFields(merged);
-  if (instagram) extractedFields.push("instagramUrl");
-  if (official) extractedFields.push("officialUrl");
 
-  if (extractedFields.length === 0) {
-    merged.notes?.push(
-      "取得できた情報がありませんでした。URLを確認するか、手入力で作成してください。"
-    );
+  if (instagram && !extractedFields.includes("instagramUrl")) {
+    extractedFields.push("instagramUrl");
   }
-
-  merged.notes?.push(
-    `合計 ${photoStats.total}枚取得（食べログ ${photoStats.tabelog} / Instagram ${photoStats.instagram} / 公式 ${photoStats.official}）`
-  );
+  if (official && !extractedFields.includes("officialUrl")) {
+    extractedFields.push("officialUrl");
+  }
 
   return {
     storeName: merged.storeName ?? "",
     genre,
     businessType,
+    suggestedTemplateId: suggestTemplateFromGenre(genre),
     address: merged.address ?? "",
     phone: merged.phone ?? "",
     businessHours: merged.businessHours ?? "",
     closedDays: merged.closedDays ?? "",
-    instagramUrl: instagram,
-    officialUrl: official,
+    access: merged.access ?? "",
+    budget: merged.budget ?? "",
+    seats: merged.seats ?? "",
+    paymentMethods: merged.paymentMethods ?? "",
+    smokingPolicy: merged.smokingPolicy ?? "",
+    parking: merged.parking ?? "",
+    instagramUrl: merged.instagramUrl || instagram,
+    officialUrl: merged.officialUrl || official,
+    reservationUrl: merged.reservationUrl || official,
     menus,
     photos,
     photoStats,
     extractedFields,
     sourceUrls: input,
     fetchNotes: merged.notes ?? [],
+    importPhase: phase,
   };
+}
+
+/** サーバー側: URLから取得できる情報のみマージ（AI不使用） */
+export async function importDemoFromUrls(
+  input: DemoUrlImportInput
+): Promise<DemoUrlImportResult> {
+  let result: DemoUrlImportResult | null = null;
+  await importDemoFromUrlsStreaming(input, (event) => {
+    if (event.type === "complete") result = event.result;
+    if (event.type === "error") throw new Error(event.message);
+  });
+  if (!result) throw new Error("情報の取得に失敗しました");
+  return result;
+}
+
+/** 段階的に取得結果を送出 */
+export async function importDemoFromUrlsStreaming(
+  input: DemoUrlImportInput,
+  emit: (event: DemoImportStreamEvent) => void
+): Promise<void> {
+  const merged: PartialImportData = {
+    menus: [],
+    photos: [],
+    notes: [],
+  };
+
+  const tabelog = input.tabelogUrl.trim();
+  const instagram = input.instagramUrl.trim();
+  const official = input.officialUrl?.trim() ?? "";
+
+  try {
+    if (tabelog) {
+      emit({ type: "phase", message: "店舗情報を取得しています…" });
+      await crawlTabelogProgressive(tabelog, (partial, phase) => {
+        mergePartial(merged, partial);
+        emit({ type: "partial", phase, data: partial });
+      });
+    }
+
+    const secondaryTasks: Promise<void>[] = [];
+
+    if (official) {
+      secondaryTasks.push(
+        crawlOfficialSite(official).then((data) => {
+          mergePartial(merged, { ...data, officialUrl: official });
+          if (data.photos?.length) {
+            emit({
+              type: "partial",
+              phase: "photos-more",
+              data: { photos: data.photos },
+            });
+          }
+        })
+      );
+    }
+
+    if (instagram) {
+      secondaryTasks.push(
+        crawlInstagram(instagram).then((data) => {
+          mergePartial(merged, { ...data, instagramUrl: instagram });
+          if (data.photos?.length) {
+            emit({
+              type: "partial",
+              phase: "photos-more",
+              data: { photos: data.photos },
+            });
+          }
+        })
+      );
+    }
+
+    if (secondaryTasks.length > 0) {
+      emit({ type: "phase", message: "Instagram・公式サイトの写真を取得中…" });
+      await Promise.all(secondaryTasks);
+    }
+
+    const extractedFields = buildExtractedFields(merged);
+    if (extractedFields.length === 0) {
+      merged.notes?.push(
+        "取得できた情報がありませんでした。URLを確認するか、手入力で作成してください。"
+      );
+    }
+
+    const photoStats = countPhotosBySource(merged.photos ?? []);
+    merged.notes?.push(
+      `合計 ${photoStats.total}枚取得（食べログ ${photoStats.tabelog} / Instagram ${photoStats.instagram} / 公式 ${photoStats.official}）`
+    );
+
+    const result = buildImportResult(merged, input, "complete");
+    emit({ type: "complete", result });
+  } catch (e) {
+    emit({
+      type: "error",
+      message: e instanceof Error ? e.message : "情報の取得中にエラーが発生しました",
+    });
+  }
+}
+
+/** クライアント側: PartialImportData をマージして DemoUrlImportResult を更新 */
+export function mergeImportResult(
+  current: DemoUrlImportResult | null,
+  input: DemoUrlImportInput,
+  partial: PartialImportData,
+  phase: Extract<DemoImportStreamEvent, { type: "partial" }>["phase"]
+): DemoUrlImportResult {
+  const base: PartialImportData = {
+    storeName: current?.storeName,
+    genre: current?.genre,
+    address: current?.address,
+    phone: current?.phone,
+    businessHours: current?.businessHours,
+    closedDays: current?.closedDays,
+    access: current?.access,
+    budget: current?.budget,
+    seats: current?.seats,
+    paymentMethods: current?.paymentMethods,
+    smokingPolicy: current?.smokingPolicy,
+    parking: current?.parking,
+    reservationUrl: current?.reservationUrl,
+    instagramUrl: current?.instagramUrl,
+    officialUrl: current?.officialUrl,
+    menus: current?.menus ?? [],
+    photos: current?.photos ?? [],
+    notes: current?.fetchNotes ?? [],
+  };
+
+  mergePartial(base, partial);
+  return buildImportResult(base, input, phase);
 }

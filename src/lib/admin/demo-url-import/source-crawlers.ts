@@ -7,7 +7,7 @@ import {
   extractInstagramEmbeddedImages,
   upgradeTabelogImageUrl,
 } from "@/lib/admin/demo-url-import/image-extract";
-import { parseJsonLdFromHtml } from "@/lib/admin/demo-url-import/parsers";
+import { parseJsonLdFromHtml, parseTabelogExtraFields } from "@/lib/admin/demo-url-import/parsers";
 import type { PartialImportData } from "@/lib/admin/demo-url-import/parsers";
 import {
   normalizeImageUrlForDedup,
@@ -20,12 +20,14 @@ import {
 async function collectPhotosFromPages(
   pageUrls: string[],
   source: DemoImportedPhoto["source"],
-  altPrefix: string
+  altPrefix: string,
+  maxPages?: number
 ): Promise<RawCollected[]> {
   const rawUrls = new Map<string, string>();
+  const pages = maxPages ? pageUrls.slice(0, maxPages) : pageUrls;
 
   await Promise.all(
-    pageUrls.map(async (pageUrl) => {
+    pages.map(async (pageUrl) => {
       const html = await fetchPageHtml(pageUrl);
       if (!html) return;
 
@@ -106,13 +108,8 @@ async function finalizePhotos(raw: RawCollected[]): Promise<DemoImportedPhoto[]>
   }));
 }
 
-export async function crawlTabelog(tabelogUrl: string): Promise<PartialImportData> {
+function parseTabelogStoreFromHtml(html: string, tabelogUrl: string): PartialImportData {
   const notes: string[] = [];
-  const html = await fetchPageHtml(tabelogUrl);
-  if (!html) {
-    return { notes: ["食べログ: ページを取得できませんでした"] };
-  }
-
   const data: PartialImportData = { notes, photos: [], menus: [] };
   const jsonLd = parseJsonLdFromHtml(html, tabelogUrl);
   Object.assign(data, {
@@ -157,6 +154,8 @@ export async function crawlTabelog(tabelogUrl: string): Promise<PartialImportDat
   const closed = html.match(/定休日[\s\S]*?<td[^>]*>([\s\S]*?)<\/td>/i);
   if (closed) data.closedDays = stripTags(closed[1]);
 
+  Object.assign(data, parseTabelogExtraFields(html));
+
   const menuItems = [...(data.menus ?? [])];
   const menuRe =
     /class=["'][^"']*rstdtl-menu-lst__name[^"']*["'][^>]*>([\s\S]*?)<\/p>[\s\S]*?class=["'][^"']*rstdtl-menu-lst__price[^"']*["'][^>]*>([\s\S]*?)<\/p>/gi;
@@ -174,12 +173,36 @@ export async function crawlTabelog(tabelogUrl: string): Promise<PartialImportDat
   }
   data.menus = menuItems;
 
+  return data;
+}
+
+const INITIAL_PHOTO_PAGES = 2;
+const INITIAL_PHOTO_TARGET = 20;
+
+/** 食べログ: 店舗情報 → 初期20枚 → 残り写真の順で段階取得 */
+export async function crawlTabelogProgressive(
+  tabelogUrl: string,
+  onPartial: (
+    data: PartialImportData,
+    phase: "store" | "photos-initial" | "photos-more"
+  ) => void
+): Promise<PartialImportData> {
+  const notes: string[] = [];
+  const html = await fetchPageHtml(tabelogUrl);
+  if (!html) {
+    const fail = { notes: ["食べログ: ページを取得できませんでした"] };
+    return fail;
+  }
+
+  const storeData = parseTabelogStoreFromHtml(html, tabelogUrl);
+  storeData.notes = [...(storeData.notes ?? []), ...notes];
+  onPartial(storeData, "store");
+
+  const alt = storeData.storeName ? `${storeData.storeName} 写真` : "食べログ写真";
   const photoPages = discoverTabelogPhotoPages(html, tabelogUrl);
-  notes.push(`食べログ: ${photoPages.length}ページをスキャン`);
+  storeData.notes?.push(`食べログ: ${photoPages.length}ページをスキャン`);
 
-  const alt = data.storeName ? `${data.storeName} 写真` : "食べログ写真";
-  const raw = await collectPhotosFromPages(photoPages, "tabelog", alt);
-
+  const raw: RawCollected[] = [];
   const mainCandidates = extractAllImageCandidates(html, tabelogUrl);
   for (const c of mainCandidates) {
     let url = upgradeTabelogImageUrl(c.url);
@@ -188,10 +211,55 @@ export async function crawlTabelog(tabelogUrl: string): Promise<PartialImportDat
     raw.push({ url, source: "tabelog", alt: c.alt || alt });
   }
 
-  data.photos = await finalizePhotos(raw);
-  notes.push(`食べログ: ${data.photos.length}枚の写真を取得`);
+  const initialPages = photoPages.slice(0, INITIAL_PHOTO_PAGES);
+  const initialRaw = await collectPhotosFromPages(
+    initialPages,
+    "tabelog",
+    alt,
+    INITIAL_PHOTO_PAGES
+  );
+  raw.push(...initialRaw);
 
-  return data;
+  let photos = await finalizePhotos(raw);
+  if (photos.length > INITIAL_PHOTO_TARGET) {
+    photos = photos.slice(0, INITIAL_PHOTO_TARGET);
+  }
+
+  onPartial(
+    {
+      photos,
+      notes: [`食べログ: 初期 ${photos.length}枚の写真を取得`],
+    },
+    "photos-initial"
+  );
+
+  if (photoPages.length > INITIAL_PHOTO_PAGES) {
+    const remainingRaw = await collectPhotosFromPages(
+      photoPages.slice(INITIAL_PHOTO_PAGES),
+      "tabelog",
+      alt
+    );
+    const allRaw = [...raw, ...remainingRaw];
+    const allPhotos = await finalizePhotos(allRaw);
+    onPartial(
+      {
+        photos: allPhotos,
+        notes: [`食べログ: 合計 ${allPhotos.length}枚の写真を取得`],
+      },
+      "photos-more"
+    );
+    return {
+      ...storeData,
+      photos: allPhotos,
+      notes: storeData.notes,
+    };
+  }
+
+  return { ...storeData, photos, notes: storeData.notes };
+}
+
+export async function crawlTabelog(tabelogUrl: string): Promise<PartialImportData> {
+  return crawlTabelogProgressive(tabelogUrl, () => {});
 }
 
 export async function crawlInstagram(instagramUrl: string): Promise<PartialImportData> {
@@ -255,10 +323,19 @@ export async function crawlOfficialSite(officialUrl: string): Promise<PartialImp
 
   const photos = await finalizePhotos(raw);
 
+  const insta =
+    html.match(/href=["'](https?:\/\/(?:www\.)?instagram\.com\/[^"']+)["']/i)?.[1] ?? "";
+  const reserve =
+    html.match(/href=["']([^"']*(?:reserve|yoyaku|booking|reservation)[^"']*)["']/i)?.[1] ??
+    "";
+
   return {
     ...jsonLd,
     storeName: storeName || jsonLd.storeName,
     photos,
+    instagramUrl: insta || undefined,
+    reservationUrl: reserve.startsWith("http") ? reserve : undefined,
+    officialUrl: officialUrl,
     notes: [`公式サイト: ${photos.length}枚の写真を取得`],
   };
 }
