@@ -10,6 +10,8 @@ import type {
 } from "@/types/demo-content";
 import { ensureDemoContent } from "@/types/demo-content";
 import { getTemplateSamples } from "@/lib/stores/demo-samples";
+import { getHeroDisplayFromPhotos } from "@/lib/stores/store-photo-overrides";
+import type { HeroImageFit, HeroObjectPosition } from "@/types/hero-display";
 import type {
   StoreCourseItem,
   StoreMenuItem,
@@ -129,6 +131,8 @@ function resolvePhotoUrl(
 export type ResolvedDemoStore = {
   store: StoreRecord;
   sampleFlags: DemoSampleFlags;
+  heroFit: HeroImageFit;
+  heroObjectPosition: HeroObjectPosition;
 };
 
 export function resolveDemoStore(demo: DemoSite): ResolvedDemoStore {
@@ -273,14 +277,14 @@ export function resolveDemoStore(demo: DemoSite): ResolvedDemoStore {
     {
       id: "photo-food",
       sortOrder: 4,
-      role: "gallery",
+      role: "food",
       url: foodUrl,
       alt: `${demo.storeName} 料理`,
     },
     {
       id: "photo-exterior",
       sortOrder: 5,
-      role: "gallery",
+      role: "exterior",
       url: exteriorUrl,
       alt: `${demo.storeName} 外観`,
     },
@@ -343,5 +347,12 @@ export function resolveDemoStore(demo: DemoSite): ResolvedDemoStore {
     };
   }
 
-  return { store, sampleFlags: flags };
+  const heroDisplay = getHeroDisplayFromPhotos(content.photos);
+
+  return {
+    store,
+    sampleFlags: flags,
+    heroFit: heroDisplay.heroFit,
+    heroObjectPosition: heroDisplay.heroObjectPosition,
+  };
 }

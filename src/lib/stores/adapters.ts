@@ -1,4 +1,13 @@
 import { getPhotoById, getPhotoByRole, getPhotosByRole } from "@/lib/stores/helpers";
+import {
+  buildLuxuryPhotoSections,
+  resolveCommitmentItems,
+} from "@/lib/stores/luxury-photo-layout";
+import type { HeroImageFit, HeroObjectPosition } from "@/types/hero-display";
+import {
+  DEFAULT_HERO_FIT,
+  DEFAULT_HERO_OBJECT_POSITION,
+} from "@/types/hero-display";
 import type { CafeData } from "@/types/cafe";
 import type { LuxuryIzakayaData } from "@/types/luxury-izakaya";
 import type {
@@ -26,13 +35,17 @@ function assertCafeExtensions(store: StoreRecord): CafeExtensions {
 }
 
 /** StoreRecord → 和風居酒屋テンプレ用データ */
-export function toLuxuryIzakayaData(store: StoreRecord): LuxuryIzakayaData {
+export function toLuxuryIzakayaData(
+  store: StoreRecord,
+  heroDisplay?: { heroFit: HeroImageFit; heroObjectPosition: HeroObjectPosition }
+): LuxuryIzakayaData {
   const ext = assertLuxuryExtensions(store);
   const hero = getPhotoByRole(store, "hero");
   const about = getPhotoByRole(store, "about");
   const subCopy = Array.isArray(store.subCopy)
     ? store.subCopy
     : [store.subCopy];
+  const photoSections = buildLuxuryPhotoSections(store);
 
   return {
     store: {
@@ -56,17 +69,12 @@ export function toLuxuryIzakayaData(store: StoreRecord): LuxuryIzakayaData {
       mapEmbedUrl: store.mapEmbedUrl,
     },
     heroImage: hero?.url ?? "",
+    heroImageFit: heroDisplay?.heroFit ?? DEFAULT_HERO_FIT,
+    heroObjectPosition:
+      heroDisplay?.heroObjectPosition ?? DEFAULT_HERO_OBJECT_POSITION,
     aboutImage: about?.url ?? "",
     useCases: ext.useCases,
-    commitments: ext.commitments.map((item) => {
-      const photo = getPhotoById(store, item.photoId);
-      return {
-        number: item.number,
-        title: item.title,
-        description: item.description,
-        image: photo?.url ?? "",
-      };
-    }),
+    commitments: resolveCommitmentItems(store),
     recommendations: [...store.menu]
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map((item) => ({
@@ -87,6 +95,9 @@ export function toLuxuryIzakayaData(store: StoreRecord): LuxuryIzakayaData {
       alt: photo.alt,
       caption: photo.caption,
     })),
+    interiorSpaceImages: photoSections.interiorSpaceImages,
+    photoShowcaseImages: photoSections.photoShowcaseImages,
+    showPhotoShowcase: photoSections.showPhotoShowcase,
     topics: [...store.topics]
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map((item) => ({
@@ -97,7 +108,10 @@ export function toLuxuryIzakayaData(store: StoreRecord): LuxuryIzakayaData {
 }
 
 /** StoreRecord → Cafeテンプレ用データ */
-export function toCafeData(store: StoreRecord): CafeData {
+export function toCafeData(
+  store: StoreRecord,
+  heroDisplay?: { heroFit: HeroImageFit; heroObjectPosition: HeroObjectPosition }
+): CafeData {
   const ext = assertCafeExtensions(store);
   const hero = getPhotoByRole(store, "hero");
   const concept = getPhotoByRole(store, "concept");
@@ -129,6 +143,9 @@ export function toCafeData(store: StoreRecord): CafeData {
       mapEmbedUrl: store.mapEmbedUrl,
     },
     heroImage: hero?.url ?? "",
+    heroImageFit: heroDisplay?.heroFit ?? DEFAULT_HERO_FIT,
+    heroObjectPosition:
+      heroDisplay?.heroObjectPosition ?? DEFAULT_HERO_OBJECT_POSITION,
     conceptImage: concept?.url ?? "",
     interior: {
       image: interiorPhoto?.url ?? "",

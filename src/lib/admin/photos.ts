@@ -17,13 +17,13 @@ export const PHOTO_DISPLAY_CATEGORIES = [
     key: "food",
     label: "料理",
     recommended: 5,
-    roles: ["gallery", "commitment"] as StorePhotoRole[],
+    roles: ["food", "gallery", "commitment"] as StorePhotoRole[],
   },
   {
     key: "exterior",
     label: "外観",
     recommended: 1,
-    roles: ["about", "concept"] as StorePhotoRole[],
+    roles: ["exterior", "about", "concept"] as StorePhotoRole[],
   },
 ] as const;
 

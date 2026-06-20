@@ -28,7 +28,15 @@ export function CafePage({ data }: CafePageProps) {
   return (
     <div className="template-cafe">
       <Header store={store} />
-      <Hero data={{ store, heroImage, heroImageIsSample: data.heroImageIsSample }} />
+      <Hero
+        data={{
+          store,
+          heroImage,
+          heroImageIsSample: data.heroImageIsSample,
+          heroImageFit: data.heroImageFit,
+          heroObjectPosition: data.heroObjectPosition,
+        }}
+      />
       <main className="bg-[var(--cafe-white)] pb-14 lg:pb-0">
         <Concept store={store} conceptImage={conceptImage} />
         <PopularMenu popularMenu={popularMenu} />

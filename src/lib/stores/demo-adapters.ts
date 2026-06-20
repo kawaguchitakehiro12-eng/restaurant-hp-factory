@@ -1,4 +1,9 @@
 import { getPhotoById, getPhotoByRole, getPhotosByRole } from "@/lib/stores/helpers";
+import {
+  buildLuxuryPhotoSections,
+  resolveCommitmentItems,
+} from "@/lib/stores/luxury-photo-layout";
+import type { HeroImageFit, HeroObjectPosition } from "@/types/hero-display";
 import type { CafeData } from "@/types/cafe";
 import type { LuxuryIzakayaData, MenuItem, Topic } from "@/types/luxury-izakaya";
 import type { DemoSampleFlags } from "@/types/demo-content";
@@ -24,12 +29,14 @@ function assertCafeExtensions(store: StoreRecord): CafeExtensions {
 
 export function toLuxuryIzakayaDataWithSamples(
   store: StoreRecord,
-  sampleFlags: DemoSampleFlags
+  sampleFlags: DemoSampleFlags,
+  heroDisplay?: { heroFit: HeroImageFit; heroObjectPosition: HeroObjectPosition }
 ): LuxuryIzakayaData {
   const ext = assertLuxuryExtensions(store);
   const hero = getPhotoByRole(store, "hero");
   const about = getPhotoByRole(store, "about");
   const subCopy = Array.isArray(store.subCopy) ? store.subCopy : [store.subCopy];
+  const photoSections = buildLuxuryPhotoSections(store, sampleFlags);
 
   const recommendations: MenuItem[] = [...store.menu]
     .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -73,18 +80,12 @@ export function toLuxuryIzakayaDataWithSamples(
     },
     heroImage: hero?.url ?? "",
     heroImageIsSample: Boolean(sampleFlags.photos.hero),
+    heroImageFit: heroDisplay?.heroFit,
+    heroObjectPosition: heroDisplay?.heroObjectPosition,
     aboutImage: about?.url ?? "",
     aboutImageIsSample: Boolean(sampleFlags.photos.interior),
     useCases: ext.useCases,
-    commitments: ext.commitments.map((item) => {
-      const photo = getPhotoById(store, item.photoId);
-      return {
-        number: item.number,
-        title: item.title,
-        description: item.description,
-        image: photo?.url ?? "",
-      };
-    }),
+    commitments: resolveCommitmentItems(store, sampleFlags),
     recommendations,
     courses: [...store.courses]
       .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -100,6 +101,9 @@ export function toLuxuryIzakayaDataWithSamples(
       caption: photo.caption,
       isSample: Boolean(sampleFlags.photos.gallery),
     })),
+    interiorSpaceImages: photoSections.interiorSpaceImages,
+    photoShowcaseImages: photoSections.photoShowcaseImages,
+    showPhotoShowcase: photoSections.showPhotoShowcase,
     topics,
     taglineIsSample: Boolean(sampleFlags.basicInfo.catchCopy),
     conceptIsSample: Boolean(sampleFlags.basicInfo.concept),
@@ -108,7 +112,8 @@ export function toLuxuryIzakayaDataWithSamples(
 
 export function toCafeDataWithSamples(
   store: StoreRecord,
-  sampleFlags: DemoSampleFlags
+  sampleFlags: DemoSampleFlags,
+  heroDisplay?: { heroFit: HeroImageFit; heroObjectPosition: HeroObjectPosition }
 ): CafeData {
   const ext = assertCafeExtensions(store);
   const hero = getPhotoByRole(store, "hero");
@@ -140,6 +145,8 @@ export function toCafeDataWithSamples(
     },
     heroImage: hero?.url ?? "",
     heroImageIsSample: Boolean(sampleFlags.photos.hero),
+    heroImageFit: heroDisplay?.heroFit,
+    heroObjectPosition: heroDisplay?.heroObjectPosition,
     conceptImage: concept?.url ?? "",
     conceptImageIsSample: Boolean(sampleFlags.photos.interior),
     interior: {

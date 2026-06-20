@@ -1,4 +1,5 @@
 import { BrandImage } from "@/components/ui/BrandImage";
+import { SampleLabel } from "@/components/demo/SampleLabel";
 import { StaggerContainer, StaggerItem } from "@/components/ui/FadeIn";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -26,12 +27,17 @@ export function Commitment({ commitments }: CommitmentProps) {
                 index % 2 === 1 ? "md:[&>*:first-child]:order-2" : ""
               }`}
             >
-              <BrandImage
-                src={item.image}
-                alt={item.title}
-                aspectClass="aspect-[5/4]"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
+              <div className="relative">
+                <BrandImage
+                  src={item.image}
+                  alt={item.title}
+                  aspectClass="aspect-[5/4]"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+                {item.imageIsSample ? (
+                  <SampleLabel className="demo-sample-label--image" />
+                ) : null}
+              </div>
 
               <div className="flex flex-col gap-6 md:gap-8 md:pt-4">
                 <span className="font-mincho text-4xl text-gold/12 sm:text-5xl">

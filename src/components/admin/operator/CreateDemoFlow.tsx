@@ -2,21 +2,26 @@
 
 import { Check, Copy, ExternalLink, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ConfirmModal } from "@/components/admin/ConfirmModal";
-import { AiDemoDraftStep } from "@/components/admin/operator/AiDemoDraftStep";
-import { AiDraftReviewPanel } from "@/components/admin/operator/AiDraftReviewPanel";
+import { DemoImportReviewPanel } from "@/components/admin/operator/DemoImportReviewPanel";
+import { DemoPhotoAssignmentPanel } from "@/components/admin/operator/DemoPhotoAssignmentPanel";
+import { DemoUrlImportStep } from "@/components/admin/operator/DemoUrlImportStep";
 import { useOperatorAdmin } from "@/components/admin/operator/OperatorAdminProvider";
 import { CONTRACT_TEMPLATE_OPTIONS } from "@/lib/admin/contract-templates";
 import {
-  applyAiDraftToForm,
-  generateDemoDraftFromUrls,
-  validateAiDraftInput,
-} from "@/lib/admin/ai-demo-draft";
+  applyImportToForm,
+  fetchDemoImportFromUrls,
+  validateDemoUrlImportInput,
+} from "@/lib/admin/demo-url-import";
 import { BUSINESS_TYPE_OPTIONS, SALES_STATUS_OPTIONS } from "@/lib/admin/demo-labels";
 import { isValidEmail, isValidSlug, normalizeSlug } from "@/lib/admin/demo-create";
 import { isReservedSlug } from "@/lib/stores/demo-site-registry";
 import { formatDate } from "@/lib/admin/labels";
-import type { AiDemoDraft, AiDemoDraftInput } from "@/types/ai-demo-draft";
+import type {
+  DemoPhotoAssignment,
+  DemoUrlImportInput,
+  DemoUrlImportResult,
+} from "@/types/demo-url-import";
+import { emptyPhotoAssignment } from "@/types/demo-url-import";
 import type {
   BusinessType,
   ContractTemplateId,
@@ -25,16 +30,16 @@ import type {
   SalesStatus,
 } from "@/types/demo";
 
-type FlowStep = 0 | "review" | 1 | 2 | 3;
+type FlowStep = 0 | "import" | 1 | 2 | 3;
 
 const STEPS: { id: FlowStep; label: string }[] = [
-  { id: 0, label: "AI下書き" },
+  { id: 0, label: "URL取得" },
   { id: 1, label: "店舗情報" },
   { id: 2, label: "テンプレート" },
   { id: 3, label: "営業メモ" },
 ];
 
-function emptyAiUrls(): AiDemoDraftInput {
+function emptyUrls(): DemoUrlImportInput {
   return { tabelogUrl: "", instagramUrl: "", officialUrl: "" };
 }
 
@@ -84,12 +89,13 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
   const [completed, setCompleted] = useState<CreateDemoSiteResult | null>(null);
   const [copied, setCopied] = useState<"sales" | "customer" | null>(null);
 
-  const [aiUrls, setAiUrls] = useState<AiDemoDraftInput>(emptyAiUrls);
-  const [aiDraft, setAiDraft] = useState<AiDemoDraft | null>(null);
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiUsed, setAiUsed] = useState(false);
-  const [aiError, setAiError] = useState<string | null>(null);
-  const [showRetryModal, setShowRetryModal] = useState(false);
+  const [importUrls, setImportUrls] = useState<DemoUrlImportInput>(emptyUrls);
+  const [importResult, setImportResult] = useState<DemoUrlImportResult | null>(null);
+  const [photoAssignment, setPhotoAssignment] = useState<DemoPhotoAssignment>(
+    emptyPhotoAssignment()
+  );
+  const [importLoading, setImportLoading] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
 
   const reset = useCallback(() => {
     setStep(0);
@@ -98,12 +104,11 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
     setErrors({});
     setCompleted(null);
     setCopied(null);
-    setAiUrls(emptyAiUrls());
-    setAiDraft(null);
-    setAiLoading(false);
-    setAiUsed(false);
-    setAiError(null);
-    setShowRetryModal(false);
+    setImportUrls(emptyUrls());
+    setImportResult(null);
+    setPhotoAssignment(emptyPhotoAssignment());
+    setImportLoading(false);
+    setImportError(null);
   }, []);
 
   useEffect(() => {
@@ -160,55 +165,48 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleAiGenerate = async () => {
-    const validationError = validateAiDraftInput(aiUrls);
+  const handleFetch = async () => {
+    const validationError = validateDemoUrlImportInput(importUrls);
     if (validationError) {
-      setAiError(validationError);
+      setImportError(validationError);
       return;
     }
-    setAiError(null);
-    setAiLoading(true);
+    setImportError(null);
+    setImportLoading(true);
     try {
-      const draft = await generateDemoDraftFromUrls(aiUrls);
-      setAiDraft(draft);
-      setAiUsed(true);
-      setStep("review");
-    } catch {
-      setAiError("AI下書きの生成に失敗しました。時間をおいて再度お試しください。");
+      const result = await fetchDemoImportFromUrls(importUrls);
+      setImportResult(result);
+      setPhotoAssignment(emptyPhotoAssignment());
+      setStep("import");
+    } catch (e) {
+      setImportError(
+        e instanceof Error ? e.message : "情報の取得に失敗しました"
+      );
     } finally {
-      setAiLoading(false);
+      setImportLoading(false);
     }
   };
 
-  const applyDraftAndContinue = () => {
-    if (!aiDraft) return;
-    setForm(applyAiDraftToForm(aiDraft, form));
+  const applyImportAndContinue = () => {
+    if (!importResult) return;
+    setForm(applyImportToForm(importResult, photoAssignment, form));
     setSlugTouched(false);
     setStep(1);
   };
 
-  const handleRetry = () => {
-    if (aiUsed) {
-      setShowRetryModal(true);
-      return;
-    }
-    setAiDraft(null);
-    setStep(0);
-  };
-
   const handleNext = () => {
-    if (step === "review") return;
+    if (step === "import") return;
     if (!validateStep(step)) return;
     if (step < 3) setStep((step + 1) as FlowStep);
   };
 
   const handleBack = () => {
-    if (step === "review") {
+    if (step === "import") {
       setStep(0);
       return;
     }
     if (step === 1) {
-      setStep(aiDraft ? "review" : 0);
+      setStep(importResult ? "import" : 0);
       return;
     }
     if (step > 1) setStep((step - 1) as FlowStep);
@@ -238,17 +236,17 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
   };
 
   const stepIndicator = (s: (typeof STEPS)[number]) => {
-    const numericStep = step === "review" ? 0 : step;
-    const isActive = s.id === numericStep || (step === "review" && s.id === 0);
+    const numericStep = step === "import" ? 0 : step;
+    const isActive = s.id === numericStep || (step === "import" && s.id === 0);
     const isDone = typeof s.id === "number" && s.id < numericStep;
     return (
       <li
         key={String(s.id)}
         className={`admin-contract-step${isActive ? " admin-contract-step--active" : ""}${
           isDone ? " admin-contract-step--done" : ""
-        }${s.id === 0 ? " admin-contract-step--ai" : ""}`}
+        }`}
       >
-        <span className="admin-contract-step-index">{s.id === 0 ? "AI" : s.id}</span>
+        <span className="admin-contract-step-index">{s.id === 0 ? "URL" : s.id}</span>
         <span className="admin-contract-step-label">{s.label}</span>
       </li>
     );
@@ -268,7 +266,7 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
             </h2>
             {!completed && (
               <p className="admin-modal-message">
-                営業提案用のデモHPを作成します。AI下書きは運営側のみ利用可能です。
+                URLから店舗情報を取得し、5分で営業用デモHPを作成できます。
               </p>
             )}
           </div>
@@ -289,31 +287,49 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
             </ol>
 
             {step === 0 && (
-              <AiDemoDraftStep
-                urls={aiUrls}
-                onChange={setAiUrls}
-                loading={aiLoading}
-                aiUsed={aiUsed}
-                error={aiError}
-                onGenerate={handleAiGenerate}
+              <DemoUrlImportStep
+                urls={importUrls}
+                onChange={setImportUrls}
+                loading={importLoading}
+                error={importError}
+                onFetch={handleFetch}
                 onSkip={() => setStep(1)}
               />
             )}
 
-            {step === "review" && aiDraft && (
-              <AiDraftReviewPanel
-                draft={aiDraft}
-                onConfirm={applyDraftAndContinue}
-                onEditManually={applyDraftAndContinue}
-                onRetry={handleRetry}
-              />
+            {step === "import" && importResult && (
+              <>
+                <DemoImportReviewPanel result={importResult} />
+                <DemoPhotoAssignmentPanel
+                  photos={importResult.photos}
+                  photoStats={importResult.photoStats}
+                  assignment={photoAssignment}
+                  onChange={setPhotoAssignment}
+                />
+                <div className="admin-import-continue-actions">
+                  <button
+                    type="button"
+                    className="admin-btn admin-btn--secondary"
+                    onClick={() => setStep(0)}
+                  >
+                    URLを変更
+                  </button>
+                  <button
+                    type="button"
+                    className="admin-btn admin-btn--primary"
+                    onClick={applyImportAndContinue}
+                  >
+                    この内容で次へ
+                  </button>
+                </div>
+              </>
             )}
 
             {step === 1 && (
               <div className="admin-form-grid">
                 {form.content ? (
-                  <p className="admin-form-group admin-form-group--full admin-ai-applied-note">
-                    AI下書きを反映済みです。必要に応じて編集してください。
+                  <p className="admin-form-group admin-form-group--full admin-import-applied-note">
+                    URLから取得した情報を反映済みです。必要に応じて編集してください。
                   </p>
                 ) : null}
                 <div className="admin-form-group">
@@ -527,7 +543,7 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
               </div>
             )}
 
-            {step !== "review" && (
+            {step !== "import" && (
               <div className="admin-modal-actions admin-modal-actions--contract">
                 <button
                   type="button"
@@ -666,20 +682,6 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
           </>
         )}
       </div>
-
-      <ConfirmModal
-        open={showRetryModal}
-        title="AI下書きをやり直しますか？"
-        message="AIを再実行するとAPI利用料が発生します。現在の下書き内容は破棄されます。"
-        confirmLabel="やり直す"
-        confirmVariant="primary"
-        onConfirm={() => {
-          setShowRetryModal(false);
-          setAiDraft(null);
-          setStep(0);
-        }}
-        onCancel={() => setShowRetryModal(false)}
-      />
     </dialog>
   );
 }

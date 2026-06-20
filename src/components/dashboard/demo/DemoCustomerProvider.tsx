@@ -15,6 +15,7 @@ import {
   DEMO_SITES_STORAGE_KEY,
   findDemoSiteBySlug,
   loadDemoSitesFromStorage,
+  updateDemoSiteContent,
 } from "@/lib/stores/demo-site-registry";
 import { initialDemoSites } from "@/data/admin/demo-mock";
 
@@ -30,6 +31,13 @@ export function DemoCustomerProvider({
   const [ctx, setCtx] = useState<DemoCustomerContext | null>(null);
   const [ready, setReady] = useState(false);
 
+  const savePhotos = useCallback<DemoCustomerContext["savePhotos"]>(
+    (payload) => {
+      updateDemoSiteContent(slug, payload, initialDemoSites);
+    },
+    [slug]
+  );
+
   const refresh = useCallback(() => {
     const sites = loadDemoSitesFromStorage(initialDemoSites);
     const demo = findDemoSiteBySlug(slug, sites);
@@ -37,8 +45,8 @@ export function DemoCustomerProvider({
       setCtx(null);
       return;
     }
-    setCtx(buildDemoCustomerContext(demo, slug));
-  }, [slug]);
+    setCtx(buildDemoCustomerContext(demo, slug, savePhotos));
+  }, [slug, savePhotos]);
 
   useEffect(() => {
     refresh();

@@ -8,6 +8,8 @@ export type PublicStoreResolution =
       status: "found";
       store: ReturnType<typeof resolveDemoStore>["store"];
       sampleFlags: ReturnType<typeof resolveDemoStore>["sampleFlags"];
+      heroFit: ReturnType<typeof resolveDemoStore>["heroFit"];
+      heroObjectPosition: ReturnType<typeof resolveDemoStore>["heroObjectPosition"];
       demoSite: DemoSite;
     };
 
@@ -22,8 +24,15 @@ export function resolvePublicStoreBySlug(
   if (!isDemoSitePubliclyVisible(demo)) {
     return { status: "unpublished" };
   }
-  const { store, sampleFlags } = resolveDemoStore(demo);
-  return { status: "found", store, sampleFlags, demoSite: demo };
+  const { store, sampleFlags, heroFit, heroObjectPosition } = resolveDemoStore(demo);
+  return {
+    status: "found",
+    store,
+    sampleFlags,
+    heroFit,
+    heroObjectPosition,
+    demoSite: demo,
+  };
 }
 
 export function isDemoSitePubliclyVisible(demo: DemoSite): boolean {

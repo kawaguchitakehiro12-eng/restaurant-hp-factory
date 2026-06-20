@@ -27,6 +27,7 @@ export type Commitment = {
   title: string;
   description: string;
   image: string;
+  imageIsSample?: boolean;
 };
 
 export type MenuItem = {
@@ -62,6 +63,8 @@ export type LuxuryIzakayaData = {
   store: StoreInfo;
   heroImage: string;
   heroImageIsSample?: boolean;
+  heroImageFit?: import("@/types/hero-display").HeroImageFit;
+  heroObjectPosition?: import("@/types/hero-display").HeroObjectPosition;
   aboutImage: string;
   aboutImageIsSample?: boolean;
   useCases: UseCase[];
@@ -69,6 +72,9 @@ export type LuxuryIzakayaData = {
   recommendations: MenuItem[];
   courses: Course[];
   galleryImages: GalleryImage[];
+  interiorSpaceImages: GalleryImage[];
+  photoShowcaseImages: GalleryImage[];
+  showPhotoShowcase?: boolean;
   topics: Topic[];
   taglineIsSample?: boolean;
   conceptIsSample?: boolean;

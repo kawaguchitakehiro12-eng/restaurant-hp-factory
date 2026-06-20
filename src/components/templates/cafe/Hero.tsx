@@ -5,13 +5,29 @@ import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
 import { CafeLink } from "@/components/templates/cafe/ui/CafeLink";
 import { SampleLabel } from "@/components/demo/SampleLabel";
 import type { CafeData } from "@/types/cafe";
+import {
+  heroObjectPositionClass,
+  normalizeHeroFit,
+  normalizeHeroObjectPosition,
+} from "@/types/hero-display";
 
 type HeroProps = {
-  data: Pick<CafeData, "store" | "heroImage" | "heroImageIsSample">;
+  data: Pick<
+    CafeData,
+    | "store"
+    | "heroImage"
+    | "heroImageIsSample"
+    | "heroImageFit"
+    | "heroObjectPosition"
+  >;
 };
 
 export function Hero({ data }: HeroProps) {
   const { store, heroImage, heroImageIsSample } = data;
+  const heroFit = normalizeHeroFit(data.heroImageFit);
+  const heroObjectPosition = normalizeHeroObjectPosition(data.heroObjectPosition);
+  const fitClass = heroFit === "contain" ? "object-contain" : "object-cover";
+  const positionClass = heroObjectPositionClass(heroObjectPosition);
 
   return (
     <section className="relative h-[100svh] min-h-[560px] w-full overflow-hidden">
@@ -25,7 +41,7 @@ export function Hero({ data }: HeroProps) {
           src={heroImage}
           alt={`${store.name}の店内`}
           priority
-          className="cafe-image object-cover object-center"
+          className={`cafe-image ${fitClass} ${positionClass}${heroFit === "contain" ? " bg-[var(--cafe-cream)]" : ""}`}
           sizes="100vw"
         />
         {heroImageIsSample ? (

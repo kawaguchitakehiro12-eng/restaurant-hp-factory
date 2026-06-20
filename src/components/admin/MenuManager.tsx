@@ -1,8 +1,6 @@
 "use client";
 
-import Image from "next/image";
 import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
-import { isInlineImageSrc } from "@/lib/images/image-src";
 import { useState } from "react";
 import { GripVertical, Plus, Trash2, Upload } from "lucide-react";
 import { DirtyForm } from "@/components/admin/DirtyForm";
@@ -28,22 +26,12 @@ function MenuImagePreview({ src, alt }: { src: string; alt: string }) {
   return (
     <div className="admin-menu-preview">
       {src ? (
-        isInlineImageSrc(src) ? (
-          <FlexibleImageFill
-            src={src}
-            alt={alt}
-            sizes="120px"
-            className="admin-photo-preview-img object-cover"
-          />
-        ) : (
-          <Image
-            src={src}
-            alt={alt}
-            fill
-            sizes="120px"
-            className="admin-photo-preview-img"
-          />
-        )
+        <FlexibleImageFill
+          src={src}
+          alt={alt}
+          sizes="120px"
+          className="admin-photo-preview-img object-cover"
+        />
       ) : (
         <div className="admin-menu-preview-empty">
           <Upload size={20} strokeWidth={1.5} />

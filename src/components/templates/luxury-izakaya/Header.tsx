@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ReserveLink } from "@/components/ui/ReserveLink";
 import type { StoreInfo } from "@/types/luxury-izakaya";
 
-const navItems = [
+const baseNavItems = [
   { label: "紹介", href: "#about" },
   { label: "用途", href: "#occasions" },
   { label: "こだわり", href: "#commitment" },
@@ -14,9 +14,13 @@ const navItems = [
 
 type HeaderProps = {
   store: StoreInfo;
+  showPhotoShowcase?: boolean;
 };
 
-export function Header({ store }: HeaderProps) {
+export function Header({ store, showPhotoShowcase = false }: HeaderProps) {
+  const navItems = showPhotoShowcase
+    ? [...baseNavItems, { label: "写真", href: "#photos" }]
+    : baseNavItems;
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 

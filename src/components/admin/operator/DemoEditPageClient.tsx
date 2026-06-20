@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { PageHeader } from "@/components/admin/PageHeader";
+import { DemoPhotosEditor, type PhotoEditorPayload } from "@/components/admin/DemoPhotosEditor";
 import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { useAdminUi } from "@/components/admin/AdminUiProvider";
 import { useOperatorAdmin } from "@/components/admin/operator/OperatorAdminProvider";
@@ -12,12 +13,8 @@ import { SALES_STATUS_OPTIONS } from "@/lib/admin/demo-labels";
 import { buildDemoUrl } from "@/lib/admin/demo-create";
 import { normalizeSlug, todayIso } from "@/lib/admin/form-utils";
 import { getTemplateLabel } from "@/lib/admin/contract-templates";
-import {
-  createEmptyMenuItem,
-  createEmptyTopic,
-  createEmptyGalleryPhoto,
-} from "@/lib/stores/demo-samples";
-import type { DemoGalleryPhoto } from "@/types/demo-content";
+import { buildPhotoLibrary } from "@/lib/admin/demo-photo-library";
+import { createEmptyMenuItem, createEmptyTopic } from "@/lib/stores/demo-samples";
 import type { DemoSite } from "@/types/demo";
 import type { DemoMenuItem, DemoSiteContent, DemoTopicItem } from "@/types/demo-content";
 import { ensureDemoContent } from "@/types/demo-content";
@@ -105,29 +102,28 @@ export function DemoEditPageClient() {
     patchContent({ basicInfo: { ...content.basicInfo, [key]: value } });
   };
 
-  const patchPhoto = (key: keyof Omit<DemoSiteContent["photos"], "gallery">, value: string) => {
-    patchContent({ photos: { ...content.photos, [key]: value } });
+  const patchPhotoContent = (payload: PhotoEditorPayload) => {
+    setDirty(true);
+    setDraft((prev) =>
+      prev
+        ? {
+            ...prev,
+            content: {
+              ...ensureDemoContent(prev.content),
+              photos: payload.photos,
+              importedPhotos:
+                payload.importedPhotos ??
+                ensureDemoContent(prev.content).importedPhotos,
+            },
+          }
+        : prev
+    );
   };
 
-  const updateGalleryPhoto = (id: string, patch: Partial<DemoGalleryPhoto>) => {
-    patchContent({
-      photos: {
-        ...content.photos,
-        gallery: content.photos.gallery.map((g) =>
-          g.id === id ? { ...g, ...patch } : g
-        ),
-      },
-    });
-  };
-
-  const removeGalleryPhoto = (id: string) => {
-    patchContent({
-      photos: {
-        ...content.photos,
-        gallery: content.photos.gallery.filter((g) => g.id !== id),
-      },
-    });
-  };
+  const photoLibrary = buildPhotoLibrary(
+    content.photos,
+    content.importedPhotos ?? []
+  );
 
   const patchSales = (patch: Partial<DemoSite>) => {
     setDirty(true);
@@ -346,86 +342,17 @@ export function DemoEditPageClient() {
         </div>
       </SectionCard>
 
-      <SectionCard title="写真" description="画像をアップロード（未登録はサンプル画像を表示）">
-        <div className="admin-form-grid admin-form-grid--photos">
-          {(
-            [
-              ["hero", "ファーストビュー画像"],
-              ["interior", "店内写真"],
-              ["food", "料理写真"],
-              ["exterior", "外観写真"],
-            ] as const
-          ).map(([key, label]) => (
-            <div key={key} className="admin-form-group admin-form-group--full">
-              <ImageUploadField
-                label={label}
-                value={content.photos[key]}
-                onChange={(value) => patchPhoto(key, value)}
-              />
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-6">
-          <h3 className="admin-edit-subheading">ギャラリー写真</h3>
-          <div className="admin-edit-list">
-            {content.photos.gallery.map((photo) => (
-              <div key={photo.id} className="admin-edit-list-item">
-                <ImageUploadField
-                  label={`ギャラリー ${photo.sortOrder}`}
-                  value={photo.url}
-                  onChange={(value) => updateGalleryPhoto(photo.id, { url: value })}
-                />
-                <div className="admin-form-grid mt-2">
-                  <div className="admin-form-group">
-                    <label className="admin-form-label">代替テキスト</label>
-                    <input
-                      className="admin-form-input"
-                      value={photo.alt}
-                      onChange={(e) =>
-                        updateGalleryPhoto(photo.id, { alt: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="admin-form-group">
-                    <label className="admin-form-label">キャプション</label>
-                    <input
-                      className="admin-form-input"
-                      value={photo.caption}
-                      onChange={(e) =>
-                        updateGalleryPhoto(photo.id, { caption: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className="admin-btn admin-btn--ghost admin-btn--danger-text mt-2"
-                  onClick={() => removeGalleryPhoto(photo.id)}
-                >
-                  ギャラリーから削除
-                </button>
-              </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            className="admin-btn admin-btn--secondary mt-3"
-            onClick={() =>
-              patchContent({
-                photos: {
-                  ...content.photos,
-                  gallery: [
-                    ...content.photos.gallery,
-                    createEmptyGalleryPhoto(content.photos.gallery.length + 1),
-                  ],
-                },
-              })
-            }
-          >
-            + ギャラリー写真を追加
-          </button>
-        </div>
+      <SectionCard
+        title="写真"
+        description="取得写真の割り当て・画像アップロード（未登録はサンプル表示）"
+      >
+        <DemoPhotosEditor
+          photos={content.photos}
+          importedPhotos={photoLibrary}
+          onChange={patchPhotoContent}
+          showSaveBar={false}
+          showAssignmentPanel={photoLibrary.length > 0}
+        />
       </SectionCard>
 
       <SectionCard title="メニュー">

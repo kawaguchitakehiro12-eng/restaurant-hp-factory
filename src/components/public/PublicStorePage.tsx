@@ -89,18 +89,21 @@ export function PublicStorePage({ slug }: PublicStorePageProps) {
     return <StoreUnpublished />;
   }
 
-  const { store, sampleFlags } = resolution;
+  const { store, sampleFlags, heroFit, heroObjectPosition } = resolution;
+  const heroDisplay = { heroFit, heroObjectPosition };
 
   if (store.templateType === "cafe") {
     return (
       <div className={`${notoSans.variable} ${playfair.variable} ${jost.variable}`}>
-        <CafePage data={toCafeDataWithSamples(store, sampleFlags)} />
+        <CafePage data={toCafeDataWithSamples(store, sampleFlags, heroDisplay)} />
       </div>
     );
   }
 
   return (
-    <LuxuryIzakayaPage data={toLuxuryIzakayaDataWithSamples(store, sampleFlags)} />
+    <LuxuryIzakayaPage
+      data={toLuxuryIzakayaDataWithSamples(store, sampleFlags, heroDisplay)}
+    />
   );
 }
 

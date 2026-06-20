@@ -1,5 +1,8 @@
 import type { DemoSite } from "@/types/demo";
+import type { DemoSiteContent } from "@/types/demo-content";
+import { ensureDemoContent } from "@/types/demo-content";
 import { initialDemoSites } from "@/data/admin/demo-mock";
+import { todayIso } from "@/lib/admin/form-utils";
 
 export const DEMO_SITES_STORAGE_KEY = "sakupage:demo-sites";
 
@@ -35,8 +38,45 @@ export function loadDemoSitesFromStorage(fallback: DemoSite[] = initialDemoSites
 export function saveDemoSitesToStorage(sites: DemoSite[]): void {
   if (typeof window === "undefined") return;
   localStorage.setItem(DEMO_SITES_STORAGE_KEY, JSON.stringify(sites));
+  window.dispatchEvent(
+    new StorageEvent("storage", { key: DEMO_SITES_STORAGE_KEY })
+  );
 }
 
 export function findDemoSiteBySlug(slug: string, sites: DemoSite[]): DemoSite | undefined {
   return sites.find((d) => d.storeSlug.toLowerCase() === slug.toLowerCase());
+}
+
+export function updateDemoSiteContent(
+  slug: string,
+  contentPatch: Partial<DemoSiteContent>,
+  fallback: DemoSite[] = initialDemoSites
+): DemoSite | null {
+  const sites = loadDemoSitesFromStorage(fallback);
+  const index = sites.findIndex((d) => d.storeSlug.toLowerCase() === slug.toLowerCase());
+  if (index < 0) return null;
+
+  const current = sites[index];
+  const updated: DemoSite = {
+    ...current,
+    content: {
+      ...ensureDemoContent(current.content),
+      ...contentPatch,
+      basicInfo: contentPatch.basicInfo
+        ? { ...ensureDemoContent(current.content).basicInfo, ...contentPatch.basicInfo }
+        : ensureDemoContent(current.content).basicInfo,
+      photos: contentPatch.photos
+        ? { ...ensureDemoContent(current.content).photos, ...contentPatch.photos }
+        : ensureDemoContent(current.content).photos,
+      importedPhotos:
+        contentPatch.importedPhotos ??
+        ensureDemoContent(current.content).importedPhotos,
+    },
+    lastUpdatedAt: todayIso(),
+  };
+
+  const next = [...sites];
+  next[index] = updated;
+  saveDemoSitesToStorage(next);
+  return updated;
 }

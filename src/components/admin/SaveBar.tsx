@@ -6,16 +6,19 @@ type SaveBarProps = {
   saveLabel?: string;
   toastTitle?: string;
   toastMessage?: string;
+  onSave?: () => void;
 };
 
 export function SaveBar({
   saveLabel = "変更を保存",
   toastTitle = "保存しました",
   toastMessage = "サイトへ反映されました",
+  onSave,
 }: SaveBarProps) {
   const { showToast, setDirty } = useAdminUi();
 
   const handleSave = () => {
+    onSave?.();
     setDirty(false);
     showToast(toastTitle, toastMessage);
   };

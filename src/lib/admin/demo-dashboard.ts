@@ -1,5 +1,7 @@
 import type { StoreSubscription } from "@/types/admin";
 import type { DemoSite } from "@/types/demo";
+import type { DemoSiteContent } from "@/types/demo-content";
+import type { HeroImageFit, HeroObjectPosition } from "@/types/hero-display";
 import { resolveDemoStore } from "@/lib/stores/demo-content-resolver";
 import { APP_BASE_URL } from "@/lib/admin/form-utils";
 import type { StoreRecord } from "@/types/store";
@@ -14,6 +16,9 @@ export type DemoCustomerContext = {
   store: StoreRecord;
   subscription: StoreSubscription;
   basePath: string;
+  heroFit: HeroImageFit;
+  heroObjectPosition: HeroObjectPosition;
+  savePhotos: (payload: Pick<DemoSiteContent, "photos" | "importedPhotos">) => void;
 };
 
 export function demoSiteToSubscription(demo: DemoSite): StoreSubscription {
@@ -44,13 +49,17 @@ export function demoSiteToSubscription(demo: DemoSite): StoreSubscription {
 
 export function buildDemoCustomerContext(
   demo: DemoSite,
-  slug: string
+  slug: string,
+  savePhotos: DemoCustomerContext["savePhotos"]
 ): DemoCustomerContext {
-  const { store } = resolveDemoStore(demo);
+  const resolved = resolveDemoStore(demo);
   return {
     demo,
-    store,
+    store: resolved.store,
     subscription: demoSiteToSubscription(demo),
     basePath: `/dashboard/demo/${slug}`,
+    heroFit: resolved.heroFit,
+    heroObjectPosition: resolved.heroObjectPosition,
+    savePhotos,
   };
 }

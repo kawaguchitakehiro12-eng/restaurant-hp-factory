@@ -10,6 +10,8 @@ export type StorePhotoRole =
   | "about"
   | "concept"
   | "interior"
+  | "food"
+  | "exterior"
   | "gallery"
   | "commitment";
 

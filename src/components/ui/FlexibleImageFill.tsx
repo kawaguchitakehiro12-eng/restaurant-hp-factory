@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { isInlineImageSrc } from "@/lib/images/image-src";
+import { shouldUseNativeImg } from "@/lib/images/image-src";
 
 type FlexibleImageFillProps = {
   src: string;
@@ -9,7 +9,7 @@ type FlexibleImageFillProps = {
   priority?: boolean;
 };
 
-/** data URL と remote URL の両方に対応した fill 画像 */
+/** data URL / 未許可ドメイン / 許可済みリモート URL に対応した fill 画像 */
 export function FlexibleImageFill({
   src,
   alt,
@@ -19,7 +19,7 @@ export function FlexibleImageFill({
 }: FlexibleImageFillProps) {
   if (!src) return null;
 
-  if (isInlineImageSrc(src)) {
+  if (shouldUseNativeImg(src)) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img src={src} alt={alt} className={`absolute inset-0 h-full w-full ${className}`} />

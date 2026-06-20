@@ -1,5 +1,4 @@
-import { PhotosManager } from "@/components/admin/PhotosManager";
-import { PageHeader } from "@/components/admin/PageHeader";
+import { CustomerPhotosPageClient } from "@/components/dashboard/CustomerPhotosPageClient";
 import { getCurrentCustomerContext } from "@/lib/admin/customer-context";
 import { notFound } from "next/navigation";
 
@@ -8,12 +7,9 @@ export default function DashboardPhotosPage() {
   if (!ctx) notFound();
 
   return (
-    <>
-      <PageHeader
-        title="写真管理"
-        description="各セクションの写真をアップロード・差し替え"
-      />
-      <PhotosManager photos={ctx.store.photos} />
-    </>
+    <CustomerPhotosPageClient
+      storeSlug={ctx.store.slug}
+      storeName={ctx.store.name}
+    />
   );
 }

@@ -5,13 +5,29 @@ import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
 import { ReserveLink } from "@/components/ui/ReserveLink";
 import { SampleLabel } from "@/components/demo/SampleLabel";
 import type { LuxuryIzakayaData } from "@/types/luxury-izakaya";
+import {
+  heroObjectPositionClass,
+  normalizeHeroFit,
+  normalizeHeroObjectPosition,
+} from "@/types/hero-display";
 
 type HeroProps = {
-  data: Pick<LuxuryIzakayaData, "store" | "heroImage" | "heroImageIsSample">;
+  data: Pick<
+    LuxuryIzakayaData,
+    | "store"
+    | "heroImage"
+    | "heroImageIsSample"
+    | "heroImageFit"
+    | "heroObjectPosition"
+  >;
 };
 
 export function Hero({ data }: HeroProps) {
   const { store, heroImage, heroImageIsSample } = data;
+  const heroFit = normalizeHeroFit(data.heroImageFit);
+  const heroObjectPosition = normalizeHeroObjectPosition(data.heroObjectPosition);
+  const fitClass = heroFit === "contain" ? "object-contain" : "object-cover";
+  const positionClass = heroObjectPositionClass(heroObjectPosition);
 
   return (
     <section className="fixed inset-0 z-0 h-[100svh] w-full overflow-hidden">
@@ -26,7 +42,7 @@ export function Hero({ data }: HeroProps) {
             src={heroImage}
             alt={`${store.name}の店内`}
             priority
-            className="brand-image object-cover object-center"
+            className={`brand-image ${fitClass} ${positionClass}${heroFit === "contain" ? " bg-ink" : ""}`}
             sizes="100vw"
           />
           {heroImageIsSample ? (

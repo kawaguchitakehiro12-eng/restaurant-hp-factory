@@ -53,6 +53,8 @@ export type CafeData = {
   store: CafeStore;
   heroImage: string;
   heroImageIsSample?: boolean;
+  heroImageFit?: import("@/types/hero-display").HeroImageFit;
+  heroObjectPosition?: import("@/types/hero-display").HeroObjectPosition;
   conceptImage: string;
   conceptImageIsSample?: boolean;
   interior: CafeInterior;

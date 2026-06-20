@@ -1,4 +1,13 @@
+import type { DemoImportedPhoto } from "@/types/demo-url-import";
 import type { ContractTemplateId } from "@/types/demo";
+import {
+  DEFAULT_HERO_FIT,
+  DEFAULT_HERO_OBJECT_POSITION,
+  normalizeHeroFit,
+  normalizeHeroObjectPosition,
+  type HeroImageFit,
+  type HeroObjectPosition,
+} from "@/types/hero-display";
 
 /** 店舗基本情報（編集可能） */
 export type DemoBasicInfo = {
@@ -34,6 +43,8 @@ export type DemoPhotos = {
   food: string;
   exterior: string;
   gallery: DemoGalleryPhoto[];
+  heroFit?: HeroImageFit;
+  heroObjectPosition?: HeroObjectPosition;
 };
 
 /** メニュー項目 */
@@ -70,6 +81,8 @@ export type DemoSalesInfo = {
 export type DemoSiteContent = {
   basicInfo: DemoBasicInfo;
   photos: DemoPhotos;
+  /** URL取得時の写真ライブラリ（作成後の再割り当て用） */
+  importedPhotos?: DemoImportedPhoto[];
   menus: DemoMenuItem[];
   topics: DemoTopicItem[];
 };
@@ -112,6 +125,8 @@ export function createEmptyDemoContent(): DemoSiteContent {
       food: "",
       exterior: "",
       gallery: [],
+      heroFit: DEFAULT_HERO_FIT,
+      heroObjectPosition: DEFAULT_HERO_OBJECT_POSITION,
     },
     menus: [],
     topics: [],
@@ -127,7 +142,12 @@ export function ensureDemoContent(content?: DemoSiteContent): DemoSiteContent {
       ...empty.photos,
       ...content.photos,
       gallery: content.photos?.gallery ?? [],
+      heroFit: normalizeHeroFit(content.photos?.heroFit),
+      heroObjectPosition: normalizeHeroObjectPosition(
+        content.photos?.heroObjectPosition
+      ),
     },
+    importedPhotos: content.importedPhotos ?? [],
     menus: content.menus ?? [],
     topics: content.topics ?? [],
   };
