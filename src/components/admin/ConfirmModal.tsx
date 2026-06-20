@@ -10,6 +10,7 @@ type ConfirmModalProps = {
   onConfirm: () => void;
   onCancel: () => void;
   children?: ReactNode;
+  confirmVariant?: "primary" | "danger";
 };
 
 export function ConfirmModal({
@@ -20,6 +21,7 @@ export function ConfirmModal({
   onConfirm,
   onCancel,
   children,
+  confirmVariant = "primary",
 }: ConfirmModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -46,7 +48,9 @@ export function ConfirmModal({
           </button>
           <button
             type="button"
-            className="admin-btn admin-btn--primary"
+            className={`admin-btn ${
+              confirmVariant === "danger" ? "admin-btn--danger" : "admin-btn--primary"
+            }`}
             onClick={onConfirm}
           >
             {confirmLabel}

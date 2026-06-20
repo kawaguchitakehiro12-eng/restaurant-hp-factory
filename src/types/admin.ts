@@ -1,3 +1,4 @@
+import type { ContractTemplateId, DomainStatus } from "@/types/contract";
 import type { TemplateType } from "@/types/store";
 
 export type ContractStatus = "active" | "pending" | "expired" | "cancelled";
@@ -11,6 +12,7 @@ export type CustomerAccount = {
   name: string;
   contactEmail: string;
   contactPhone: string;
+  contactPersonName?: string;
   createdAt: string;
 };
 
@@ -21,6 +23,8 @@ export type StoreSubscription = {
   storeSlug: string;
   storeName: string;
   templateType: TemplateType;
+  contractTemplateId?: ContractTemplateId;
+  domainStatus?: DomainStatus;
   monthlyFee: number;
   contractStartDate: string;
   minimumTermEndDate: string;
@@ -35,6 +39,7 @@ export type StoreSubscription = {
   noticeEmailVerified: boolean;
   lastUpdatedAt: string;
   suspensionScheduled: boolean;
+  isNewlyCreated?: boolean;
 };
 
 export type StoreSectionUpdates = {

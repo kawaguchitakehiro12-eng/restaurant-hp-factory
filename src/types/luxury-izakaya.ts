@@ -33,6 +33,15 @@ export type MenuItem = {
   name: string;
   price: string;
   image: string;
+  description?: string;
+  isSample?: boolean;
+};
+
+export type Topic = {
+  date: string;
+  title: string;
+  body?: string;
+  isSample?: boolean;
 };
 
 export type Course = {
@@ -46,21 +55,21 @@ export type GalleryImage = {
   src: string;
   alt: string;
   caption?: string;
-};
-
-export type Topic = {
-  date: string;
-  title: string;
+  isSample?: boolean;
 };
 
 export type LuxuryIzakayaData = {
   store: StoreInfo;
   heroImage: string;
+  heroImageIsSample?: boolean;
   aboutImage: string;
+  aboutImageIsSample?: boolean;
   useCases: UseCase[];
   commitments: Commitment[];
   recommendations: MenuItem[];
   courses: Course[];
   galleryImages: GalleryImage[];
   topics: Topic[];
+  taglineIsSample?: boolean;
+  conceptIsSample?: boolean;
 };

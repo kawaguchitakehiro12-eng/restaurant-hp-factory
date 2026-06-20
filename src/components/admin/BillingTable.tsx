@@ -7,7 +7,7 @@ import {
   publishStatusVariant,
   StatusBadge,
 } from "@/components/admin/StatusBadge";
-import { getCustomerName } from "@/data/admin/mock";
+import { getCustomerName as getMockCustomerName } from "@/data/admin/mock";
 import { getBillingActionItems } from "@/lib/admin/action-items";
 import {
   billingStatusLabels,
@@ -21,6 +21,7 @@ import {
 import {
   daysRemainingLabel,
   daysUntil,
+  getStoreSitePath,
 } from "@/lib/admin/helpers";
 import type { StoreSubscription } from "@/types/admin";
 
@@ -55,7 +56,7 @@ export function BillingTable({ subscriptions }: BillingTableProps) {
 
             return (
               <tr key={sub.id}>
-                <td className="admin-cell-nowrap">{getCustomerName(sub.customerId)}</td>
+                <td className="admin-cell-nowrap">{getMockCustomerName(sub.customerId)}</td>
                 <td className="font-medium">{sub.storeName}</td>
                 <td>{sub.planName}</td>
                 <td>{formatCurrency(sub.monthlyFee)}</td>
@@ -111,9 +112,13 @@ export function BillingTable({ subscriptions }: BillingTableProps) {
 
 type AdminStoreTableProps = {
   subscriptions: StoreSubscription[];
+  getCustomerName?: (customerId: string) => string;
 };
 
-export function AdminStoreTable({ subscriptions }: AdminStoreTableProps) {
+export function AdminStoreTable({
+  subscriptions,
+  getCustomerName = getMockCustomerName,
+}: AdminStoreTableProps) {
   return (
     <div className="admin-table-wrap">
       <table className="admin-table admin-table--relaxed">
@@ -135,16 +140,19 @@ export function AdminStoreTable({ subscriptions }: AdminStoreTableProps) {
           {subscriptions.map((sub) => {
             const daysLeft = daysUntil(sub.minimumTermEndDate);
             const actions = getBillingActionItems(sub);
-            const sitePath =
-              sub.storeSlug === "nuee"
-                ? "/cafe"
-                : sub.storeSlug === "shogetsu"
-                  ? "/"
-                  : `/${sub.storeSlug}`;
+            const sitePath = getStoreSitePath(sub.storeSlug);
 
             return (
-              <tr key={sub.id}>
-                <td className="admin-cell-nowrap">{getCustomerName(sub.customerId)}</td>
+              <tr
+                key={sub.id}
+                className={sub.isNewlyCreated ? "admin-table-row--new" : undefined}
+              >
+                <td className="admin-cell-nowrap">
+                  {getCustomerName(sub.customerId)}
+                  {sub.isNewlyCreated ? (
+                    <span className="admin-badge-new">新規</span>
+                  ) : null}
+                </td>
                 <td className="font-medium">{sub.storeName}</td>
                 <td>{formatCurrency(sub.monthlyFee)}</td>
                 <td>

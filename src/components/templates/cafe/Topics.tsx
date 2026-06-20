@@ -1,6 +1,7 @@
 import { FadeIn } from "@/components/ui/FadeIn";
 import { CafeSection } from "@/components/templates/cafe/ui/CafeSection";
 import { CafeSectionHeading } from "@/components/templates/cafe/ui/CafeSectionHeading";
+import { SampleLabel } from "@/components/demo/SampleLabel";
 import type { CafeTopic } from "@/types/cafe";
 
 type TopicsProps = {
@@ -31,6 +32,10 @@ export function Topics({ topics }: TopicsProps) {
                 <h3 className="text-sm leading-[1.9] tracking-[0.04em] text-[var(--cafe-ink)]/75 sm:text-[15px]">
                   {topic.title}
                 </h3>
+                {topic.body ? (
+                  <p className="text-xs leading-relaxed text-[var(--cafe-muted)]">{topic.body}</p>
+                ) : null}
+                {topic.isSample ? <SampleLabel /> : null}
               </div>
             </article>
           </FadeIn>

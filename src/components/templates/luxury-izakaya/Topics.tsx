@@ -1,6 +1,7 @@
 import { FadeIn } from "@/components/ui/FadeIn";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { SampleLabel } from "@/components/demo/SampleLabel";
 import type { Topic } from "@/types/luxury-izakaya";
 
 type TopicsProps = {
@@ -23,6 +24,10 @@ export function Topics({ topics }: TopicsProps) {
                 <h3 className="font-mincho text-sm leading-[2] tracking-[0.12em] text-ink/65 sm:text-base">
                   {topic.title}
                 </h3>
+                {topic.body ? (
+                  <p className="text-xs leading-relaxed text-ink-muted/55">{topic.body}</p>
+                ) : null}
+                {topic.isSample ? <SampleLabel /> : null}
               </div>
             </article>
           </FadeIn>

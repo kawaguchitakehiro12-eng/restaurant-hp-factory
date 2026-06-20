@@ -2,6 +2,7 @@ import { BrandImage } from "@/components/ui/BrandImage";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/ui/FadeIn";
 import { Section } from "@/components/ui/Section";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { SampleLabel } from "@/components/demo/SampleLabel";
 import type { MenuItem } from "@/types/luxury-izakaya";
 
 type RecommendationsProps = {
@@ -17,12 +18,17 @@ export function Recommendations({ recommendations }: RecommendationsProps) {
         {recommendations.map((item) => (
           <StaggerItem key={item.name}>
             <article className="flex flex-col gap-5">
-              <BrandImage
-                src={item.image}
-                alt={item.name}
-                aspectClass="aspect-[4/5]"
-                sizes="(max-width: 768px) 100vw, 33vw"
-              />
+              <div className="relative">
+                <BrandImage
+                  src={item.image}
+                  alt={item.name}
+                  aspectClass="aspect-[4/5]"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                />
+                {item.isSample ? (
+                  <SampleLabel className="demo-sample-label--image" />
+                ) : null}
+              </div>
               <div className="flex flex-col gap-2 px-0.5">
                 <p className="font-en text-sm italic tracking-wider text-gold/70">
                   {item.price}
@@ -30,6 +36,10 @@ export function Recommendations({ recommendations }: RecommendationsProps) {
                 <h3 className="font-mincho text-base tracking-[0.2em] text-ink sm:text-lg">
                   {item.name}
                 </h3>
+                {item.description ? (
+                  <p className="text-xs leading-relaxed text-ink-muted/60">{item.description}</p>
+                ) : null}
+                {item.isSample ? <SampleLabel /> : null}
               </div>
             </article>
           </StaggerItem>

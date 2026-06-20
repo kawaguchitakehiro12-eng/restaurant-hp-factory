@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
+import { isInlineImageSrc } from "@/lib/images/image-src";
 import { Upload } from "lucide-react";
 import { DirtyForm } from "@/components/admin/DirtyForm";
 import { SaveBar } from "@/components/admin/SaveBar";
@@ -31,13 +33,22 @@ function PhotoCard({ photo }: { photo: StorePhoto }) {
   return (
     <div className="admin-photo-card admin-photo-card--simple">
       <div className="admin-photo-preview">
-        <Image
-          src={photo.url}
-          alt={photo.alt}
-          fill
-          sizes="(max-width: 768px) 50vw, 200px"
-          className="admin-photo-preview-img"
-        />
+        {isInlineImageSrc(photo.url) ? (
+          <FlexibleImageFill
+            src={photo.url}
+            alt={photo.alt}
+            sizes="(max-width: 768px) 50vw, 200px"
+            className="admin-photo-preview-img object-cover"
+          />
+        ) : (
+          <Image
+            src={photo.url}
+            alt={photo.alt}
+            fill
+            sizes="(max-width: 768px) 50vw, 200px"
+            className="admin-photo-preview-img"
+          />
+        )}
       </div>
       <div className="admin-photo-body">
         <p className="admin-photo-title">{getPhotoTitle(photo)}</p>

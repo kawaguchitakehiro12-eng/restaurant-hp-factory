@@ -1,16 +1,17 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
+import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
 import { ReserveLink } from "@/components/ui/ReserveLink";
+import { SampleLabel } from "@/components/demo/SampleLabel";
 import type { LuxuryIzakayaData } from "@/types/luxury-izakaya";
 
 type HeroProps = {
-  data: Pick<LuxuryIzakayaData, "store" | "heroImage">;
+  data: Pick<LuxuryIzakayaData, "store" | "heroImage" | "heroImageIsSample">;
 };
 
 export function Hero({ data }: HeroProps) {
-  const { store, heroImage } = data;
+  const { store, heroImage, heroImageIsSample } = data;
 
   return (
     <section className="fixed inset-0 z-0 h-[100svh] w-full overflow-hidden">
@@ -21,14 +22,16 @@ export function Hero({ data }: HeroProps) {
           transition={{ duration: 1.8, ease: [0.25, 0.1, 0.25, 1] }}
           className="relative h-full w-full"
         >
-          <Image
+          <FlexibleImageFill
             src={heroImage}
             alt={`${store.name}の店内`}
-            fill
             priority
             className="brand-image object-cover object-center"
             sizes="100vw"
           />
+          {heroImageIsSample ? (
+            <SampleLabel className="demo-sample-label--image demo-sample-label--hero" />
+          ) : null}
         </motion.div>
       </div>
 

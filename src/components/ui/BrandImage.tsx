@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
 
 type BrandImageProps = {
   src: string;
@@ -22,10 +22,9 @@ export function BrandImage({
   return (
     <figure className={`flex flex-col gap-5 sm:gap-6 ${className}`}>
       <div className={`relative overflow-hidden ${aspectClass}`}>
-        <Image
+        <FlexibleImageFill
           src={src}
           alt={alt}
-          fill
           priority={priority}
           className="brand-image object-cover"
           sizes={sizes}

@@ -1,16 +1,17 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
+import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
 import { CafeLink } from "@/components/templates/cafe/ui/CafeLink";
+import { SampleLabel } from "@/components/demo/SampleLabel";
 import type { CafeData } from "@/types/cafe";
 
 type HeroProps = {
-  data: Pick<CafeData, "store" | "heroImage">;
+  data: Pick<CafeData, "store" | "heroImage" | "heroImageIsSample">;
 };
 
 export function Hero({ data }: HeroProps) {
-  const { store, heroImage } = data;
+  const { store, heroImage, heroImageIsSample } = data;
 
   return (
     <section className="relative h-[100svh] min-h-[560px] w-full overflow-hidden">
@@ -18,16 +19,18 @@ export function Hero({ data }: HeroProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.2, ease: [0.25, 0.1, 0.25, 1] }}
-        className="absolute inset-0"
+        className="absolute inset-0 relative"
       >
-        <Image
+        <FlexibleImageFill
           src={heroImage}
           alt={`${store.name}の店内`}
-          fill
           priority
           className="cafe-image object-cover object-center"
           sizes="100vw"
         />
+        {heroImageIsSample ? (
+          <SampleLabel className="demo-sample-label--image demo-sample-label--hero" />
+        ) : null}
       </motion.div>
 
       <div className="cafe-hero-overlay absolute inset-0" />

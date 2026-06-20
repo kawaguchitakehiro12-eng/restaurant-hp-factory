@@ -27,7 +27,7 @@ export function LuxuryIzakayaPage({ data }: LuxuryIzakayaPageProps) {
   return (
     <>
       <Header store={store} />
-      <Hero data={{ store, heroImage }} />
+      <Hero data={{ store, heroImage, heroImageIsSample: data.heroImageIsSample }} />
       <div className="relative z-10">
         <div className="h-[100svh]" aria-hidden />
         <div className="bg-washi pb-[3.25rem] lg:pb-0">

@@ -2,6 +2,7 @@ import { StaggerContainer, StaggerItem } from "@/components/ui/FadeIn";
 import { CafeImage } from "@/components/templates/cafe/ui/CafeImage";
 import { CafeSection } from "@/components/templates/cafe/ui/CafeSection";
 import { CafeSectionHeading } from "@/components/templates/cafe/ui/CafeSectionHeading";
+import { SampleLabel } from "@/components/demo/SampleLabel";
 import type { CafeMenuItem } from "@/types/cafe";
 
 type PopularMenuProps = {
@@ -34,6 +35,9 @@ export function PopularMenu({ popularMenu }: PopularMenuProps) {
                     {item.badge}
                   </span>
                 )}
+                {item.isSample ? (
+                  <SampleLabel className="demo-sample-label--image" />
+                ) : null}
               </div>
               <div className="flex flex-col gap-1.5 px-0.5">
                 {item.nameEn && (
@@ -60,6 +64,7 @@ export function PopularMenu({ popularMenu }: PopularMenuProps) {
                     {item.description}
                   </p>
                 )}
+                {item.isSample ? <SampleLabel /> : null}
               </div>
             </article>
           </StaggerItem>

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
 
 type CafeImageProps = {
   src: string;
@@ -26,10 +26,9 @@ export function CafeImage({
       <div
         className={`relative overflow-hidden ${aspectClass} ${rounded ? "rounded-sm" : ""}`}
       >
-        <Image
+        <FlexibleImageFill
           src={src}
           alt={alt}
-          fill
           priority={priority}
           className="cafe-image object-cover"
           sizes={sizes}
