@@ -2656,6 +2656,45 @@
   opacity: 1;
 }
 
+.admin-photo-library-item--excluded {
+  opacity: 0.45;
+  cursor: default;
+  border-style: dashed;
+  border-color: #d6d3d1;
+}
+
+.admin-photo-library-item--excluded:hover {
+  border-color: #d6d3d1;
+  box-shadow: none;
+}
+
+.admin-photo-library-exclude {
+  position: absolute;
+  top: 0.25rem;
+  left: 0.25rem;
+  z-index: 2;
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
+  border: none;
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: rgba(28, 25, 23, 0.72);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.admin-photo-library-item:hover .admin-photo-library-exclude,
+.admin-photo-library-item--excluded .admin-photo-library-exclude {
+  opacity: 1;
+}
+
+.admin-photo-library-item--excluded .admin-photo-library-exclude {
+  background: rgba(234, 88, 12, 0.85);
+}
+
 /* Photo lightbox */
 .admin-photo-lightbox {
   position: fixed;

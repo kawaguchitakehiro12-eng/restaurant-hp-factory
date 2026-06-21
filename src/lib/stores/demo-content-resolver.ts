@@ -9,6 +9,7 @@ import type {
   DemoTopicItem,
 } from "@/types/demo-content";
 import { ensureDemoContent } from "@/types/demo-content";
+import { getExcludedPhotoUrls, urlIfUsable } from "@/lib/admin/demo-photo-exclusions";
 import { getTemplateSamples } from "@/lib/stores/demo-samples";
 import { getHeroDisplayFromPhotos } from "@/lib/stores/store-photo-overrides";
 import type { HeroImageFit, HeroObjectPosition } from "@/types/hero-display";
@@ -137,6 +138,7 @@ export type ResolvedDemoStore = {
 
 export function resolveDemoStore(demo: DemoSite): ResolvedDemoStore {
   const content = ensureDemoContent(demo.content);
+  const excludedUrls = getExcludedPhotoUrls(content.importedPhotos ?? []);
   const samples = getTemplateSamples(demo.templateId);
   const flags: DemoSampleFlags = {
     basicInfo: {},
@@ -193,22 +195,34 @@ export function resolveDemoStore(demo: DemoSite): ResolvedDemoStore {
     }
   }
 
-  const heroUrl = resolvePhotoUrl(content.photos.hero, samples.hero, "hero", flags);
+  const heroUrl = resolvePhotoUrl(
+    urlIfUsable(content.photos.hero, excludedUrls),
+    samples.hero,
+    "hero",
+    flags
+  );
   const interiorUrl = resolvePhotoUrl(
-    content.photos.interior,
+    urlIfUsable(content.photos.interior, excludedUrls),
     samples.interior,
     "interior",
     flags
   );
-  const foodUrl = resolvePhotoUrl(content.photos.food, samples.food, "food", flags);
+  const foodUrl = resolvePhotoUrl(
+    urlIfUsable(content.photos.food, excludedUrls),
+    samples.food,
+    "food",
+    flags
+  );
   const exteriorUrl = resolvePhotoUrl(
-    content.photos.exterior,
+    urlIfUsable(content.photos.exterior, excludedUrls),
     samples.exterior,
     "exterior",
     flags
   );
 
-  const galleryUser = content.photos.gallery.filter((g) => isFilled(g.url));
+  const galleryUser = content.photos.gallery.filter(
+    (g) => isFilled(g.url) && !excludedUrls.has(g.url.trim())
+  );
   let galleryPhotos: StorePhoto[];
   if (galleryUser.length > 0) {
     galleryPhotos = galleryUser.map((g, i) => ({

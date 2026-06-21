@@ -12,6 +12,8 @@ export type DemoImportedPhoto = {
   url: string;
   alt: string;
   source: "tabelog" | "instagram" | "official" | "upload";
+  /** 公開サイトで使用しない（ライブラリには残す） */
+  excluded?: boolean;
 };
 
 export type DemoImportedMenu = {

@@ -8,6 +8,10 @@ import { DemoUrlImportStep } from "@/components/admin/operator/DemoUrlImportStep
 import { useOperatorAdmin } from "@/components/admin/operator/OperatorAdminProvider";
 import { CONTRACT_TEMPLATE_OPTIONS } from "@/lib/admin/contract-templates";
 import {
+  sanitizeAssignment,
+  togglePhotoExcluded,
+} from "@/lib/admin/demo-photo-exclusions";
+import {
   applyImportToForm,
   fetchDemoImportStream,
   suggestPhotoAssignment,
@@ -227,6 +231,17 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
     setPhotoAssignment(next);
   };
 
+  const handleToggleExclude = (photoId: string) => {
+    if (!importResult) return;
+    const nextPhotos = togglePhotoExcluded(importResult.photos, photoId);
+    setImportResult({ ...importResult, photos: nextPhotos });
+    if (!assignmentTouched) {
+      setPhotoAssignment(suggestPhotoAssignment(nextPhotos));
+    } else {
+      setPhotoAssignment(sanitizeAssignment(photoAssignment, nextPhotos));
+    }
+  };
+
   const applyImportAndContinue = () => {
     if (!importResult) return;
     setForm(applyImportToForm(importResult, photoAssignment, form));
@@ -350,13 +365,14 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
                       importPhaseMessage={importPhaseMessage}
                     />
                     <p className="admin-import-auto-assign-note">
-                      写真はルールベースで自動配置済みです。必要なら1〜2枚だけ差し替えてください。
+                      写真は自動配置済みです。不要な写真は「使用しない」で除外し、必要なら1〜2枚だけ差し替えてください。
                     </p>
                     <DemoPhotoAssignmentPanel
                       photos={importResult.photos}
                       photoStats={importResult.photoStats}
                       assignment={photoAssignment}
                       onChange={handlePhotoAssignmentChange}
+                      onToggleExclude={handleToggleExclude}
                     />
                   </>
                 ) : (

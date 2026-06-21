@@ -2,6 +2,7 @@
 
 import { Jost, Noto_Sans_JP, Playfair_Display } from "next/font/google";
 import { useEffect, useState } from "react";
+import { StoreSeoHead } from "@/components/public/StoreSeoHead";
 import { CafePage } from "@/components/templates/cafe/CafePage";
 import { LuxuryIzakayaPage } from "@/components/templates/luxury-izakaya/LuxuryIzakayaPage";
 import {
@@ -94,16 +95,22 @@ export function PublicStorePage({ slug }: PublicStorePageProps) {
 
   if (store.templateType === "cafe") {
     return (
-      <div className={`${notoSans.variable} ${playfair.variable} ${jost.variable}`}>
-        <CafePage data={toCafeDataWithSamples(store, sampleFlags, heroDisplay)} />
-      </div>
+      <>
+        <StoreSeoHead store={store} isDemo canonicalPath={`/${slug}`} />
+        <div className={`${notoSans.variable} ${playfair.variable} ${jost.variable}`}>
+          <CafePage data={toCafeDataWithSamples(store, sampleFlags, heroDisplay)} />
+        </div>
+      </>
     );
   }
 
   return (
-    <LuxuryIzakayaPage
-      data={toLuxuryIzakayaDataWithSamples(store, sampleFlags, heroDisplay)}
-    />
+    <>
+      <StoreSeoHead store={store} isDemo canonicalPath={`/${slug}`} />
+      <LuxuryIzakayaPage
+        data={toLuxuryIzakayaDataWithSamples(store, sampleFlags, heroDisplay)}
+      />
+    </>
   );
 }
 

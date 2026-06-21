@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Shippori_Antique_B1, Zen_Old_Mincho } from "next/font/google";
+import { DEFAULT_PUBLIC_METADATA, resolveSiteBaseUrl } from "@/lib/stores/store-seo";
 import "./globals.css";
 
 const shipporiAntique = Shippori_Antique_B1({
@@ -24,17 +25,17 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "宵月 | 西麻布の高級和風居酒屋",
-  description:
-    "西麻布の路地奥に佇む、完全予約制の高級和風居酒屋。会食の席で語られる、わずか八席のみの隠れ家。",
-  openGraph: {
-    title: "宵月 | 西麻布",
-    description: "旬を紡ぐ、大人の隠れ家",
-    type: "website",
-    locale: "ja_JP",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = await resolveSiteBaseUrl();
+  return {
+    ...DEFAULT_PUBLIC_METADATA,
+    metadataBase: new URL(baseUrl),
+    title: {
+      default: DEFAULT_PUBLIC_METADATA.title as string,
+      template: "%s",
+    },
+  };
+}
 
 export default function RootLayout({
   children,

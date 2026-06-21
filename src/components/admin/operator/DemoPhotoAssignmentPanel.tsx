@@ -24,6 +24,7 @@ type DemoPhotoAssignmentPanelProps = {
   photoStats?: DemoPhotoStats;
   assignment: DemoPhotoAssignment;
   onChange: (assignment: DemoPhotoAssignment) => void;
+  onToggleExclude?: (photoId: string) => void;
   libraryTitle?: string;
 };
 
@@ -32,6 +33,7 @@ export function DemoPhotoAssignmentPanel({
   photoStats,
   assignment,
   onChange,
+  onToggleExclude,
   libraryTitle = "取得した写真",
 }: DemoPhotoAssignmentPanelProps) {
   const photoMap = useCallback(
@@ -204,6 +206,9 @@ export function DemoPhotoAssignmentPanel({
                 key={photo.id}
                 photo={photo}
                 onPreview={() => setPreviewPhoto(photo)}
+                onToggleExclude={
+                  onToggleExclude ? () => onToggleExclude(photo.id) : undefined
+                }
               />
             ))}
           </div>
@@ -218,9 +223,11 @@ export function DemoPhotoAssignmentPanel({
 function PhotoLibraryItem({
   photo,
   onPreview,
+  onToggleExclude,
 }: {
   photo: DemoImportedPhoto;
   onPreview: () => void;
+  onToggleExclude?: () => void;
 }) {
   const didDrag = useRef(false);
 
@@ -238,10 +245,10 @@ function PhotoLibraryItem({
 
   return (
     <div
-      className="admin-photo-library-item"
-      draggable
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      className={`admin-photo-library-item${photo.excluded ? " admin-photo-library-item--excluded" : ""}`}
+      draggable={!photo.excluded}
+      onDragStart={photo.excluded ? undefined : handleDragStart}
+      onDragEnd={photo.excluded ? undefined : handleDragEnd}
       onClick={() => {
         if (!didDrag.current) onPreview();
       }}
@@ -258,6 +265,20 @@ function PhotoLibraryItem({
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={photo.url} alt={photo.alt} draggable={false} />
       <span className="admin-photo-library-source">{photo.source}</span>
+      {onToggleExclude ? (
+        <button
+          type="button"
+          className="admin-photo-library-exclude"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleExclude();
+          }}
+          aria-label={photo.excluded ? "使用する" : "この写真を使用しない"}
+          title={photo.excluded ? "使用する" : "この写真を使用しない"}
+        >
+          {photo.excluded ? "使用する" : "使用しない"}
+        </button>
+      ) : null}
       <span className="admin-photo-library-zoom" aria-hidden>
         <ZoomIn size={14} strokeWidth={1.75} />
       </span>

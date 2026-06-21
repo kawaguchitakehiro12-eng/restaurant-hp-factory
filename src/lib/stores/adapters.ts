@@ -67,6 +67,7 @@ export function toLuxuryIzakayaData(
       access: store.access,
       reservationUrl: store.reservationUrl,
       mapEmbedUrl: store.mapEmbedUrl,
+      instagramUrl: store.instagramUrl,
     },
     heroImage: hero?.url ?? "",
     heroImageFit: heroDisplay?.heroFit ?? DEFAULT_HERO_FIT,

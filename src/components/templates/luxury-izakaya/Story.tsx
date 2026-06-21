@@ -1,6 +1,6 @@
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/ui/FadeIn";
-import { Section } from "@/components/ui/Section";
-import { SectionHeading } from "@/components/ui/SectionHeading";
+import { LuxurySection } from "./LuxurySection";
+import { LuxurySectionHeading } from "./LuxurySectionHeading";
 import type { StoreInfo } from "@/types/luxury-izakaya";
 
 type StoryProps = {
@@ -9,27 +9,25 @@ type StoryProps = {
 
 export function Story({ store }: StoryProps) {
   return (
-    <Section id="story" className="border-t border-ink/5">
-      <SectionHeading label="Story" title="宵月のはじまり" />
+    <LuxurySection id="story" narrow>
+      <LuxurySectionHeading label="Story" title={`${store.name}のはじまり`} />
 
-      <StaggerContainer className="mt-14 flex flex-col gap-10 sm:mt-20 sm:gap-12">
+      <StaggerContainer className="luxury-story-list">
         {store.story.map((paragraph) => (
           <StaggerItem key={paragraph}>
-            <p className="font-mincho text-[15px] leading-[2.6] tracking-[0.1em] text-ink-muted sm:text-base">
-              {paragraph}
-            </p>
+            <p className="luxury-story-text">{paragraph}</p>
           </StaggerItem>
         ))}
       </StaggerContainer>
 
-      <FadeIn delay={0.2} className="mt-14 flex justify-end sm:mt-20">
+      <FadeIn delay={0.2} className="mt-16 flex justify-center sm:mt-24">
         <p
-          className="font-mincho text-2xl tracking-[0.45em] text-ink/25 sm:text-3xl"
+          className="font-mincho text-xl tracking-[0.45em] text-ink/15 sm:text-2xl"
           style={{ writingMode: "vertical-rl" }}
         >
           一期一会
         </p>
       </FadeIn>
-    </Section>
+    </LuxurySection>
   );
 }

@@ -1,7 +1,7 @@
+import Link from "next/link";
 import { FadeIn } from "@/components/ui/FadeIn";
-import { ReserveLink } from "@/components/ui/ReserveLink";
-import { Section } from "@/components/ui/Section";
-import { SectionHeading } from "@/components/ui/SectionHeading";
+import { LuxurySection } from "./LuxurySection";
+import { LuxurySectionHeading } from "./LuxurySectionHeading";
 import type { StoreInfo } from "@/types/luxury-izakaya";
 
 type StoreInfoSectionProps = {
@@ -13,38 +13,34 @@ const infoItems = (store: StoreInfo) => [
   { label: "電話", value: store.phone },
   { label: "営業", value: store.hours.dinner },
   { label: "定休", value: store.hours.closed },
+  { label: "アクセス", value: store.access },
 ];
 
 export function StoreInfo({ store }: StoreInfoSectionProps) {
   return (
-    <Section id="info" narrow>
-      <SectionHeading
+    <LuxurySection id="info" narrow>
+      <LuxurySectionHeading
         label="Information"
         title="店舗情報"
-        subtitle="完全予約制"
+        subtitle={store.exclusivity}
       />
 
-      <FadeIn className="mt-14 sm:mt-20">
+      <FadeIn className="luxury-info-grid">
         <dl>
           {infoItems(store).map((item) => (
-            <div
-              key={item.label}
-              className="grid grid-cols-[64px_1fr] gap-4 border-b border-ink/8 py-6 sm:grid-cols-[88px_1fr] sm:py-7"
-            >
-              <dt className="font-mincho text-[11px] tracking-[0.35em] text-gold/55">
-                {item.label}
-              </dt>
-              <dd className="font-mincho text-sm leading-[2] tracking-[0.08em] text-ink/70">
-                {item.value}
-              </dd>
+            <div key={item.label} className="luxury-info-row">
+              <dt className="luxury-info-label">{item.label}</dt>
+              <dd className="luxury-info-value">{item.value}</dd>
             </div>
           ))}
         </dl>
 
-        <div id="reservation" className="mt-10 sm:mt-14">
-          <ReserveLink href={store.reservationUrl} variant="section" />
+        <div id="reservation" className="luxury-info-reserve">
+          <Link href={store.reservationUrl} className="luxury-info-reserve-link">
+            御予約のお問い合わせ
+          </Link>
         </div>
       </FadeIn>
-    </Section>
+    </LuxurySection>
   );
 }

@@ -1,5 +1,6 @@
 import type { DemoImportedPhoto, DemoPhotoAssignment } from "@/types/demo-url-import";
 import { emptyPhotoAssignment } from "@/types/demo-url-import";
+import { filterUsablePhotos } from "@/lib/admin/demo-photo-exclusions";
 import { estimatePixelsFromUrl } from "@/lib/admin/demo-url-import/image-filter";
 
 type PhotoCategory = "food" | "interior" | "exterior" | "other";
@@ -84,11 +85,12 @@ function classifyPhoto(photo: DemoImportedPhoto): PhotoCategory {
 export function suggestPhotoAssignment(
   photos: DemoImportedPhoto[]
 ): DemoPhotoAssignment {
-  if (photos.length === 0) return emptyPhotoAssignment();
+  const usable = filterUsablePhotos(photos);
+  if (usable.length === 0) return emptyPhotoAssignment();
 
   const assignment = emptyPhotoAssignment();
   const used = new Set<string>();
-  const scored = [...photos].sort((a, b) => photoScore(b) - photoScore(a));
+  const scored = [...usable].sort((a, b) => photoScore(b) - photoScore(a));
 
   const pick = (predicate: (photo: DemoImportedPhoto) => boolean): string | null => {
     const found = scored.find((p) => !used.has(p.id) && predicate(p));

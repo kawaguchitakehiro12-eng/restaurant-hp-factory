@@ -7,6 +7,10 @@ import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { DirtyForm } from "@/components/admin/DirtyForm";
 import { SaveBar } from "@/components/admin/SaveBar";
 import {
+  sanitizeAssignment,
+  togglePhotoExcluded,
+} from "@/lib/admin/demo-photo-exclusions";
+import {
   ensureLibraryHasUrl,
   photosToAssignment,
   syncAssignment,
@@ -81,6 +85,12 @@ export function DemoPhotosEditor({
     emit(synced);
   };
 
+  const handleToggleExclude = (photoId: string) => {
+    const nextLibrary = togglePhotoExcluded(importedPhotos, photoId);
+    const nextAssignment = sanitizeAssignment(assignment, nextLibrary);
+    emit(syncAssignment(nextAssignment, nextLibrary, photos));
+  };
+
   const updateGalleryPhoto = (id: string, patch: Partial<DemoGalleryPhoto>) => {
     const gallery = photos.gallery.map((g) => (g.id === id ? { ...g, ...patch } : g));
     let nextLibrary = importedPhotos;
@@ -115,6 +125,7 @@ export function DemoPhotosEditor({
             photos={importedPhotos}
             assignment={assignment}
             onChange={handleAssignmentChange}
+            onToggleExclude={handleToggleExclude}
             libraryTitle="写真一覧"
           />
         </div>

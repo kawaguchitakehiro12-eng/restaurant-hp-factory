@@ -139,7 +139,9 @@ function photoUrlById(
   id: string | null
 ): string {
   if (!id) return "";
-  return photos.find((p) => p.id === id)?.url ?? "";
+  const photo = photos.find((p) => p.id === id);
+  if (!photo || photo.excluded) return "";
+  return photo.url;
 }
 
 /** 取得結果と写真割り当てをデモ作成フォームへ反映（AI文章は含めない） */
@@ -158,7 +160,7 @@ export function applyImportToForm(
   const galleryPhotos = assignment.gallery
     .map((id, i) => {
       const photo = result.photos.find((p) => p.id === id);
-      if (!photo) return null;
+      if (!photo || photo.excluded) return null;
       return {
         id: generateId("gallery"),
         url: photo.url,

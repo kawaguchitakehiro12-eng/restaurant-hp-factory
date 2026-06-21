@@ -77,6 +77,7 @@ export function toLuxuryIzakayaDataWithSamples(
       access: store.access,
       reservationUrl: store.reservationUrl,
       mapEmbedUrl: store.mapEmbedUrl,
+      instagramUrl: store.instagramUrl,
     },
     heroImage: hero?.url ?? "",
     heroImageIsSample: Boolean(sampleFlags.photos.hero),

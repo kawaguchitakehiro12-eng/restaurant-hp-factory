@@ -1,7 +1,7 @@
 import { FadeIn } from "@/components/ui/FadeIn";
-import { Section } from "@/components/ui/Section";
-import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SampleLabel } from "@/components/demo/SampleLabel";
+import { LuxurySection } from "./LuxurySection";
+import { LuxurySectionHeading } from "./LuxurySectionHeading";
 import type { Topic } from "@/types/luxury-izakaya";
 
 type TopicsProps = {
@@ -9,30 +9,26 @@ type TopicsProps = {
 };
 
 export function Topics({ topics }: TopicsProps) {
-  return (
-    <Section id="topics" className="border-t border-ink/5" narrow>
-      <SectionHeading label="News" title="トピックス" />
+  const displayTopics = topics.slice(0, Math.max(3, topics.length));
 
-      <div className="mt-14 sm:mt-20">
-        {topics.map((topic, index) => (
-          <FadeIn key={topic.title} delay={index * 0.08}>
-            <article className="border-b border-ink/8 py-7 sm:py-8">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-10">
-                <time className="shrink-0 font-en text-xs italic tracking-wider text-ink-muted/45">
-                  {topic.date}
-                </time>
-                <h3 className="font-mincho text-sm leading-[2] tracking-[0.12em] text-ink/65 sm:text-base">
-                  {topic.title}
-                </h3>
-                {topic.body ? (
-                  <p className="text-xs leading-relaxed text-ink-muted/55">{topic.body}</p>
-                ) : null}
-                {topic.isSample ? <SampleLabel /> : null}
-              </div>
+  return (
+    <LuxurySection id="topics" wide>
+      <LuxurySectionHeading label="News" title="トピックス" />
+
+      <div className="luxury-topics-grid">
+        {displayTopics.map((topic, index) => (
+          <FadeIn key={`${topic.title}-${index}`} delay={index * 0.08}>
+            <article className="luxury-topic-card">
+              <time className="luxury-topic-date">{topic.date}</time>
+              <h3 className="luxury-topic-title">{topic.title}</h3>
+              {topic.body ? (
+                <p className="text-xs leading-relaxed text-ink-muted/55">{topic.body}</p>
+              ) : null}
+              {topic.isSample ? <SampleLabel /> : null}
             </article>
           </FadeIn>
         ))}
       </div>
-    </Section>
+    </LuxurySection>
   );
 }

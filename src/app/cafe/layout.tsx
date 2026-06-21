@@ -1,6 +1,16 @@
 import type { Metadata } from "next";
 import { Jost, Noto_Sans_JP, Playfair_Display } from "next/font/google";
+import { getStoreBySlug } from "@/data/stores";
+import { isPublished } from "@/lib/stores/helpers";
+import {
+  buildStoreSeoMetadata,
+  DEFAULT_PUBLIC_METADATA,
+  resolveSiteBaseUrl,
+  storeRecordToSeoInput,
+} from "@/lib/stores/store-seo";
 import "./cafe.css";
+
+const SLUG = "nuee";
 
 const notoSans = Noto_Sans_JP({
   variable: "--font-cafe-sans",
@@ -24,17 +34,16 @@ const jost = Jost({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "nuée | 表参道のスペシャルティカフェ",
-  description:
-    "光に包まれる、午後の余白。表参道に佇む白を基調としたスペシャルティカフェ「nuée」。",
-  openGraph: {
-    title: "nuée | 表参道",
-    description: "光に包まれる、午後の余白",
-    type: "website",
-    locale: "ja_JP",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const store = getStoreBySlug(SLUG);
+  if (!store || !isPublished(store)) return DEFAULT_PUBLIC_METADATA;
+
+  const baseUrl = await resolveSiteBaseUrl();
+  return buildStoreSeoMetadata(
+    storeRecordToSeoInput(store, { canonicalPath: "/cafe" }),
+    baseUrl
+  );
+}
 
 export default function CafeLayout({
   children,

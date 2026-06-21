@@ -14,6 +14,7 @@ export type StoreInfo = {
   access: string;
   reservationUrl: string;
   mapEmbedUrl: string;
+  instagramUrl?: string | null;
 };
 
 export type UseCase = {
