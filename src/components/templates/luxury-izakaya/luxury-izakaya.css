@@ -321,17 +321,17 @@
   opacity: 1;
 }
 
-/* ── About (photo-first 55/45) ── */
+/* ── About (photo-first, balanced) ── */
 .luxury-template .luxury-about-editorial {
   display: grid;
   gap: 2.5rem;
-  max-width: 88rem;
+  max-width: 84rem;
   margin-inline: auto;
 }
 
 @media (min-width: 768px) {
   .luxury-template .luxury-about-editorial {
-    grid-template-columns: minmax(0, 55%) minmax(0, 45%);
+    grid-template-columns: minmax(0, 50%) minmax(0, 50%);
     gap: clamp(2.5rem, 5vw, 4rem);
     align-items: start;
   }
@@ -341,13 +341,13 @@
   position: relative;
   overflow: hidden;
   aspect-ratio: 4 / 5;
-  min-height: 22rem;
+  min-height: 20rem;
 }
 
 @media (min-width: 768px) {
   .luxury-template .luxury-about-photo-main {
-    aspect-ratio: 5 / 6;
-    min-height: 36rem;
+    aspect-ratio: 4 / 5;
+    min-height: 32rem;
   }
 }
 
@@ -474,7 +474,7 @@
   color: rgba(107, 95, 82, 0.65);
 }
 
-/* ── Commitment (varied photo sizes) ── */
+/* ── Commitment (editorial — text-led) ── */
 .luxury-template .luxury-commitment-list {
   display: flex;
   flex-direction: column;
@@ -485,13 +485,17 @@
 .luxury-template .luxury-commitment-row {
   display: grid;
   gap: 2rem;
-  align-items: center;
+  align-items: start;
 }
 
 @media (min-width: 768px) {
   .luxury-template .luxury-commitment-row {
-    grid-template-columns: 1.05fr 0.95fr;
+    grid-template-columns: minmax(0, 40%) minmax(0, 60%);
     gap: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .luxury-template .luxury-commitment-row--reverse {
+    grid-template-columns: minmax(0, 60%) minmax(0, 40%);
   }
 
   .luxury-template .luxury-commitment-row--reverse .luxury-commitment-photo {
@@ -509,41 +513,29 @@
   position: relative;
   overflow: hidden;
   margin: 0;
-}
-
-.luxury-template .luxury-commitment-photo.luxury-mosaic--hero {
-  aspect-ratio: 16 / 10;
-  min-height: 16rem;
-}
-
-.luxury-template .luxury-commitment-photo.luxury-mosaic--xl {
-  aspect-ratio: 5 / 4;
-  min-height: 18rem;
-}
-
-.luxury-template .luxury-commitment-photo.luxury-mosaic--md {
-  aspect-ratio: 4 / 5;
-  min-height: 16rem;
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 3 / 2;
+  max-height: 13.75rem;
 }
 
 @media (min-width: 768px) {
-  .luxury-template .luxury-commitment-photo.luxury-mosaic--hero {
-    min-height: 26rem;
-  }
-
-  .luxury-template .luxury-commitment-photo.luxury-mosaic--xl {
-    min-height: 24rem;
-  }
-
-  .luxury-template .luxury-commitment-photo.luxury-mosaic--md {
-    min-height: 20rem;
+  .luxury-template .luxury-commitment-photo {
+    max-height: 16.25rem;
   }
 }
 
 .luxury-template .luxury-commitment-text {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
+  padding: 0.25rem 0;
+}
+
+@media (min-width: 768px) {
+  .luxury-template .luxury-commitment-text {
+    padding-top: 0.5rem;
+  }
 }
 
 .luxury-template .luxury-commitment-num {
@@ -551,24 +543,28 @@
   font-size: 0.6875rem;
   font-style: italic;
   letter-spacing: 0.38em;
-  color: rgba(196, 169, 98, 0.22);
+  color: rgba(196, 169, 98, 0.3);
 }
 
 .luxury-template .luxury-commitment-title {
   font-family: var(--font-shippori), serif;
-  font-size: clamp(1.25rem, 2.2vw, 1.625rem);
-  letter-spacing: 0.24em;
-  line-height: 1.75;
-  color: rgba(245, 240, 232, 0.95);
+  font-size: clamp(1.1875rem, 2vw, 1.5rem);
+  letter-spacing: 0.22em;
+  line-height: 1.8;
+  color: rgba(245, 240, 232, 0.96);
 }
 
 .luxury-template .luxury-commitment-desc {
-  max-width: 32rem;
+  max-width: 36rem;
   font-family: var(--font-shippori), serif;
-  font-size: 0.875rem;
-  line-height: 2.5;
-  letter-spacing: 0.08em;
-  color: rgba(245, 240, 232, 0.42);
+  font-size: 0.9375rem;
+  line-height: 2.35;
+  letter-spacing: 0.06em;
+  color: rgba(245, 240, 232, 0.58);
+}
+
+.luxury-template .luxury-commitment-row--reverse .luxury-commitment-desc {
+  margin-left: auto;
 }
 
 /* ── Dish showcase ── */
@@ -582,20 +578,20 @@
   display: grid;
   gap: 2rem;
   align-items: center;
-  max-width: 88rem;
+  max-width: 80rem;
   margin-inline: auto;
   padding-inline: 1rem;
 }
 
 @media (min-width: 768px) {
   .luxury-template .luxury-dish-feature {
-    grid-template-columns: minmax(0, 58%) minmax(0, 42%);
+    grid-template-columns: minmax(0, 50%) minmax(0, 50%);
     gap: clamp(2.5rem, 5vw, 4.5rem);
     padding-inline: clamp(1rem, 4vw, 3rem);
   }
 
   .luxury-template .luxury-dish-feature--reverse {
-    grid-template-columns: minmax(0, 42%) minmax(0, 58%);
+    grid-template-columns: minmax(0, 50%) minmax(0, 50%);
   }
 
   .luxury-template .luxury-dish-feature--reverse .luxury-dish-photo {
@@ -617,30 +613,30 @@
 
 .luxury-template .luxury-dish-photo--hero {
   aspect-ratio: 4 / 3;
-  min-height: 18rem;
+  min-height: 15rem;
 }
 
 .luxury-template .luxury-dish-photo--landscape {
   aspect-ratio: 5 / 4;
-  min-height: 16rem;
+  min-height: 14rem;
 }
 
 .luxury-template .luxury-dish-photo--portrait {
   aspect-ratio: 3 / 4;
-  min-height: 18rem;
+  min-height: 15rem;
 }
 
 @media (min-width: 768px) {
   .luxury-template .luxury-dish-photo--hero {
-    min-height: 28rem;
+    min-height: 24rem;
   }
 
   .luxury-template .luxury-dish-photo--landscape {
-    min-height: 22rem;
+    min-height: 19rem;
   }
 
   .luxury-template .luxury-dish-photo--portrait {
-    min-height: 26rem;
+    min-height: 22rem;
   }
 }
 
