@@ -59,6 +59,8 @@ export type CafeData = {
   conceptImageIsSample?: boolean;
   interior: CafeInterior;
   popularMenu: CafeMenuItem[];
+  foodMenu: CafeMenuItem[];
+  drinkMenu: CafeMenuItem[];
   galleryImages: CafeGalleryImage[];
   topics: CafeTopic[];
   taglineIsSample?: boolean;

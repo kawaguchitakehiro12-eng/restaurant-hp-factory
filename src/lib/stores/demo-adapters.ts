@@ -1,3 +1,4 @@
+import { splitCafeMenu } from "@/lib/stores/cafe-menu-split";
 import { getPhotoById, getPhotoByRole, getPhotosByRole } from "@/lib/stores/helpers";
 import {
   buildLuxuryPhotoSections,
@@ -122,6 +123,19 @@ export function toCafeDataWithSamples(
   const interiorPhoto = getPhotoById(store, ext.interior.photoId);
   const subCopy = Array.isArray(store.subCopy) ? store.subCopy.join(" ") : store.subCopy;
 
+  const menuItems = [...store.menu]
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((item) => ({
+      name: item.name,
+      nameEn: item.nameEn,
+      price: item.price,
+      description: item.description,
+      image: item.imageUrl,
+      badge: item.badge,
+      isSample: sampleFlags.menuItemIds.includes(item.id),
+    }));
+  const { popularMenu, foodMenu, drinkMenu } = splitCafeMenu(menuItems);
+
   return {
     store: {
       name: store.name,
@@ -157,17 +171,9 @@ export function toCafeDataWithSamples(
       features: ext.interior.features,
       isSample: Boolean(sampleFlags.photos.interior),
     },
-    popularMenu: [...store.menu]
-      .sort((a, b) => a.sortOrder - b.sortOrder)
-      .map((item) => ({
-        name: item.name,
-        nameEn: item.nameEn,
-        price: item.price,
-        description: item.description,
-        image: item.imageUrl,
-        badge: item.badge,
-        isSample: sampleFlags.menuItemIds.includes(item.id),
-      })),
+    popularMenu,
+    foodMenu,
+    drinkMenu,
     galleryImages: getPhotosByRole(store, "gallery").map((photo) => ({
       src: photo.url,
       alt: photo.alt,

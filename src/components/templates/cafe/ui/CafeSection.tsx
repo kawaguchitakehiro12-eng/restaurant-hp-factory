@@ -5,7 +5,9 @@ type CafeSectionProps = {
   children: ReactNode;
   className?: string;
   narrow?: boolean;
-  cream?: boolean;
+  wide?: boolean;
+  warm?: boolean;
+  beige?: boolean;
 };
 
 export function CafeSection({
@@ -13,16 +15,18 @@ export function CafeSection({
   children,
   className = "",
   narrow = false,
-  cream = false,
+  wide = false,
+  warm = false,
+  beige = false,
 }: CafeSectionProps) {
-  const width = narrow ? "max-w-3xl" : "max-w-5xl";
+  const width = narrow ? "max-w-3xl" : wide ? "max-w-7xl" : "max-w-6xl";
+  const tone = beige ? "cafe-section--beige" : warm ? "cafe-section--warm" : "";
 
   return (
-    <section
-      id={id}
-      className={`cafe-section ${cream ? "bg-[var(--cafe-cream)]" : ""} ${className}`}
-    >
-      <div className={`mx-auto ${width} px-5 sm:px-8 md:px-12`}>{children}</div>
+    <section id={id} className={`cafe-section ${tone} ${className}`}>
+      <div className={`mx-auto ${width} px-5 sm:px-8 md:px-12 lg:px-16`}>
+        {children}
+      </div>
     </section>
   );
 }

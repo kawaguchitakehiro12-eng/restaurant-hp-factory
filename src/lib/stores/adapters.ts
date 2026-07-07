@@ -1,3 +1,4 @@
+import { splitCafeMenu } from "@/lib/stores/cafe-menu-split";
 import { getPhotoById, getPhotoByRole, getPhotosByRole } from "@/lib/stores/helpers";
 import {
   buildLuxuryPhotoSections,
@@ -121,6 +122,18 @@ export function toCafeData(
     ? store.subCopy.join(" ")
     : store.subCopy;
 
+  const menuItems = [...store.menu]
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((item) => ({
+      name: item.name,
+      nameEn: item.nameEn,
+      price: item.price,
+      description: item.description,
+      image: item.imageUrl,
+      badge: item.badge,
+    }));
+  const { popularMenu, foodMenu, drinkMenu } = splitCafeMenu(menuItems);
+
   return {
     store: {
       name: store.name,
@@ -154,16 +167,9 @@ export function toCafeData(
       description: ext.interior.description,
       features: ext.interior.features,
     },
-    popularMenu: [...store.menu]
-      .sort((a, b) => a.sortOrder - b.sortOrder)
-      .map((item) => ({
-        name: item.name,
-        nameEn: item.nameEn,
-        price: item.price,
-        description: item.description,
-        image: item.imageUrl,
-        badge: item.badge,
-      })),
+    popularMenu,
+    foodMenu,
+    drinkMenu,
     galleryImages: getPhotosByRole(store, "gallery").map((photo) => ({
       src: photo.url,
       alt: photo.alt,

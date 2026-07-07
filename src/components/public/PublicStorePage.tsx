@@ -1,6 +1,6 @@
 "use client";
 
-import { Jost, Noto_Sans_JP, Playfair_Display } from "next/font/google";
+import { Cormorant_Garamond, DM_Sans, Noto_Sans_JP } from "next/font/google";
 import { useEffect, useState } from "react";
 import { StoreSeoHead } from "@/components/public/StoreSeoHead";
 import { CafePage } from "@/components/templates/cafe/CafePage";
@@ -30,7 +30,7 @@ const notoSans = Noto_Sans_JP({
   display: "swap",
 });
 
-const playfair = Playfair_Display({
+const cormorant = Cormorant_Garamond({
   variable: "--font-cafe-display",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
@@ -38,7 +38,7 @@ const playfair = Playfair_Display({
   display: "swap",
 });
 
-const jost = Jost({
+const dmSans = DM_Sans({
   variable: "--font-cafe-en",
   subsets: ["latin"],
   weight: ["300", "400", "500"],
@@ -97,7 +97,7 @@ export function PublicStorePage({ slug }: PublicStorePageProps) {
     return (
       <>
         <StoreSeoHead store={store} isDemo canonicalPath={`/${slug}`} />
-        <div className={`${notoSans.variable} ${playfair.variable} ${jost.variable}`}>
+        <div className={`${notoSans.variable} ${cormorant.variable} ${dmSans.variable}`}>
           <CafePage data={toCafeDataWithSamples(store, sampleFlags, heroDisplay)} />
         </div>
       </>

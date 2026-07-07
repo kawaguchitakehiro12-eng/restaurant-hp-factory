@@ -1,14 +1,15 @@
-import { Access } from "./Access";
 import { Concept } from "./Concept";
-import { DesktopCta, MobileCtaBar } from "./CtaBar";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { Hero } from "./Hero";
-import { Interior } from "./Interior";
+import { DrinkMenu, FoodMenu } from "./MenuSections";
+import { Map } from "./Map";
+import { News } from "./News";
 import { PhotoGallery } from "./PhotoGallery";
 import { PopularMenu } from "./PopularMenu";
-import { Topics } from "./Topics";
+import { StoreInfo } from "./StoreInfo";
 import type { CafeData } from "@/types/cafe";
+import "./cafe.css";
 
 type CafePageProps = {
   data: CafeData;
@@ -21,12 +22,14 @@ export function CafePage({ data }: CafePageProps) {
     conceptImage,
     interior,
     popularMenu,
+    foodMenu,
+    drinkMenu,
     galleryImages,
     topics,
   } = data;
 
   return (
-    <div className="template-cafe">
+    <div className="cafe-template">
       <Header store={store} />
       <Hero
         data={{
@@ -37,17 +40,22 @@ export function CafePage({ data }: CafePageProps) {
           heroObjectPosition: data.heroObjectPosition,
         }}
       />
-      <main className="bg-[var(--cafe-white)] pb-14 lg:pb-0">
-        <Concept store={store} conceptImage={conceptImage} />
+      <main>
+        <Concept
+          store={store}
+          conceptImage={conceptImage}
+          conceptImageIsSample={data.conceptImageIsSample}
+          conceptIsSample={data.conceptIsSample}
+        />
         <PopularMenu popularMenu={popularMenu} />
-        <Interior interior={interior} />
-        <PhotoGallery galleryImages={galleryImages} />
-        <Topics topics={topics} />
-        <Access store={store} />
+        <FoodMenu items={foodMenu} />
+        <DrinkMenu items={drinkMenu} />
+        <PhotoGallery galleryImages={galleryImages} interior={interior} />
+        <News topics={topics} />
+        <StoreInfo store={store} />
+        <Map store={store} />
         <Footer store={store} />
       </main>
-      <DesktopCta store={store} />
-      <MobileCtaBar store={store} />
     </div>
   );
 }

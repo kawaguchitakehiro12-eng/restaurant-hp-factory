@@ -62,6 +62,36 @@ export const nueeStore: StoreRecord = {
       imageUrl:
         "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200&q=90&auto=format&fit=crop",
     },
+    {
+      id: "menu-004",
+      sortOrder: 4,
+      name: "フラットホワイト",
+      nameEn: "Flat White",
+      price: "¥720",
+      description: "ダブルショットとスチームミルクの、なめらかな一杯",
+      imageUrl:
+        "https://images.unsplash.com/photo-1511920170033-f8396924c10b?w=1200&q=90&auto=format&fit=crop",
+    },
+    {
+      id: "menu-005",
+      sortOrder: 5,
+      name: "アボカドトースト",
+      nameEn: "Avocado Toast",
+      price: "¥980",
+      description: "サワードウにアボカドとポーチドエッグをのせた定番",
+      imageUrl:
+        "https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?w=1200&q=90&auto=format&fit=crop",
+    },
+    {
+      id: "menu-006",
+      sortOrder: 6,
+      name: "バナナブレッド",
+      nameEn: "Banana Bread",
+      price: "¥480",
+      description: "しっとり焼き上げた、週末の定番スイーツ",
+      imageUrl:
+        "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?w=1200&q=90&auto=format&fit=crop",
+    },
   ],
 
   courses: [],

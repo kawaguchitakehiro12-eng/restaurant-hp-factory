@@ -1,5 +1,6 @@
 import { FadeIn } from "@/components/ui/FadeIn";
-import { CafeImage } from "@/components/templates/cafe/ui/CafeImage";
+import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
+import { SampleLabel } from "@/components/demo/SampleLabel";
 import { CafeSection } from "@/components/templates/cafe/ui/CafeSection";
 import { CafeSectionHeading } from "@/components/templates/cafe/ui/CafeSectionHeading";
 import type { CafeStore } from "@/types/cafe";
@@ -7,9 +8,16 @@ import type { CafeStore } from "@/types/cafe";
 type ConceptProps = {
   store: CafeStore;
   conceptImage: string;
+  conceptImageIsSample?: boolean;
+  conceptIsSample?: boolean;
 };
 
-export function Concept({ store, conceptImage }: ConceptProps) {
+export function Concept({
+  store,
+  conceptImage,
+  conceptImageIsSample,
+  conceptIsSample,
+}: ConceptProps) {
   return (
     <CafeSection id="concept">
       <CafeSectionHeading
@@ -18,29 +26,30 @@ export function Concept({ store, conceptImage }: ConceptProps) {
         subtitle={store.tagline}
       />
 
-      <div className="mt-12 grid items-start gap-10 sm:mt-16 md:grid-cols-2 md:gap-14 lg:gap-20">
+      <div className="cafe-concept-grid">
         <FadeIn direction="left">
-          <CafeImage
-            src={conceptImage}
-            alt="nuéeのカフェ空間"
-            aspectClass="aspect-[4/5]"
-            sizes="(max-width: 768px) 100vw, 50vw"
-            rounded
-          />
+          <figure className="cafe-concept-photo">
+            <FlexibleImageFill
+              src={conceptImage}
+              alt={`${store.name}のカフェ空間`}
+              className="cafe-image-fill object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+            {conceptImageIsSample ? (
+              <SampleLabel className="demo-sample-label--image" />
+            ) : null}
+          </figure>
         </FadeIn>
 
-        <FadeIn direction="right" delay={0.1} className="flex flex-col gap-8 md:pt-6">
-          <p className="text-[15px] leading-[2.3] tracking-[0.04em] text-[var(--cafe-muted)] sm:text-base">
+        <FadeIn direction="right" delay={0.1} className="cafe-concept-body">
+          <p className="cafe-concept-text">
             {store.concept}
+            {conceptIsSample ? <SampleLabel /> : null}
           </p>
 
-          <ul className="flex flex-col gap-4 border-t border-[var(--cafe-cream)] pt-8">
+          <ul className="cafe-concept-points">
             {store.conceptPoints.map((point) => (
-              <li
-                key={point}
-                className="flex items-start gap-3 text-[13px] leading-[1.9] tracking-[0.04em] text-[var(--cafe-ink)]/75 sm:text-sm"
-              >
-                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[var(--cafe-accent)]" />
+              <li key={point} className="cafe-concept-point">
                 {point}
               </li>
             ))}
