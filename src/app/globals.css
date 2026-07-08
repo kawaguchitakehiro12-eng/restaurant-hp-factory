@@ -12,6 +12,16 @@
   --background: var(--washi);
   --foreground: var(--ink);
   --section-py: clamp(4.5rem, 12vw, 10rem);
+
+  /* Local / system font stacks (no Google Fonts at build time) */
+  --font-shippori: "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Yu Mincho",
+    "YuMincho", "Noto Serif JP", "Songti SC", serif;
+  --font-zen: "Hiragino Mincho ProN", "Hiragino Mincho Pro", "Yu Mincho",
+    "YuMincho", "Noto Serif JP", Georgia, serif;
+  --font-cormorant: "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
+    "Times New Roman", serif;
+  --font-admin: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
 }
 
 @theme inline {

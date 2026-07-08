@@ -1,5 +1,6 @@
 import { splitBarMenu } from "@/lib/stores/bar-menu-split";
 import { splitCafeMenu } from "@/lib/stores/cafe-menu-split";
+import { splitIzakayaCasualMenu } from "@/lib/stores/izakaya-casual-menu-split";
 import { getPhotoById, getPhotoByRole, getPhotosByRole } from "@/lib/stores/helpers";
 import {
   buildLuxuryPhotoSections,
@@ -12,10 +13,12 @@ import {
 } from "@/types/hero-display";
 import type { BarData } from "@/types/bar";
 import type { CafeData } from "@/types/cafe";
+import type { IzakayaCasualData } from "@/types/izakaya-casual";
 import type { LuxuryIzakayaData } from "@/types/luxury-izakaya";
 import type {
   BarExtensions,
   CafeExtensions,
+  IzakayaCasualExtensions,
   LuxuryIzakayaExtensions,
   StoreRecord,
 } from "@/types/store";
@@ -251,6 +254,96 @@ export function toBarData(
     },
     signatureDrinks,
     foodSnacks,
+    galleryImages: getPhotosByRole(store, "gallery").map((photo) => ({
+      src: photo.url,
+      alt: photo.alt,
+      caption: photo.caption,
+    })),
+    topics: [...store.topics]
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map((item) => ({
+        date: item.date,
+        category: item.category ?? "",
+        title: item.title,
+      })),
+  };
+}
+
+function assertIzakayaCasualExtensions(
+  store: StoreRecord
+): IzakayaCasualExtensions {
+  if (store.templateExtensions.templateType !== "izakaya-casual") {
+    throw new Error(`Store "${store.slug}" is not an izakaya-casual template`);
+  }
+  return store.templateExtensions;
+}
+
+/** StoreRecord → 大衆居酒屋テンプレ用データ */
+export function toIzakayaCasualData(
+  store: StoreRecord,
+  heroDisplay?: { heroFit: HeroImageFit; heroObjectPosition: HeroObjectPosition }
+): IzakayaCasualData {
+  const ext = assertIzakayaCasualExtensions(store);
+  const hero = getPhotoByRole(store, "hero");
+  const spacePhoto = getPhotoById(store, ext.space.photoId);
+  const subCopy = Array.isArray(store.subCopy)
+    ? store.subCopy.join(" ")
+    : store.subCopy;
+
+  const mappedMenu = [...store.menu]
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((item) => ({
+      name: item.name,
+      nameEn: item.nameEn,
+      price: item.price,
+      description: item.description,
+      image: item.imageUrl,
+      badge: item.badge,
+    }));
+  const { specialtyDishes, todaysSpecials, menuItems } =
+    splitIzakayaCasualMenu(mappedMenu);
+
+  return {
+    store: {
+      name: store.name,
+      nameEn: store.nameEn,
+      location: store.location,
+      tagline: store.catchCopy,
+      heroMessage: subCopy,
+      concept: store.concept,
+      highlights: ext.highlights,
+      address: store.address,
+      phone: store.phone,
+      hours: {
+        dinner: store.businessHours.dinner ?? "",
+        closed: store.closedDays,
+      },
+      access: store.access,
+      reservationUrl: store.reservationUrl,
+      instagramUrl: store.instagramUrl ?? "",
+      mapEmbedUrl: store.mapEmbedUrl,
+    },
+    heroImage: hero?.url ?? "",
+    heroImageFit: heroDisplay?.heroFit ?? DEFAULT_HERO_FIT,
+    heroObjectPosition:
+      heroDisplay?.heroObjectPosition ?? DEFAULT_HERO_OBJECT_POSITION,
+    specialtyDishes,
+    todaysSpecials,
+    menuItems,
+    courses: [...store.courses]
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .map((item) => ({
+        name: item.name,
+        price: item.price,
+        note: item.note,
+        featured: item.isFeatured,
+      })),
+    space: {
+      image: spacePhoto?.url ?? "",
+      title: ext.space.title,
+      description: ext.space.description,
+      features: ext.space.features,
+    },
     galleryImages: getPhotosByRole(store, "gallery").map((photo) => ({
       src: photo.url,
       alt: photo.alt,

@@ -12,10 +12,16 @@
   --cafe-gray: #7a7772;
   --cafe-light: #a8a4a0;
   --cafe-section-py: clamp(5rem, 12vw, 10rem);
+  --font-cafe-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic",
+    Meiryo, sans-serif;
+  --font-cafe-display: "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
+    "Times New Roman", serif;
+  --font-cafe-en: "Avenir Next", Avenir, "Segoe UI", "Helvetica Neue", Helvetica,
+    sans-serif;
 
   background-color: var(--cafe-white);
   color: var(--cafe-ink);
-  font-family: var(--font-cafe-sans), "Hiragino Sans", "Yu Gothic", sans-serif;
+  font-family: var(--font-cafe-sans);
   -webkit-font-smoothing: antialiased;
 }
 

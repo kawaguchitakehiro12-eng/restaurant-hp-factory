@@ -1,15 +1,8 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import { AdminOperatorLayout } from "@/components/admin/operator/AdminOperatorLayout";
 import { BRAND } from "@/lib/admin/brand";
 import { ADMIN_FAVICON_ICONS } from "@/lib/admin/tokens";
 import "./admin.css";
-
-const inter = Inter({
-  variable: "--font-admin",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const adminNav = [
   { href: "/admin", label: "ダッシュボード", exact: true, icon: "dashboard" as const },
@@ -28,14 +21,12 @@ export default function AdminLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className={inter.variable}>
-      <AdminOperatorLayout
-        title={BRAND.name}
-        subtitle={BRAND.operatorPanelTitle}
-        navItems={adminNav}
-      >
-        {children}
-      </AdminOperatorLayout>
-    </div>
+    <AdminOperatorLayout
+      title={BRAND.name}
+      subtitle={BRAND.operatorPanelTitle}
+      navItems={adminNav}
+    >
+      {children}
+    </AdminOperatorLayout>
   );
 }

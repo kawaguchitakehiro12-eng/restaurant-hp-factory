@@ -1,6 +1,7 @@
 import { amberStore } from "@/data/stores/amber";
 import { nueeStore } from "@/data/stores/nuee";
 import { shogetsuStore } from "@/data/stores/shogetsu";
+import { yakitoriDaidokoroStore } from "@/data/stores/yakitori-daidokoro";
 import type { DemoSite } from "@/types/demo";
 import type {
   DemoBasicInfo,
@@ -153,7 +154,9 @@ export function resolveDemoStore(demo: DemoSite): ResolvedDemoStore {
       ? cloneStore(nueeStore)
       : demo.templateType === "bar"
         ? cloneStore(amberStore)
-        : cloneStore(shogetsuStore);
+        : demo.templateType === "izakaya-casual"
+          ? cloneStore(yakitoriDaidokoroStore)
+          : cloneStore(shogetsuStore);
   const bi = content.basicInfo;
 
   const catchCopy = pickString(bi.catchCopy, samples.catchCopy, "catchCopy", flags);
@@ -373,6 +376,21 @@ export function resolveDemoStore(demo: DemoSite): ResolvedDemoStore {
       conceptPoints: [
         `${demo.storeName}向けデモ`,
         "SAKUPAGEで作成した完成イメージ",
+        "ご契約後に自由に編集可能",
+      ],
+      space: {
+        ...store.templateExtensions.space,
+        photoId: "photo-interior",
+      },
+    };
+  }
+
+  if (store.templateExtensions.templateType === "izakaya-casual") {
+    store.templateExtensions = {
+      ...store.templateExtensions,
+      highlights: [
+        `${demo.storeName}向けデモ`,
+        "宴会コース・飲み放題プラン対応",
         "ご契約後に自由に編集可能",
       ],
       space: {

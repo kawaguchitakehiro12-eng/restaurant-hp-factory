@@ -11,7 +11,7 @@ export const CONTRACT_TEMPLATE_OPTIONS: {
   { id: "cafe", label: "Cafe", templateType: "cafe" },
   { id: "bar", label: "Bar", templateType: "bar" },
   { id: "bal", label: "バル", templateType: "luxury-izakaya" },
-  { id: "izakaya-casual", label: "大衆居酒屋", templateType: "luxury-izakaya" },
+  { id: "izakaya-casual", label: "大衆居酒屋", templateType: "izakaya-casual" },
 ];
 
 export const DOMAIN_STATUS_OPTIONS: { id: DomainStatus; label: string }[] = [

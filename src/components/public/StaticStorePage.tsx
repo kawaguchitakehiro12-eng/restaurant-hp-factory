@@ -4,9 +4,15 @@ import { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { BarPage } from "@/components/templates/bar/BarPage";
 import { CafePage } from "@/components/templates/cafe/CafePage";
+import { IzakayaCasualPage } from "@/components/templates/izakaya-casual/IzakayaCasualPage";
 import { LuxuryIzakayaPage } from "@/components/templates/luxury-izakaya/LuxuryIzakayaPage";
 import { mergeStoreWithPhotoContent } from "@/lib/admin/demo-photo-library";
-import { toBarData, toCafeData, toLuxuryIzakayaData } from "@/lib/stores/adapters";
+import {
+  toBarData,
+  toCafeData,
+  toIzakayaCasualData,
+  toLuxuryIzakayaData,
+} from "@/lib/stores/adapters";
 import { isPublished } from "@/lib/stores/helpers";
 import { getStoreBySlug } from "@/data/stores";
 import {
@@ -16,6 +22,7 @@ import {
 } from "@/lib/stores/store-photo-overrides";
 import "@/app/cafe/cafe.css";
 import "@/app/bar/bar.css";
+import "@/app/izakaya/izakaya.css";
 
 type StaticStorePageProps = {
   slug: string;
@@ -30,6 +37,9 @@ export function StaticStorePage({ slug }: StaticStorePageProps) {
   );
   const [cafeData, setCafeData] = useState<ReturnType<typeof toCafeData> | null>(null);
   const [barData, setBarData] = useState<ReturnType<typeof toBarData> | null>(null);
+  const [izakayaData, setIzakayaData] = useState<ReturnType<typeof toIzakayaCasualData> | null>(
+    null
+  );
 
   useEffect(() => {
     const load = () => {
@@ -47,18 +57,19 @@ export function StaticStorePage({ slug }: StaticStorePageProps) {
         ? getHeroDisplayFromPhotos(override.photos)
         : undefined;
 
+      setCafeData(null);
+      setBarData(null);
+      setLuxuryData(null);
+      setIzakayaData(null);
+
       if (store.templateType === "cafe") {
         setCafeData(toCafeData(store, heroDisplay));
-        setLuxuryData(null);
-        setBarData(null);
       } else if (store.templateType === "bar") {
         setBarData(toBarData(store, heroDisplay));
-        setCafeData(null);
-        setLuxuryData(null);
+      } else if (store.templateType === "izakaya-casual") {
+        setIzakayaData(toIzakayaCasualData(store, heroDisplay));
       } else {
         setLuxuryData(toLuxuryIzakayaData(store, heroDisplay));
-        setCafeData(null);
-        setBarData(null);
       }
       setMissing(false);
       setReady(true);
@@ -84,17 +95,10 @@ export function StaticStorePage({ slug }: StaticStorePageProps) {
     notFound();
   }
 
-  if (cafeData) {
-    return <CafePage data={cafeData} />;
-  }
-
-  if (barData) {
-    return <BarPage data={barData} />;
-  }
-
-  if (luxuryData) {
-    return <LuxuryIzakayaPage data={luxuryData} />;
-  }
+  if (cafeData) return <CafePage data={cafeData} />;
+  if (barData) return <BarPage data={barData} />;
+  if (izakayaData) return <IzakayaCasualPage data={izakayaData} />;
+  if (luxuryData) return <LuxuryIzakayaPage data={luxuryData} />;
 
   notFound();
 }

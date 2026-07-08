@@ -7,9 +7,9 @@ import {
   resolveSiteBaseUrl,
   storeRecordToSeoInput,
 } from "@/lib/stores/store-seo";
-import "./cafe.css";
+import "./izakaya.css";
 
-const SLUG = "nuee";
+const SLUG = "yakitori-daidokoro";
 
 export async function generateMetadata(): Promise<Metadata> {
   const store = getStoreBySlug(SLUG);
@@ -17,12 +17,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const baseUrl = await resolveSiteBaseUrl();
   return buildStoreSeoMetadata(
-    storeRecordToSeoInput(store, { canonicalPath: "/cafe" }),
+    storeRecordToSeoInput(store, { canonicalPath: "/izakaya" }),
     baseUrl
   );
 }
 
-export default function CafeLayout({
+export default function IzakayaLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return children;

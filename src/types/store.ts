@@ -1,5 +1,5 @@
 /** テンプレート種別（Supabase: stores.template_type） */
-export type TemplateType = "luxury-izakaya" | "cafe" | "bar";
+export type TemplateType = "luxury-izakaya" | "cafe" | "bar" | "izakaya-casual";
 
 /** 公開状態（Supabase: stores.publish_status） */
 export type PublishStatus = "draft" | "published" | "archived";
@@ -107,10 +107,23 @@ export type BarExtensions = {
   };
 };
 
+/** 大衆居酒屋テンプレ固有データ */
+export type IzakayaCasualExtensions = {
+  templateType: "izakaya-casual";
+  highlights: string[];
+  space: {
+    title: string;
+    description: string;
+    features: string[];
+    photoId: string;
+  };
+};
+
 export type StoreTemplateExtensions =
   | LuxuryIzakayaExtensions
   | CafeExtensions
-  | BarExtensions;
+  | BarExtensions
+  | IzakayaCasualExtensions;
 
 /**
  * 店舗マスタ（Supabase移行時は stores + 関連テーブルに分割）

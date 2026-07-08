@@ -16,10 +16,16 @@
   --bar-dim: #5c5650;
   --bar-line: rgba(201, 169, 98, 0.18);
   --bar-section-py: clamp(5.5rem, 13vw, 11rem);
+  --font-bar-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic",
+    Meiryo, sans-serif;
+  --font-bar-display: "Palatino Linotype", Palatino, "Book Antiqua", Georgia,
+    "Times New Roman", serif;
+  --font-bar-en: "Palatino Linotype", Palatino, Georgia, "Times New Roman",
+    serif;
 
   background-color: var(--bar-black);
   color: var(--bar-cream);
-  font-family: var(--font-bar-sans), "Hiragino Sans", "Yu Gothic", sans-serif;
+  font-family: var(--font-bar-sans);
   -webkit-font-smoothing: antialiased;
 }
 

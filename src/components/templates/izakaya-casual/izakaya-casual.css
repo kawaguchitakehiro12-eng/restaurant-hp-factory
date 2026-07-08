@@ -1,0 +1,1430 @@
+@import "tailwindcss";
+
+/* ── 大衆居酒屋 — 赤提灯 / 木目 / 生成り / 黒板メニュー ── */
+
+.izakaya-casual-template {
+  --izk-cream: #f7f1e3;
+  --izk-paper: #f3e9d5;
+  --izk-paper-deep: #eadfc8;
+  --izk-wood: #6b4f3a;
+  --izk-wood-deep: #4a3526;
+  --izk-wood-light: #8a6a52;
+  --izk-lantern: #c43c2c;
+  --izk-lantern-deep: #9e2f22;
+  --izk-lantern-soft: #e85848;
+  --izk-ink: #2b2118;
+  --izk-charcoal: #3a3128;
+  --izk-muted: #7a6a58;
+  --izk-dim: #9a8874;
+  --izk-orange: #d4783a;
+  --izk-chalk: #e8e0d0;
+  --izk-board: #2f3a2e;
+  --izk-board-edge: #1f271e;
+  --izk-line: rgba(107, 79, 58, 0.18);
+  --izk-line-strong: rgba(196, 60, 44, 0.28);
+  --izk-section-py: clamp(4.5rem, 11vw, 8.5rem);
+  --font-izakaya-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic",
+    Meiryo, sans-serif;
+  --font-izakaya-display: "Hiragino Maru Gothic ProN", "Hiragino Sans",
+    "Yu Gothic", Meiryo, sans-serif;
+  --font-izakaya-en: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP",
+    Georgia, serif;
+
+  background-color: var(--izk-cream);
+  color: var(--izk-ink);
+  font-family: var(--font-izakaya-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.izakaya-casual-template ::selection {
+  background-color: rgba(196, 60, 44, 0.22);
+  color: var(--izk-ink);
+}
+
+.izakaya-casual-template .izk-font-en {
+  font-family: var(--font-izakaya-en), "Zen Kurenaido", cursive;
+}
+
+.izakaya-casual-template .izk-font-display {
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+}
+
+.izakaya-casual-template .izk-image-fill {
+  filter: saturate(1.08) contrast(1.02) brightness(1.01);
+}
+
+/* ── Section shell ── */
+.izakaya-casual-template .izk-section {
+  padding-top: var(--izk-section-py);
+  padding-bottom: var(--izk-section-py);
+}
+
+.izakaya-casual-template .izk-section--paper {
+  background-color: var(--izk-paper);
+}
+
+.izakaya-casual-template .izk-section--wood {
+  background:
+    linear-gradient(180deg, rgba(74, 53, 38, 0.04), rgba(74, 53, 38, 0.08)),
+    var(--izk-paper-deep);
+}
+
+.izakaya-casual-template .izk-section--board {
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(232, 88, 72, 0.08), transparent 50%),
+    var(--izk-board);
+  color: var(--izk-chalk);
+}
+
+/* ── Section heading ── */
+.izakaya-casual-template .izk-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.izakaya-casual-template .izk-heading--center {
+  align-items: center;
+  text-align: center;
+}
+
+.izakaya-casual-template .izk-heading-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-izakaya-en), "Zen Kurenaido", cursive;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  color: var(--izk-lantern);
+}
+
+.izakaya-casual-template .izk-heading-label::before,
+.izakaya-casual-template .izk-heading-label::after {
+  content: "";
+  width: 1.25rem;
+  height: 2px;
+  background: var(--izk-lantern);
+  opacity: 0.75;
+}
+
+.izakaya-casual-template .izk-section--board .izk-heading-label {
+  color: #f0a090;
+}
+
+.izakaya-casual-template .izk-section--board .izk-heading-label::before,
+.izakaya-casual-template .izk-section--board .izk-heading-label::after {
+  background: #f0a090;
+}
+
+.izakaya-casual-template .izk-heading-title {
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: clamp(1.85rem, 4.2vw, 2.75rem);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  line-height: 1.35;
+  color: var(--izk-ink);
+}
+
+.izakaya-casual-template .izk-section--board .izk-heading-title {
+  color: var(--izk-chalk);
+}
+
+.izakaya-casual-template .izk-heading-sub {
+  max-width: 28rem;
+  font-size: 0.875rem;
+  line-height: 2;
+  letter-spacing: 0.04em;
+  color: var(--izk-muted);
+}
+
+.izakaya-casual-template .izk-section--board .izk-heading-sub {
+  color: rgba(232, 224, 208, 0.72);
+}
+
+.izakaya-casual-template .izk-heading--center .izk-heading-sub {
+  margin-inline: auto;
+}
+
+/* ── Sticky-note accent (small dose) ── */
+.izakaya-casual-template .izk-sticker {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: var(--izk-ink);
+  background: #ffe9a8;
+  box-shadow: 1px 2px 0 rgba(43, 33, 24, 0.12);
+  transform: rotate(-2deg);
+}
+
+/* ── Header ── */
+.izakaya-casual-template .izk-header {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: 50;
+  transition:
+    background-color 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+.izakaya-casual-template .izk-header--scrolled {
+  border-bottom: 2px solid var(--izk-line-strong);
+  background-color: rgba(247, 241, 227, 0.94);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 18px rgba(74, 53, 38, 0.08);
+}
+
+.izakaya-casual-template .izk-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 3.75rem;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .izakaya-casual-template .izk-header-inner {
+    padding-inline: 2rem;
+  }
+}
+
+.izakaya-casual-template .izk-header-logo {
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 1.125rem;
+  letter-spacing: 0.1em;
+  color: var(--izk-ink);
+  text-decoration: none;
+}
+
+.izakaya-casual-template .izk-header:not(.izk-header--scrolled) .izk-header-logo {
+  color: #fff7ea;
+  text-shadow: 0 1px 8px rgba(43, 33, 24, 0.55);
+}
+
+.izakaya-casual-template .izk-header-nav {
+  display: none;
+  align-items: center;
+  gap: 1.35rem;
+}
+
+@media (min-width: 1024px) {
+  .izakaya-casual-template .izk-header-nav {
+    display: flex;
+  }
+}
+
+.izakaya-casual-template .izk-header-link {
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  color: var(--izk-charcoal);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.izakaya-casual-template .izk-header:not(.izk-header--scrolled) .izk-header-link {
+  color: rgba(255, 247, 234, 0.88);
+}
+
+.izakaya-casual-template .izk-header-link:hover {
+  color: var(--izk-lantern);
+}
+
+.izakaya-casual-template .izk-header:not(.izk-header--scrolled) .izk-header-link:hover {
+  color: #ffd4a8;
+}
+
+.izakaya-casual-template .izk-header-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 1rem;
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  color: #fff7ea;
+  background: var(--izk-lantern);
+  text-decoration: none;
+  border: 2px solid var(--izk-lantern-deep);
+  box-shadow: 2px 2px 0 var(--izk-wood-deep);
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.izakaya-casual-template .izk-header-cta:hover {
+  background: var(--izk-lantern-soft);
+  transform: translateY(-1px);
+}
+
+.izakaya-casual-template .izk-menu-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+@media (min-width: 1024px) {
+  .izakaya-casual-template .izk-menu-btn {
+    display: none;
+  }
+}
+
+.izakaya-casual-template .izk-menu-btn span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--izk-ink);
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.izakaya-casual-template .izk-header:not(.izk-header--scrolled) .izk-menu-btn span {
+  background: #fff7ea;
+}
+
+.izakaya-casual-template .izk-menu-btn--open span:first-child {
+  transform: translateY(5px) rotate(45deg);
+}
+
+.izakaya-casual-template .izk-menu-btn--open span:last-child {
+  transform: translateY(-5px) rotate(-45deg);
+}
+
+.izakaya-casual-template .izk-mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(196, 60, 44, 0.12), transparent 55%),
+    var(--izk-cream);
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+}
+
+.izakaya-casual-template .izk-mobile-menu--closed {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.izakaya-casual-template .izk-mobile-menu a {
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 1.35rem;
+  letter-spacing: 0.12em;
+  color: var(--izk-ink);
+  text-decoration: none;
+}
+
+/* ── Hero ── */
+.izakaya-casual-template .izk-hero {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background-color: var(--izk-wood-deep);
+}
+
+.izakaya-casual-template .izk-hero-media {
+  position: absolute;
+  inset: 0;
+}
+
+.izakaya-casual-template .izk-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(43, 33, 24, 0.28) 0%,
+      rgba(43, 33, 24, 0.15) 40%,
+      rgba(43, 33, 24, 0.72) 100%
+    );
+  pointer-events: none;
+}
+
+.izakaya-casual-template .izk-hero-veil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 85% 15%, rgba(196, 60, 44, 0.22), transparent 42%),
+    radial-gradient(ellipse at 12% 80%, rgba(212, 120, 58, 0.18), transparent 38%);
+  pointer-events: none;
+}
+
+.izakaya-casual-template .izk-hero-lantern {
+  position: absolute;
+  top: 5.5rem;
+  left: 1.25rem;
+  width: 0.85rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--izk-lantern-soft), var(--izk-lantern-deep));
+  box-shadow:
+    0 0 18px rgba(196, 60, 44, 0.55),
+    0 0 40px rgba(196, 60, 44, 0.25);
+  pointer-events: none;
+  animation: izk-lantern-glow 3.2s ease-in-out infinite;
+}
+
+@media (min-width: 768px) {
+  .izakaya-casual-template .izk-hero-lantern {
+    left: 2rem;
+    width: 1rem;
+    height: 4.25rem;
+  }
+}
+
+@keyframes izk-lantern-glow {
+  0%,
+  100% {
+    opacity: 0.85;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 1;
+    filter: brightness(1.15);
+  }
+}
+
+.izakaya-casual-template .izk-hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 76rem;
+  margin-inline: auto;
+  padding: 6rem 1.25rem 4.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 10vw, 8rem);
+}
+
+@media (min-width: 640px) {
+  .izakaya-casual-template .izk-hero-content {
+    padding-inline: 2rem;
+  }
+}
+
+.izakaya-casual-template .izk-hero-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.izakaya-casual-template .izk-hero-location {
+  font-family: var(--font-izakaya-en), "Zen Kurenaido", cursive;
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  color: #ffd4a8;
+}
+
+.izakaya-casual-template .izk-hero-actions {
+  display: none;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .izakaya-casual-template .izk-hero-actions {
+    display: flex;
+  }
+}
+
+.izakaya-casual-template .izk-hero-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  max-width: 40rem;
+}
+
+.izakaya-casual-template .izk-hero-message {
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  line-height: 1.9;
+  color: rgba(255, 247, 234, 0.82);
+}
+
+.izakaya-casual-template .izk-hero-name {
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: clamp(2.6rem, 8vw, 5rem);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  line-height: 1.15;
+  color: #fff7ea;
+  text-shadow: 0 2px 18px rgba(43, 33, 24, 0.45);
+}
+
+.izakaya-casual-template .izk-hero-tagline {
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  line-height: 1.8;
+  color: rgba(255, 247, 234, 0.9);
+}
+
+.izakaya-casual-template .izk-hero-name-en {
+  font-family: var(--font-izakaya-en), "Zen Kurenaido", cursive;
+  font-size: 0.9375rem;
+  letter-spacing: 0.12em;
+  color: #ffb090;
+}
+
+.izakaya-casual-template .izk-hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  margin-top: 0.75rem;
+}
+
+.izakaya-casual-template .izk-hero-scroll {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.izakaya-casual-template .izk-hero-scroll span {
+  font-family: var(--font-izakaya-en), "Zen Kurenaido", cursive;
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  color: rgba(255, 247, 234, 0.55);
+  writing-mode: vertical-rl;
+}
+
+.izakaya-casual-template .izk-hero-scroll-line {
+  width: 1px;
+  height: 2.5rem;
+  background: linear-gradient(to bottom, var(--izk-lantern), transparent);
+  animation: izk-scroll-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes izk-scroll-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scaleY(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+/* ── Links / CTAs ── */
+.izakaya-casual-template .izk-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.izakaya-casual-template .izk-link-underline {
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  color: #fff7ea;
+  border-bottom: 1px solid rgba(255, 247, 234, 0.45);
+  padding-bottom: 0.15rem;
+}
+
+.izakaya-casual-template .izk-link-underline:hover {
+  color: #ffd4a8;
+  border-color: #ffd4a8;
+}
+
+.izakaya-casual-template .izk-link--lantern {
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 0.9375rem;
+  letter-spacing: 0.12em;
+  color: #fff7ea;
+  background: var(--izk-lantern);
+  border: 2px solid var(--izk-lantern-deep);
+  box-shadow: 3px 3px 0 var(--izk-wood-deep);
+}
+
+.izakaya-casual-template .izk-link--lantern:hover {
+  background: var(--izk-lantern-soft);
+  transform: translateY(-2px);
+}
+
+.izakaya-casual-template .izk-link--wood {
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 0.9375rem;
+  letter-spacing: 0.12em;
+  color: #fff7ea;
+  background: var(--izk-wood);
+  border: 2px solid var(--izk-wood-deep);
+  box-shadow: 3px 3px 0 rgba(43, 33, 24, 0.35);
+}
+
+.izakaya-casual-template .izk-link--wood:hover {
+  background: var(--izk-wood-light);
+  transform: translateY(-2px);
+}
+
+.izakaya-casual-template .izk-link--ink {
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  color: var(--izk-wood);
+  border-bottom: 1px solid var(--izk-line);
+  padding-bottom: 0.15rem;
+}
+
+.izakaya-casual-template .izk-link--ink:hover {
+  color: var(--izk-lantern);
+  border-color: var(--izk-lantern);
+}
+
+/* ── Specialty dishes ── */
+.izakaya-casual-template .izk-specialty-grid {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 3.5rem);
+  margin-top: clamp(3rem, 7vw, 5rem);
+}
+
+.izakaya-casual-template .izk-specialty-grid--single {
+  justify-items: center;
+}
+
+.izakaya-casual-template .izk-specialty-grid--single .izk-specialty-item {
+  width: 100%;
+  max-width: 26rem;
+}
+
+@media (min-width: 640px) {
+  .izakaya-casual-template .izk-specialty-grid--single .izk-specialty-item {
+    max-width: 30rem;
+  }
+}
+
+.izakaya-casual-template .izk-specialty-grid--single .izk-specialty-photo {
+  aspect-ratio: 4 / 5;
+  max-height: 36rem;
+}
+
+.izakaya-casual-template .izk-specialty-grid--single .izk-specialty-meta {
+  text-align: center;
+  align-items: center;
+}
+
+.izakaya-casual-template .izk-specialty-grid--single .izk-specialty-row {
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.izakaya-casual-template .izk-specialty-grid--duo {
+  width: 100%;
+  max-width: 48rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .izakaya-casual-template .izk-specialty-grid--duo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.75rem, 3.5vw, 2.75rem);
+  }
+
+  .izakaya-casual-template .izk-specialty-grid--multi {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+}
+
+.izakaya-casual-template .izk-specialty-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.izakaya-casual-template .izk-specialty-photo {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  border: 3px solid var(--izk-wood);
+  box-shadow: 4px 5px 0 rgba(107, 79, 58, 0.18);
+  background: var(--izk-paper-deep);
+}
+
+.izakaya-casual-template .izk-specialty-badge {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  z-index: 2;
+  padding: 0.3rem 0.65rem;
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: #fff7ea;
+  background: var(--izk-lantern);
+  box-shadow: 2px 2px 0 rgba(43, 33, 24, 0.25);
+  transform: rotate(-3deg);
+}
+
+.izakaya-casual-template .izk-specialty-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-inline: 0.15rem;
+}
+
+.izakaya-casual-template .izk-specialty-name-en {
+  font-family: var(--font-izakaya-en), "Zen Kurenaido", cursive;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--izk-wood-light);
+}
+
+.izakaya-casual-template .izk-specialty-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.izakaya-casual-template .izk-specialty-name {
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+  color: var(--izk-ink);
+}
+
+.izakaya-casual-template .izk-specialty-price {
+  flex-shrink: 0;
+  font-family: var(--font-izakaya-en), "Zen Kurenaido", cursive;
+  font-size: 1rem;
+  color: var(--izk-lantern);
+}
+
+.izakaya-casual-template .izk-specialty-desc {
+  font-size: 0.8125rem;
+  line-height: 1.9;
+  letter-spacing: 0.03em;
+  color: var(--izk-muted);
+}
+
+/* ── Today's specials (chalkboard) ── */
+.izakaya-casual-template .izk-specials-board {
+  margin-top: clamp(2.75rem, 6vw, 4.5rem);
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 30%),
+    var(--izk-board);
+  border: 8px solid var(--izk-wood);
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.25),
+    0 8px 24px rgba(43, 33, 24, 0.18);
+  color: var(--izk-chalk);
+}
+
+.izakaya-casual-template .izk-specials-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.izakaya-casual-template .izk-specials-item {
+  display: grid;
+  gap: 1rem;
+  padding-block: 1.35rem;
+  border-bottom: 1px dashed rgba(232, 224, 208, 0.28);
+}
+
+.izakaya-casual-template .izk-specials-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.izakaya-casual-template .izk-specials-item:first-child {
+  padding-top: 0;
+}
+
+@media (min-width: 640px) {
+  .izakaya-casual-template .izk-specials-item--with-photo {
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    align-items: center;
+  }
+}
+
+.izakaya-casual-template .izk-specials-photo {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border: 2px solid rgba(232, 224, 208, 0.35);
+}
+
+.izakaya-casual-template .izk-specials-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.izakaya-casual-template .izk-specials-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.izakaya-casual-template .izk-specials-name {
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 1.0625rem;
+  letter-spacing: 0.08em;
+  color: var(--izk-chalk);
+}
+
+.izakaya-casual-template .izk-specials-dots {
+  flex: 1;
+  border-bottom: 1px dotted rgba(232, 224, 208, 0.35);
+  margin-inline: 0.5rem 0.75rem;
+  min-width: 1.5rem;
+  transform: translateY(-0.25rem);
+}
+
+.izakaya-casual-template .izk-specials-price {
+  flex-shrink: 0;
+  font-family: var(--font-izakaya-en), "Zen Kurenaido", cursive;
+  font-size: 1rem;
+  color: #ffb090;
+}
+
+.izakaya-casual-template .izk-specials-desc {
+  font-size: 0.7875rem;
+  line-height: 1.85;
+  color: rgba(232, 224, 208, 0.7);
+}
+
+.izakaya-casual-template .izk-specials-badge {
+  align-self: flex-start;
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: #ffe9a8;
+}
+
+/* ── Menu board ── */
+.izakaya-casual-template .izk-menu-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: clamp(2.75rem, 6vw, 4.5rem);
+}
+
+@media (min-width: 640px) {
+  .izakaya-casual-template .izk-menu-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.15rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .izakaya-casual-template .izk-menu-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.izakaya-casual-template .izk-menu-card {
+  display: grid;
+  grid-template-columns: 5.25rem minmax(0, 1fr);
+  gap: 0.9rem;
+  padding: 0.85rem;
+  background: var(--izk-cream);
+  border: 2px solid var(--izk-wood);
+  box-shadow: 3px 3px 0 rgba(107, 79, 58, 0.14);
+  transition: transform 0.25s ease;
+}
+
+.izakaya-casual-template .izk-menu-card:hover {
+  transform: translateY(-2px);
+}
+
+.izakaya-casual-template .izk-menu-card--text-only {
+  grid-template-columns: 1fr;
+}
+
+.izakaya-casual-template .izk-menu-photo {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border: 2px solid var(--izk-line);
+  background: var(--izk-paper-deep);
+}
+
+.izakaya-casual-template .izk-menu-meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.izakaya-casual-template .izk-menu-badge {
+  align-self: flex-start;
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.05em;
+  color: var(--izk-lantern);
+}
+
+.izakaya-casual-template .izk-menu-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.izakaya-casual-template .izk-menu-name {
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  color: var(--izk-ink);
+}
+
+.izakaya-casual-template .izk-menu-price {
+  flex-shrink: 0;
+  font-family: var(--font-izakaya-en), "Zen Kurenaido", cursive;
+  font-size: 0.9375rem;
+  color: var(--izk-lantern);
+}
+
+.izakaya-casual-template .izk-menu-desc {
+  font-size: 0.75rem;
+  line-height: 1.75;
+  color: var(--izk-muted);
+}
+
+.izakaya-casual-template .izk-menu-name-en {
+  font-family: var(--font-izakaya-en), "Zen Kurenaido", cursive;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: var(--izk-wood-light);
+}
+
+/* ── Banquet courses ── */
+.izakaya-casual-template .izk-course-grid {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: clamp(2.75rem, 6vw, 4.5rem);
+}
+
+@media (min-width: 768px) {
+  .izakaya-casual-template .izk-course-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .izakaya-casual-template .izk-course-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.izakaya-casual-template .izk-course-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.5rem 1.35rem;
+  background: var(--izk-cream);
+  border: 2px solid var(--izk-wood);
+  box-shadow: 4px 4px 0 rgba(107, 79, 58, 0.14);
+}
+
+.izakaya-casual-template .izk-course-card--featured {
+  border-color: var(--izk-lantern);
+  background:
+    linear-gradient(180deg, rgba(196, 60, 44, 0.06), transparent 40%),
+    var(--izk-cream);
+  box-shadow: 4px 4px 0 rgba(196, 60, 44, 0.2);
+}
+
+.izakaya-casual-template .izk-course-badge {
+  position: absolute;
+  top: -0.65rem;
+  right: 1rem;
+  padding: 0.25rem 0.65rem;
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: #fff7ea;
+  background: var(--izk-lantern);
+  box-shadow: 2px 2px 0 rgba(43, 33, 24, 0.2);
+  transform: rotate(2deg);
+}
+
+.izakaya-casual-template .izk-course-name {
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 1.25rem;
+  letter-spacing: 0.08em;
+  color: var(--izk-ink);
+}
+
+.izakaya-casual-template .izk-course-note {
+  font-size: 0.8125rem;
+  line-height: 1.9;
+  color: var(--izk-muted);
+  flex: 1;
+}
+
+.izakaya-casual-template .izk-course-price {
+  font-family: var(--font-izakaya-en), "Zen Kurenaido", cursive;
+  font-size: 1.35rem;
+  color: var(--izk-lantern);
+  letter-spacing: 0.04em;
+}
+
+/* ── Space ── */
+.izakaya-casual-template .izk-space-grid {
+  display: grid;
+  gap: clamp(2rem, 5vw, 3.5rem);
+  margin-top: clamp(2.75rem, 6vw, 4.5rem);
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .izakaya-casual-template .izk-space-grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+}
+
+.izakaya-casual-template .izk-space-photo {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  max-height: 34rem;
+  border: 3px solid var(--izk-wood);
+  box-shadow: 5px 6px 0 rgba(107, 79, 58, 0.16);
+}
+
+.izakaya-casual-template .izk-space-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.izakaya-casual-template .izk-space-title {
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  letter-spacing: 0.08em;
+  color: var(--izk-ink);
+}
+
+.izakaya-casual-template .izk-space-desc {
+  font-size: 0.9rem;
+  line-height: 2;
+  letter-spacing: 0.03em;
+  color: var(--izk-muted);
+}
+
+.izakaya-casual-template .izk-space-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 2px dashed var(--izk-line);
+}
+
+.izakaya-casual-template .izk-space-feature {
+  position: relative;
+  padding-left: 1.15rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  color: var(--izk-charcoal);
+}
+
+.izakaya-casual-template .izk-space-feature::before {
+  content: "●";
+  position: absolute;
+  left: 0;
+  color: var(--izk-lantern);
+  font-size: 0.55rem;
+  top: 0.35rem;
+}
+
+/* ── Gallery ── */
+.izakaya-casual-template .izk-gallery-wrap {
+  max-width: 56rem;
+  margin-inline: auto;
+  margin-top: clamp(3rem, 7vw, 5rem);
+  padding-inline: clamp(1.25rem, 4vw, 3rem);
+}
+
+.izakaya-casual-template .izk-gallery-wrap--mosaic {
+  max-width: 72rem;
+}
+
+.izakaya-casual-template .izk-gallery-featured {
+  display: grid;
+  gap: clamp(0.85rem, 2vw, 1.25rem);
+}
+
+.izakaya-casual-template .izk-gallery-wrap .izk-gallery-featured--1 {
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
+.izakaya-casual-template .izk-gallery-featured--2 {
+  max-width: 44rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .izakaya-casual-template .izk-gallery-featured--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.izakaya-casual-template .izk-gallery-featured--3 {
+  max-width: 56rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .izakaya-casual-template .izk-gallery-featured--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .izakaya-casual-template .izk-gallery-featured--3 .izk-gallery-featured-cell--hero {
+    grid-column: 1 / -1;
+  }
+}
+
+.izakaya-casual-template .izk-gallery-featured-cell {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border: 2px solid var(--izk-wood);
+}
+
+.izakaya-casual-template .izk-gallery-featured--1 .izk-gallery-featured-cell {
+  aspect-ratio: 16 / 10;
+}
+
+.izakaya-casual-template .izk-gallery-featured--3 .izk-gallery-featured-cell--hero {
+  aspect-ratio: 16 / 10;
+}
+
+.izakaya-casual-template .izk-gallery-caption--center {
+  text-align: center;
+}
+
+.izakaya-casual-template .izk-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.65rem, 1.75vw, 1.1rem);
+}
+
+.izakaya-casual-template .izk-gallery-grid-cell {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  border: 2px solid var(--izk-wood);
+}
+
+@media (min-width: 768px) {
+  .izakaya-casual-template .izk-gallery-grid--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 44rem;
+    margin-inline: auto;
+  }
+
+  .izakaya-casual-template .izk-gallery-grid--5 {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+
+  .izakaya-casual-template .izk-gallery-grid--5 .izk-gallery-grid-cell:nth-child(-n + 3) {
+    grid-column: span 2;
+  }
+
+  .izakaya-casual-template .izk-gallery-grid--5 .izk-gallery-grid-cell:nth-child(4) {
+    grid-column: 2 / span 2;
+  }
+
+  .izakaya-casual-template .izk-gallery-grid--5 .izk-gallery-grid-cell:nth-child(5) {
+    grid-column: 4 / span 2;
+  }
+
+  .izakaya-casual-template .izk-gallery-grid--6 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .izakaya-casual-template .izk-gallery-grid--5 .izk-gallery-grid-cell:nth-child(5):last-child {
+    grid-column: 1 / -1;
+    max-width: calc(50% - 0.375rem);
+    justify-self: center;
+  }
+}
+
+.izakaya-casual-template .izk-gallery-mosaic {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.55rem, 1.4vw, 0.95rem);
+}
+
+@media (min-width: 768px) {
+  .izakaya-casual-template .izk-gallery-mosaic {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(0.7rem, 1.4vw, 1.15rem);
+  }
+}
+
+.izakaya-casual-template .izk-gallery-cell {
+  position: relative;
+  overflow: hidden;
+  min-height: 12rem;
+  border: 2px solid var(--izk-wood);
+}
+
+@media (min-width: 768px) {
+  .izakaya-casual-template .izk-gallery-cell {
+    grid-column: span 4;
+    min-height: 14rem;
+  }
+
+  .izakaya-casual-template .izk-gallery-cell--wide {
+    grid-column: span 8;
+    min-height: 18rem;
+  }
+
+  .izakaya-casual-template .izk-gallery-cell--tall {
+    grid-column: span 4;
+    grid-row: span 2;
+    min-height: 28rem;
+  }
+
+  .izakaya-casual-template .izk-gallery-cell--square {
+    grid-column: span 4;
+    aspect-ratio: 1;
+  }
+}
+
+.izakaya-casual-template .izk-gallery-caption {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.8;
+  letter-spacing: 0.04em;
+  color: var(--izk-muted);
+}
+
+/* ── News ── */
+.izakaya-casual-template .izk-news-list {
+  margin-top: clamp(2.75rem, 6vw, 4.5rem);
+}
+
+.izakaya-casual-template .izk-news-item {
+  display: grid;
+  gap: 0.75rem;
+  padding-block: 1.35rem;
+  border-bottom: 2px dashed var(--izk-line);
+}
+
+@media (min-width: 640px) {
+  .izakaya-casual-template .izk-news-item {
+    grid-template-columns: 9rem minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.izakaya-casual-template .izk-news-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.izakaya-casual-template .izk-news-date {
+  font-family: var(--font-izakaya-en), "Zen Kurenaido", cursive;
+  font-size: 0.875rem;
+  color: var(--izk-muted);
+}
+
+.izakaya-casual-template .izk-news-category {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: #fff7ea;
+  background: var(--izk-lantern);
+}
+
+.izakaya-casual-template .izk-news-title {
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+  line-height: 1.7;
+  color: var(--izk-ink);
+}
+
+/* ── Access ── */
+.izakaya-casual-template .izk-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: clamp(2.75rem, 6vw, 4.5rem);
+  padding: 1.5rem;
+  background: var(--izk-paper);
+  border: 2px solid var(--izk-wood);
+  box-shadow: 4px 4px 0 rgba(107, 79, 58, 0.12);
+}
+
+.izakaya-casual-template .izk-info-row {
+  display: grid;
+  gap: 0.35rem;
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--izk-line);
+}
+
+@media (min-width: 640px) {
+  .izakaya-casual-template .izk-info-row {
+    grid-template-columns: 5rem minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: baseline;
+  }
+}
+
+.izakaya-casual-template .izk-info-row:last-of-type {
+  border-bottom: none;
+}
+
+.izakaya-casual-template .izk-info-label {
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  color: var(--izk-lantern);
+}
+
+.izakaya-casual-template .izk-info-value {
+  font-size: 0.9rem;
+  line-height: 1.85;
+  letter-spacing: 0.03em;
+  color: var(--izk-ink);
+}
+
+.izakaya-casual-template .izk-info-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 2px dashed var(--izk-line);
+}
+
+.izakaya-casual-template .izk-map-wrap {
+  margin-top: 2rem;
+  overflow: hidden;
+  border: 3px solid var(--izk-wood);
+  box-shadow: 4px 4px 0 rgba(107, 79, 58, 0.14);
+  aspect-ratio: 16 / 10;
+  min-height: 16rem;
+}
+
+.izakaya-casual-template .izk-map-wrap iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  filter: saturate(0.92) contrast(0.98);
+}
+
+/* ── Footer ── */
+.izakaya-casual-template .izk-footer {
+  border-top: 3px solid var(--izk-wood);
+  background:
+    linear-gradient(180deg, rgba(196, 60, 44, 0.06), transparent 40%),
+    var(--izk-wood-deep);
+  color: #fff7ea;
+  padding: clamp(2.5rem, 6vw, 4rem) 1.25rem;
+}
+
+.izakaya-casual-template .izk-footer-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  max-width: 76rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .izakaya-casual-template .izk-footer-inner {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-inline: 0.75rem;
+  }
+}
+
+.izakaya-casual-template .izk-footer-name {
+  font-family: var(--font-izakaya-display), "Yuji Syuku", serif;
+  font-size: 1.35rem;
+  letter-spacing: 0.1em;
+}
+
+.izakaya-casual-template .izk-footer-name-en {
+  margin-top: 0.35rem;
+  font-family: var(--font-izakaya-en), "Zen Kurenaido", cursive;
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  color: #ffb090;
+}
+
+.izakaya-casual-template .izk-footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.25rem;
+}
+
+.izakaya-casual-template .izk-footer-nav a {
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 247, 234, 0.78);
+  text-decoration: none;
+}
+
+.izakaya-casual-template .izk-footer-nav a:hover {
+  color: #ffd4a8;
+}
+
+.izakaya-casual-template .izk-footer-copy {
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: rgba(255, 247, 234, 0.5);
+}
