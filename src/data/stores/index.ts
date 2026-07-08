@@ -1,10 +1,11 @@
+import { amberStore } from "./amber";
 import { nueeStore } from "./nuee";
 import { shogetsuStore } from "./shogetsu";
 import { isPublished } from "@/lib/stores/helpers";
 import type { StoreRecord, TemplateType } from "@/types/store";
 
 /** 登録店舗一覧（Supabase移行後はDBクエリに置き換え） */
-export const stores: StoreRecord[] = [shogetsuStore, nueeStore];
+export const stores: StoreRecord[] = [shogetsuStore, nueeStore, amberStore];
 
 const storeMap = new Map(stores.map((store) => [store.slug, store]));
 
@@ -26,4 +27,5 @@ export function getStoresByTemplate(
 }
 
 export { shogetsuStore } from "./shogetsu";
+export { amberStore } from "./amber";
 export { nueeStore } from "./nuee";

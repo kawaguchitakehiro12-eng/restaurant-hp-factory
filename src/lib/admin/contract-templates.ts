@@ -9,7 +9,7 @@ export const CONTRACT_TEMPLATE_OPTIONS: {
 }[] = [
   { id: "luxury-japanese", label: "高級和風", templateType: "luxury-izakaya" },
   { id: "cafe", label: "Cafe", templateType: "cafe" },
-  { id: "bar", label: "Bar", templateType: "luxury-izakaya" },
+  { id: "bar", label: "Bar", templateType: "bar" },
   { id: "bal", label: "バル", templateType: "luxury-izakaya" },
   { id: "izakaya-casual", label: "大衆居酒屋", templateType: "luxury-izakaya" },
 ];

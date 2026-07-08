@@ -4,7 +4,7 @@ import type { StoreSubscription } from "@/types/admin";
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 export function getStoreSitePath(slug: string): string {
-  return slug === "nuee" ? "/cafe" : slug === "shogetsu" ? "/" : `/${slug}`;
+  return slug === "nuee" ? "/cafe" : slug === "amber" ? "/bar" : slug === "shogetsu" ? "/" : `/${slug}`;
 }
 
 export function getStoreSiteUrl(slug: string): string {

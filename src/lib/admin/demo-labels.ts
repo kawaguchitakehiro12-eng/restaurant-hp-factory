@@ -89,5 +89,6 @@ export function siteContractStatusVariant(
 
 export function inferTemplateId(templateType: DemoSite["templateType"]): ContractTemplateId {
   if (templateType === "cafe") return "cafe";
+  if (templateType === "bar") return "bar";
   return "luxury-japanese";
 }

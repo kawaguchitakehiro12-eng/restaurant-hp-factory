@@ -1,11 +1,13 @@
 "use client";
 
-import { Cormorant_Garamond, DM_Sans, Noto_Sans_JP } from "next/font/google";
+import { Cormorant_Garamond, DM_Sans, Noto_Sans_JP, Playfair_Display } from "next/font/google";
 import { useEffect, useState } from "react";
 import { StoreSeoHead } from "@/components/public/StoreSeoHead";
+import { BarPage } from "@/components/templates/bar/BarPage";
 import { CafePage } from "@/components/templates/cafe/CafePage";
 import { LuxuryIzakayaPage } from "@/components/templates/luxury-izakaya/LuxuryIzakayaPage";
 import {
+  toBarDataWithSamples,
   toCafeDataWithSamples,
   toLuxuryIzakayaDataWithSamples,
 } from "@/lib/stores/demo-adapters";
@@ -21,16 +23,17 @@ import {
 } from "@/lib/stores/demo-to-store";
 import { StoreNotFound } from "@/components/public/StoreNotFound";
 import { StoreUnpublished } from "@/components/public/StoreUnpublished";
+import "@/app/bar/bar.css";
 import "@/app/cafe/cafe.css";
 
-const notoSans = Noto_Sans_JP({
+const cafeNotoSans = Noto_Sans_JP({
   variable: "--font-cafe-sans",
   subsets: ["latin"],
   weight: ["300", "400", "500"],
   display: "swap",
 });
 
-const cormorant = Cormorant_Garamond({
+const cafeCormorant = Cormorant_Garamond({
   variable: "--font-cafe-display",
   subsets: ["latin"],
   weight: ["400", "500", "600"],
@@ -38,10 +41,33 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-const dmSans = DM_Sans({
+const cafeDmSans = DM_Sans({
   variable: "--font-cafe-en",
   subsets: ["latin"],
   weight: ["300", "400", "500"],
+  display: "swap",
+});
+
+const barNotoSans = Noto_Sans_JP({
+  variable: "--font-bar-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  display: "swap",
+});
+
+const barPlayfair = Playfair_Display({
+  variable: "--font-bar-display",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const barCormorant = Cormorant_Garamond({
+  variable: "--font-bar-en",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -97,8 +123,19 @@ export function PublicStorePage({ slug }: PublicStorePageProps) {
     return (
       <>
         <StoreSeoHead store={store} isDemo canonicalPath={`/${slug}`} />
-        <div className={`${notoSans.variable} ${cormorant.variable} ${dmSans.variable}`}>
+        <div className={`${cafeNotoSans.variable} ${cafeCormorant.variable} ${cafeDmSans.variable}`}>
           <CafePage data={toCafeDataWithSamples(store, sampleFlags, heroDisplay)} />
+        </div>
+      </>
+    );
+  }
+
+  if (store.templateType === "bar") {
+    return (
+      <>
+        <StoreSeoHead store={store} isDemo canonicalPath={`/${slug}`} />
+        <div className={`${barNotoSans.variable} ${barPlayfair.variable} ${barCormorant.variable}`}>
+          <BarPage data={toBarDataWithSamples(store, sampleFlags, heroDisplay)} />
         </div>
       </>
     );

@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
+import { BarPage } from "@/components/templates/bar/BarPage";
 import { CafePage } from "@/components/templates/cafe/CafePage";
 import { LuxuryIzakayaPage } from "@/components/templates/luxury-izakaya/LuxuryIzakayaPage";
 import { mergeStoreWithPhotoContent } from "@/lib/admin/demo-photo-library";
-import { toCafeData, toLuxuryIzakayaData } from "@/lib/stores/adapters";
+import { toBarData, toCafeData, toLuxuryIzakayaData } from "@/lib/stores/adapters";
 import { isPublished } from "@/lib/stores/helpers";
 import { getStoreBySlug } from "@/data/stores";
 import {
@@ -14,6 +15,7 @@ import {
   STORE_PHOTO_OVERRIDES_KEY,
 } from "@/lib/stores/store-photo-overrides";
 import "@/app/cafe/cafe.css";
+import "@/app/bar/bar.css";
 
 type StaticStorePageProps = {
   slug: string;
@@ -27,6 +29,7 @@ export function StaticStorePage({ slug }: StaticStorePageProps) {
     null
   );
   const [cafeData, setCafeData] = useState<ReturnType<typeof toCafeData> | null>(null);
+  const [barData, setBarData] = useState<ReturnType<typeof toBarData> | null>(null);
 
   useEffect(() => {
     const load = () => {
@@ -47,9 +50,15 @@ export function StaticStorePage({ slug }: StaticStorePageProps) {
       if (store.templateType === "cafe") {
         setCafeData(toCafeData(store, heroDisplay));
         setLuxuryData(null);
+        setBarData(null);
+      } else if (store.templateType === "bar") {
+        setBarData(toBarData(store, heroDisplay));
+        setCafeData(null);
+        setLuxuryData(null);
       } else {
         setLuxuryData(toLuxuryIzakayaData(store, heroDisplay));
         setCafeData(null);
+        setBarData(null);
       }
       setMissing(false);
       setReady(true);
@@ -77,6 +86,10 @@ export function StaticStorePage({ slug }: StaticStorePageProps) {
 
   if (cafeData) {
     return <CafePage data={cafeData} />;
+  }
+
+  if (barData) {
+    return <BarPage data={barData} />;
   }
 
   if (luxuryData) {

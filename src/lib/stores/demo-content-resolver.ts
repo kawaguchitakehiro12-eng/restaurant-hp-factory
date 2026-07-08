@@ -1,3 +1,4 @@
+import { amberStore } from "@/data/stores/amber";
 import { nueeStore } from "@/data/stores/nuee";
 import { shogetsuStore } from "@/data/stores/shogetsu";
 import type { DemoSite } from "@/types/demo";
@@ -147,7 +148,12 @@ export function resolveDemoStore(demo: DemoSite): ResolvedDemoStore {
     topicIds: [],
   };
 
-  const base = demo.templateType === "cafe" ? cloneStore(nueeStore) : cloneStore(shogetsuStore);
+  const base =
+    demo.templateType === "cafe"
+      ? cloneStore(nueeStore)
+      : demo.templateType === "bar"
+        ? cloneStore(amberStore)
+        : cloneStore(shogetsuStore);
   const bi = content.basicInfo;
 
   const catchCopy = pickString(bi.catchCopy, samples.catchCopy, "catchCopy", flags);
@@ -277,7 +283,7 @@ export function resolveDemoStore(demo: DemoSite): ResolvedDemoStore {
     {
       id: "photo-about",
       sortOrder: 2,
-      role: demo.templateType === "cafe" ? "concept" : "about",
+      role: demo.templateType === "cafe" || demo.templateType === "bar" ? "concept" : "about",
       url: demo.templateType === "cafe" ? interiorUrl : interiorUrl,
       alt: `${demo.storeName} 店内`,
     },
@@ -356,6 +362,21 @@ export function resolveDemoStore(demo: DemoSite): ResolvedDemoStore {
       ],
       interior: {
         ...store.templateExtensions.interior,
+        photoId: "photo-interior",
+      },
+    };
+  }
+
+  if (store.templateExtensions.templateType === "bar") {
+    store.templateExtensions = {
+      ...store.templateExtensions,
+      conceptPoints: [
+        `${demo.storeName}向けデモ`,
+        "SAKUPAGEで作成した完成イメージ",
+        "ご契約後に自由に編集可能",
+      ],
+      space: {
+        ...store.templateExtensions.space,
         photoId: "photo-interior",
       },
     };

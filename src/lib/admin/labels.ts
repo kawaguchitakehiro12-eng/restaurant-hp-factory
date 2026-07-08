@@ -8,6 +8,7 @@ import type {
 export const templateTypeLabels: Record<TemplateType, string> = {
   "luxury-izakaya": "高級和風居酒屋",
   cafe: "Cafe",
+  bar: "Bar",
 };
 
 export const contractStatusLabels: Record<ContractStatus, string> = {

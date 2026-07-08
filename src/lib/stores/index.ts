@@ -1,4 +1,4 @@
-export { toCafeData, toLuxuryIzakayaData } from "./adapters";
+export { toBarData, toCafeData, toLuxuryIzakayaData } from "./adapters";
 export {
   getPhotoById,
   getPhotoByRole,
