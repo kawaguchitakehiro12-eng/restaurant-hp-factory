@@ -19,3 +19,17 @@ export function ShareNotFoundPage() {
     </div>
   );
 }
+
+export function ShareLoadErrorPage({ message }: { message: string }) {
+  return (
+    <div className="share-status-page">
+      <div className="share-status-card">
+        <h1>読み込みに失敗しました</h1>
+        <p>{message}</p>
+        <p className="share-status-hint">
+          通信環境を確認のうえ、ページを再読み込みしてください。
+        </p>
+      </div>
+    </div>
+  );
+}

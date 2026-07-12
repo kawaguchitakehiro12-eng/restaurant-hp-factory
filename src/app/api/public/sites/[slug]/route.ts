@@ -17,7 +17,10 @@ export async function GET(_request: Request, context: RouteContext) {
     await seedDemoSitesIfNeeded();
     const site = await getDemoSiteRepository().findBySlug(slug);
     if (!site) {
-      return NextResponse.json({ status: "not_found" });
+      return NextResponse.json({
+        resolution: { status: "not_found" as const },
+        visible: false,
+      });
     }
 
     const resolution = resolvePublicStoreBySlug(slug, [site]);

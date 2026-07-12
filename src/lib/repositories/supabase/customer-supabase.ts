@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createAdminDbClient } from "@/lib/supabase/admin";
 import type { CustomerRepository } from "@/lib/repositories/types";
 import {
   customerToRow,
@@ -8,7 +8,7 @@ import {
 import type { CustomerAccount } from "@/types/admin";
 
 export function createSupabaseCustomerRepository(): CustomerRepository {
-  const db = () => createAdminClient();
+  const db = () => createAdminDbClient();
 
   return {
     async list() {

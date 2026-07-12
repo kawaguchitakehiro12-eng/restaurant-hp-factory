@@ -61,6 +61,12 @@
   line-height: 1.6;
 }
 
+.share-status-hint {
+  margin-top: 0.75rem !important;
+  font-size: 0.8125rem !important;
+  color: #94a3b8 !important;
+}
+
 @media (max-width: 640px) {
   .share-demo-banner {
     padding: 0.4375rem 0.75rem;

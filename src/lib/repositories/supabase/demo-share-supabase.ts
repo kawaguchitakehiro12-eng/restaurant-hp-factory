@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createAdminDbClient } from "@/lib/supabase/admin";
 import { generateId } from "@/lib/admin/form-utils";
 import {
   computeShareExpiresAt,
@@ -25,7 +25,7 @@ export type DemoShareRepository = {
 };
 
 export function createSupabaseDemoShareRepository(): DemoShareRepository {
-  const db = () => createAdminClient();
+  const db = () => createAdminDbClient();
 
   async function findActiveByDemoSiteId(demoSiteId: string): Promise<DemoShare | null> {
     const { data, error } = await db()

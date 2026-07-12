@@ -1,11 +1,11 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createAdminAuthClient } from "@/lib/supabase/admin";
 
 /** Create or update Supabase Auth user for a customer on publish. */
 export async function ensureCustomerAuthUser(
   email: string,
   password: string
 ): Promise<string | null> {
-  const admin = createAdminClient();
+  const admin = createAdminAuthClient();
   const normalizedEmail = email.trim().toLowerCase();
   if (!normalizedEmail || !password) return null;
 
@@ -46,7 +46,7 @@ export async function createOperatorAuthUser(
   email: string,
   password: string
 ): Promise<string> {
-  const admin = createAdminClient();
+  const admin = createAdminAuthClient();
   const { data, error } = await admin.auth.admin.createUser({
     email: email.trim().toLowerCase(),
     password,

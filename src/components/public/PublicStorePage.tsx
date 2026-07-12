@@ -23,6 +23,7 @@ import {
 } from "@/lib/stores/demo-site-registry";
 import {
   isDemoSitePubliclyVisible,
+  isPublicStoreResolution,
   resolvePublicStoreBySlug,
   type PublicStoreResolution,
 } from "@/lib/stores/demo-to-store";
@@ -44,24 +45,57 @@ function resolveSlugLocally(slug: string): PublicStoreResolution {
   return resolvePublicStoreBySlug(slug, demoSites);
 }
 
+function applyResolution(
+  slug: string,
+  value: unknown,
+  source: "remote" | "local"
+): PublicStoreResolution {
+  if (isPublicStoreResolution(value)) {
+    return value;
+  }
+  console.warn(`[PublicStorePage] invalid ${source} resolution, using localStorage`, {
+    slug,
+    value,
+  });
+  return resolveSlugLocally(slug);
+}
+
 export function PublicStorePage({ slug }: PublicStorePageProps) {
+  const [mounted, setMounted] = useState(false);
   const [resolution, setResolution] = useState<PublicStoreResolution | null>(null);
   const useRemote = isSupabaseConfigured();
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     let cancelled = false;
 
     async function load() {
       if (useRemote) {
         try {
           const { resolution: remoteResolution } = await fetchPublicSiteResolution(slug);
-          if (!cancelled) setResolution(remoteResolution);
+          let next = applyResolution(slug, remoteResolution, "remote");
+          if (next.status === "not_found") {
+            const local = resolveSlugLocally(slug);
+            if (local.status === "found") {
+              next = local;
+            }
+          }
+          if (!cancelled) {
+            setResolution(next);
+          }
           return;
         } catch (error) {
           console.error("[PublicStorePage] Supabase fetch failed, using localStorage", error);
         }
       }
-      if (!cancelled) setResolution(resolveSlugLocally(slug));
+      if (!cancelled) {
+        setResolution(applyResolution(slug, resolveSlugLocally(slug), "local"));
+      }
     }
 
     void load();
@@ -69,7 +103,7 @@ export function PublicStorePage({ slug }: PublicStorePageProps) {
     if (!useRemote) {
       const onStorage = (event: StorageEvent) => {
         if (event.key === null || event.key === "sakupage:demo-sites") {
-          setResolution(resolveSlugLocally(slug));
+          setResolution(applyResolution(slug, resolveSlugLocally(slug), "local"));
         }
       };
       window.addEventListener("storage", onStorage);
@@ -82,9 +116,9 @@ export function PublicStorePage({ slug }: PublicStorePageProps) {
     return () => {
       cancelled = true;
     };
-  }, [slug, useRemote]);
+  }, [slug, useRemote, mounted]);
 
-  if (resolution === null) {
+  if (!mounted || resolution == null || !isPublicStoreResolution(resolution)) {
     return (
       <div className="public-store-status">
         <p>読み込み中…</p>

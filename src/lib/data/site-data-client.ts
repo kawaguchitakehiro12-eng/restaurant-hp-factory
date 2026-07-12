@@ -2,6 +2,10 @@ import type { CustomerAccount } from "@/types/admin";
 import type { DemoSite } from "@/types/demo";
 import type { DemoSiteContent } from "@/types/demo-content";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
+import {
+  isPublicStoreResolution,
+  type PublicStoreResolution,
+} from "@/lib/stores/demo-to-store";
 
 export { isSupabaseConfigured };
 
@@ -98,14 +102,42 @@ export async function deleteCustomerViaApi(id: string): Promise<void> {
 }
 
 export type PublicSiteApiResponse = {
-  resolution: import("@/lib/stores/demo-to-store").PublicStoreResolution;
+  resolution: PublicStoreResolution;
   visible: boolean;
 };
+
+/** API レスポンスを { resolution, visible } 形式に正規化する */
+export function normalizePublicSiteApiResponse(body: unknown): PublicSiteApiResponse {
+  if (!body || typeof body !== "object") {
+    throw new Error("Invalid public site API response");
+  }
+
+  const record = body as Record<string, unknown>;
+
+  if (isPublicStoreResolution(record.resolution)) {
+    return {
+      resolution: record.resolution,
+      visible: record.visible === true,
+    };
+  }
+
+  // 旧形式: { status: "not_found" } がトップレベルに来るケース
+  if (isPublicStoreResolution(record)) {
+    return {
+      resolution: record,
+      visible: record.status === "found",
+    };
+  }
+
+  throw new Error("Public site API response missing resolution");
+}
 
 export async function fetchPublicSiteResolution(
   slug: string
 ): Promise<PublicSiteApiResponse> {
-  return parseJson(
-    await fetch(`/api/public/sites/${encodeURIComponent(slug)}`, { cache: "no-store" })
-  );
+  const response = await fetch(`/api/public/sites/${encodeURIComponent(slug)}`, {
+    cache: "no-store",
+  });
+  const body = await parseJson<unknown>(response);
+  return normalizePublicSiteApiResponse(body);
 }

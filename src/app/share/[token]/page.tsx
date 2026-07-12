@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { SharedDemoPageClient } from "@/components/share/SharedDemoPageClient";
-import { ShareExpiredPage, ShareNotFoundPage } from "@/components/share/ShareStatusPages";
+import { SharePublicPage } from "@/components/share/SharePublicPage";
+import { ShareNotFoundPage } from "@/components/share/ShareStatusPages";
 import { isSupabaseAdminConfigured } from "@/lib/supabase/config";
-import { loadSharedDemoPage, peekSharedDemoPage } from "@/lib/share/load-shared-demo";
+import { peekSharedDemoPage } from "@/lib/share/load-shared-demo";
 import { BRAND } from "@/lib/admin/brand";
 import "@/app/share/share.css";
 
@@ -35,26 +35,8 @@ export default async function SharePage({ params }: SharePageProps) {
   const { token } = await params;
 
   if (!isSupabaseAdminConfigured()) {
-    return (
-      <ShareNotFoundPage />
-    );
-  }
-
-  let data;
-  try {
-    data = await loadSharedDemoPage(token);
-  } catch (error) {
-    console.error("[SharePage]", error);
     return <ShareNotFoundPage />;
   }
 
-  if (data.status === "expired") {
-    return <ShareExpiredPage />;
-  }
-
-  if (data.status === "not_found") {
-    return <ShareNotFoundPage />;
-  }
-
-  return <SharedDemoPageClient data={data} shareToken={token} />;
+  return <SharePublicPage shareToken={token} />;
 }

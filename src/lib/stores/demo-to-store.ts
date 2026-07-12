@@ -47,3 +47,9 @@ export function isDemoSitePubliclyVisible(demo: DemoSite): boolean {
   }
   return demo.publishStatus === "published";
 }
+
+export function isPublicStoreResolution(value: unknown): value is PublicStoreResolution {
+  if (!value || typeof value !== "object") return false;
+  const status = (value as { status?: unknown }).status;
+  return status === "not_found" || status === "unpublished" || status === "found";
+}

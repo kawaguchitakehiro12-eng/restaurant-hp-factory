@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createAdminDbClient } from "@/lib/supabase/admin";
 import type { DemoSiteRepository } from "@/lib/repositories/types";
 import {
   demoSiteToRow,
@@ -16,7 +16,7 @@ import { todayIso } from "@/lib/admin/form-utils";
 const SITE_SELECT = "*, store_content(content, site_id, updated_at)";
 
 export function createSupabaseDemoSiteRepository(): DemoSiteRepository {
-  const db = () => createAdminClient();
+  const db = () => createAdminDbClient();
 
   async function rowToSite(row: DemoSiteWithContentRow): Promise<DemoSite> {
     return rowToDemoSite(row, extractContentFromRow(row));
