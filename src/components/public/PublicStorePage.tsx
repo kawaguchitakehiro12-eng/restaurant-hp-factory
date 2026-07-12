@@ -13,6 +13,10 @@ import {
   toLuxuryIzakayaDataWithSamples,
 } from "@/lib/stores/demo-adapters";
 import {
+  fetchPublicSiteResolution,
+  isSupabaseConfigured,
+} from "@/lib/data/site-data-client";
+import {
   findDemoSiteBySlug,
   isReservedSlug,
   loadDemoSitesFromStorage,
@@ -32,7 +36,7 @@ type PublicStorePageProps = {
   slug: string;
 };
 
-function resolveSlug(slug: string): PublicStoreResolution {
+function resolveSlugLocally(slug: string): PublicStoreResolution {
   if (isReservedSlug(slug)) {
     return { status: "not_found" };
   }
@@ -42,20 +46,43 @@ function resolveSlug(slug: string): PublicStoreResolution {
 
 export function PublicStorePage({ slug }: PublicStorePageProps) {
   const [resolution, setResolution] = useState<PublicStoreResolution | null>(null);
+  const useRemote = isSupabaseConfigured();
 
   useEffect(() => {
-    const update = () => setResolution(resolveSlug(slug));
-    update();
+    let cancelled = false;
 
-    const onStorage = (event: StorageEvent) => {
-      if (event.key === null || event.key === "sakupage:demo-sites") {
-        update();
+    async function load() {
+      if (useRemote) {
+        try {
+          const { resolution: remoteResolution } = await fetchPublicSiteResolution(slug);
+          if (!cancelled) setResolution(remoteResolution);
+          return;
+        } catch (error) {
+          console.error("[PublicStorePage] Supabase fetch failed, using localStorage", error);
+        }
       }
-    };
+      if (!cancelled) setResolution(resolveSlugLocally(slug));
+    }
 
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, [slug]);
+    void load();
+
+    if (!useRemote) {
+      const onStorage = (event: StorageEvent) => {
+        if (event.key === null || event.key === "sakupage:demo-sites") {
+          setResolution(resolveSlugLocally(slug));
+        }
+      };
+      window.addEventListener("storage", onStorage);
+      return () => {
+        cancelled = true;
+        window.removeEventListener("storage", onStorage);
+      };
+    }
+
+    return () => {
+      cancelled = true;
+    };
+  }, [slug, useRemote]);
 
   if (resolution === null) {
     return (

@@ -43,10 +43,10 @@ export function IzakayaCasualPage({ data }: IzakayaCasualPageProps) {
       />
       <main>
         <SpecialtyDishes specialtyDishes={specialtyDishes} />
+        <Space space={space} />
         <TodaysSpecials todaysSpecials={todaysSpecials} />
         <MenuBoard menuItems={menuItems} />
         <BanquetCourses courses={courses} />
-        <Space space={space} />
         <PhotoGallery galleryImages={galleryImages} />
         <News topics={topics} />
         <Access store={store} />

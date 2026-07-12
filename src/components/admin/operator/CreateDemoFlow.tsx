@@ -81,10 +81,10 @@ function syncFormContent(form: DemoSiteFormInput): DemoSiteFormInput {
 }
 
 type CreateDemoFlowProps = {
-  onRequestConvert: (demoSiteId: string) => void;
+  onRequestPublish: (demoSiteId: string) => void;
 };
 
-export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
+export function CreateDemoFlow({ onRequestPublish }: CreateDemoFlowProps) {
   const { demoModalOpen, closeDemoModal, addDemoSite, isSlugTaken } = useOperatorAdmin();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [step, setStep] = useState<FlowStep>(0);
@@ -739,10 +739,10 @@ export function CreateDemoFlow({ onRequestConvert }: CreateDemoFlowProps) {
                 className="admin-btn admin-btn--primary"
                 onClick={() => {
                   handleClose();
-                  onRequestConvert(completed.demoSiteId);
+                  onRequestPublish(completed.demoSiteId);
                 }}
               >
-                契約へ切り替える
+                公開する
               </button>
             </div>
 

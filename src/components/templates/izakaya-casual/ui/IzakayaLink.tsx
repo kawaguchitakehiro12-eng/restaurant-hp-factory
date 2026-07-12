@@ -36,45 +36,6 @@ export function IzakayaLink({
     );
   }
 
-  if (variant === "lantern") {
-    return (
-      <Link
-        href={href}
-        onClick={onClick}
-        className={`izk-link izk-link--lantern ${className}`}
-        {...externalProps}
-      >
-        {label}
-      </Link>
-    );
-  }
-
-  if (variant === "wood") {
-    return (
-      <Link
-        href={href}
-        onClick={onClick}
-        className={`izk-link izk-link--wood ${className}`}
-        {...externalProps}
-      >
-        {label}
-      </Link>
-    );
-  }
-
-  if (variant === "ink") {
-    return (
-      <Link
-        href={href}
-        onClick={onClick}
-        className={`izk-link izk-link--ink ${className}`}
-        {...externalProps}
-      >
-        {label}
-      </Link>
-    );
-  }
-
   if (variant === "hero") {
     return (
       <Link
@@ -88,6 +49,7 @@ export function IzakayaLink({
     );
   }
 
+  // lantern / wood kept for compatibility but map to restrained ink style
   return (
     <Link
       href={href}

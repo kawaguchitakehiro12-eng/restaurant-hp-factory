@@ -84,18 +84,10 @@ export function Header({ store }: HeaderProps) {
         ))}
         <IzakayaLink
           href={store.reservationUrl}
-          variant="lantern"
+          variant="ink"
           label="ご予約"
           onClick={() => setMenuOpen(false)}
         />
-        {store.phone ? (
-          <IzakayaLink
-            href={`tel:${store.phone.replace(/[^\d+]/g, "")}`}
-            variant="wood"
-            label="電話する"
-            onClick={() => setMenuOpen(false)}
-          />
-        ) : null}
       </div>
     </>
   );

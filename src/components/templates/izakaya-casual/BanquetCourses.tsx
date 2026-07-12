@@ -12,25 +12,25 @@ export function BanquetCourses({ courses }: BanquetCoursesProps) {
   if (courses.length === 0) return null;
 
   return (
-    <IzakayaSection id="banquet" tone="paper">
+    <IzakayaSection id="banquet" tone="wood">
       <IzakayaSectionHeading
-        label="Banquet"
         title="宴会コース"
-        subtitle="仲良し飲み会から幹事さんまで、おまかせください"
+        subtitle="幹事さんも気軽にどうぞ"
+        variant="minimal"
       />
 
-      <StaggerContainer className="izk-course-grid">
+      <StaggerContainer className="izk-course-plain">
         {courses.map((course) => (
           <StaggerItem key={course.name}>
-            <article
-              className={`izk-course-card ${course.featured ? "izk-course-card--featured" : ""}`}
-            >
-              {course.featured ? (
-                <span className="izk-course-badge">おすすめ</span>
-              ) : null}
-              <h3 className="izk-course-name">{course.name}</h3>
-              <p className="izk-course-note">{course.note}</p>
-              <p className="izk-course-price">{course.price}</p>
+            <article className="izk-course-plain-row">
+              <div className="izk-course-plain-copy">
+                {course.featured ? (
+                  <span className="izk-course-plain-tag">おすすめ</span>
+                ) : null}
+                <h3 className="izk-course-plain-name">{course.name}</h3>
+                <p className="izk-course-plain-note">{course.note}</p>
+              </div>
+              <p className="izk-course-plain-price">{course.price}</p>
               {course.isSample ? <SampleLabel /> : null}
             </article>
           </StaggerItem>

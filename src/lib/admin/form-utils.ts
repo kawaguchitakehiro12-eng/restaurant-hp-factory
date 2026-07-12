@@ -1,5 +1,6 @@
-export const APP_BASE_URL =
-  typeof window !== "undefined" ? window.location.origin : "https://app.sakupage.jp";
+import { getAppBaseUrl } from "@/lib/admin/app-url";
+
+export const APP_BASE_URL = getAppBaseUrl();
 
 export function generateId(prefix: string): string {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;

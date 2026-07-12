@@ -58,6 +58,26 @@ export type ConvertToContractForm = {
   domainStatus: DomainStatus;
 };
 
+/** 公開フロー（サイト情報確認 → URL → 顧客アカウント） */
+export type PublishSiteForm = ConvertToContractForm & {
+  storeSlug: string;
+};
+
+export type PublishSiteResult = {
+  demoSiteId: string;
+  storeName: string;
+  storeSlug: string;
+  publicUrl: string;
+  dashboardUrl: string;
+  loginEmail: string;
+  initialPassword: string;
+  contractStartDate: string;
+  minimumTermEndDate: string;
+  domainStatusLabel: string;
+  invitationText: string;
+  publishedAt: string;
+};
+
 /** デモサイトエンティティ */
 export type DemoSite = {
   id: string;
@@ -93,6 +113,8 @@ export type DemoSite = {
   paymentMethod?: PaymentMethod;
   /** 公開サイト表示用コンテンツ */
   content?: DemoSiteContent;
+  /** 正式公開日（ISO date） */
+  publishedAt?: string;
 };
 
 export type CreateDemoSiteResult = {

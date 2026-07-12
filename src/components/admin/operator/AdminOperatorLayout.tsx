@@ -2,7 +2,9 @@
 
 import { CreateDemoButton } from "@/components/admin/operator/CreateDemoButton";
 import { CreateDemoFlow } from "@/components/admin/operator/CreateDemoFlow";
+import { PublishSiteFlow } from "@/components/admin/operator/PublishSiteFlow";
 import { ConvertToContractModal } from "@/components/admin/operator/ConvertToContractModal";
+import { DemoShareModal } from "@/components/admin/operator/DemoShareModal";
 import { OperatorAdminProvider, useOperatorAdmin } from "@/components/admin/operator/OperatorAdminProvider";
 import { AdminShell, type NavItem } from "@/components/admin/AdminShell";
 import { AdminUiProvider } from "@/components/admin/AdminUiProvider";
@@ -21,7 +23,9 @@ function AdminOperatorShell({
   navItems,
   children,
 }: AdminOperatorLayoutProps) {
-  const { openConvertModal } = useOperatorAdmin();
+  const { openPublishModal, shareModalDemoId, closeShareModal, getDemoSite, refreshShareData } =
+    useOperatorAdmin();
+  const shareDemoSite = shareModalDemoId ? getDemoSite(shareModalDemoId) : null;
 
   return (
     <AdminShell
@@ -32,8 +36,14 @@ function AdminOperatorShell({
       headerRight={<CreateDemoButton />}
     >
       {children}
-      <CreateDemoFlow onRequestConvert={openConvertModal} />
+      <CreateDemoFlow onRequestPublish={openPublishModal} />
+      <PublishSiteFlow />
       <ConvertToContractModal />
+      <DemoShareModal
+        demoSite={shareDemoSite ?? null}
+        onClose={closeShareModal}
+        onShareUpdated={refreshShareData}
+      />
     </AdminShell>
   );
 }

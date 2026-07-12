@@ -12,8 +12,8 @@ export function News({ topics }: NewsProps) {
   if (topics.length === 0) return null;
 
   return (
-    <IzakayaSection id="news" narrow tone="paper">
-      <IzakayaSectionHeading label="News" title="お知らせ" />
+    <IzakayaSection id="news" narrow>
+      <IzakayaSectionHeading title="お知らせ" variant="plain" />
 
       <div className="izk-news-list">
         {topics.map((topic, index) => (

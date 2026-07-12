@@ -42,5 +42,8 @@ export function isDemoSitePubliclyVisible(demo: DemoSite): boolean {
   if (demo.publishStatus === "suspended") {
     return false;
   }
-  return demo.siteContractStatus === "demo" || demo.siteContractStatus === "contracted";
+  if (demo.siteContractStatus === "demo") {
+    return true;
+  }
+  return demo.publishStatus === "published";
 }

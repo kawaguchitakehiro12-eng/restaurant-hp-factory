@@ -12,12 +12,18 @@ import {
 import Link from "next/link";
 import { buildDemoCustomerContext, type DemoCustomerContext } from "@/lib/admin/demo-dashboard";
 import {
+  fetchDemoSiteBySlugFromApi,
+  isSupabaseConfigured,
+  updateDemoSiteContentViaApi,
+} from "@/lib/data/site-data-client";
+import {
   DEMO_SITES_STORAGE_KEY,
   findDemoSiteBySlug,
   loadDemoSitesFromStorage,
   updateDemoSiteContent,
 } from "@/lib/stores/demo-site-registry";
 import { initialDemoSites } from "@/data/admin/demo-mock";
+import type { DemoSiteContent } from "@/types/demo-content";
 
 const DemoCustomerContextReact = createContext<DemoCustomerContext | null>(null);
 
@@ -30,36 +36,44 @@ export function DemoCustomerProvider({
 }) {
   const [ctx, setCtx] = useState<DemoCustomerContext | null>(null);
   const [ready, setReady] = useState(false);
+  const useRemote = isSupabaseConfigured();
 
-  const savePhotos = useCallback<DemoCustomerContext["savePhotos"]>(
-    (payload) => {
-      updateDemoSiteContent(slug, payload, initialDemoSites);
-    },
-    [slug]
-  );
-
-  const refresh = useCallback(() => {
+  const refresh = useCallback(async () => {
+    if (useRemote) {
+      try {
+        const demo = await fetchDemoSiteBySlugFromApi(slug);
+        if (!demo) {
+          setCtx(null);
+          return;
+        }
+        setCtx(buildDemoCustomerContext(demo, slug, makeSavePhotos(slug, useRemote, refresh)));
+        return;
+      } catch (error) {
+        console.error("[DemoCustomerProvider] Supabase fetch failed", error);
+      }
+    }
     const sites = loadDemoSitesFromStorage(initialDemoSites);
     const demo = findDemoSiteBySlug(slug, sites);
     if (!demo) {
       setCtx(null);
       return;
     }
-    setCtx(buildDemoCustomerContext(demo, slug, savePhotos));
-  }, [slug, savePhotos]);
+    setCtx(buildDemoCustomerContext(demo, slug, makeSavePhotos(slug, useRemote, refresh)));
+  }, [slug, useRemote]);
 
   useEffect(() => {
-    refresh();
-    setReady(true);
+    void refresh().finally(() => setReady(true));
 
-    const onStorage = (event: StorageEvent) => {
-      if (event.key === null || event.key === DEMO_SITES_STORAGE_KEY) {
-        refresh();
-      }
-    };
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
-  }, [refresh]);
+    if (!useRemote) {
+      const onStorage = (event: StorageEvent) => {
+        if (event.key === null || event.key === DEMO_SITES_STORAGE_KEY) {
+          void refresh();
+        }
+      };
+      window.addEventListener("storage", onStorage);
+      return () => window.removeEventListener("storage", onStorage);
+    }
+  }, [refresh, useRemote]);
 
   const value = useMemo(() => ctx, [ctx]);
 
@@ -87,6 +101,25 @@ export function DemoCustomerProvider({
       {children}
     </DemoCustomerContextReact.Provider>
   );
+}
+
+function makeSavePhotos(
+  slug: string,
+  useRemote: boolean,
+  refresh: () => Promise<void>
+): DemoCustomerContext["savePhotos"] {
+  return (payload) => {
+    if (useRemote) {
+      void updateDemoSiteContentViaApi(slug, payload)
+        .then(() => refresh())
+        .catch((error) => {
+          console.error("[DemoCustomerProvider] Failed to save content", error);
+        });
+      return;
+    }
+    updateDemoSiteContent(slug, payload, initialDemoSites);
+    void refresh();
+  };
 }
 
 export function useDemoCustomer(): DemoCustomerContext {

@@ -23,7 +23,7 @@ export function Access({ store }: AccessProps) {
 
   return (
     <IzakayaSection id="access" narrow>
-      <IzakayaSectionHeading label="Access" title="アクセス" align="center" />
+      <IzakayaSectionHeading title="アクセス" variant="plain" />
 
       <FadeIn className="izk-info-grid">
         {infoRows(store).map((row) => (
@@ -34,13 +34,9 @@ export function Access({ store }: AccessProps) {
         ))}
 
         <div className="izk-info-actions">
-          <IzakayaLink
-            href={store.reservationUrl}
-            variant="lantern"
-            label="ご予約"
-          />
+          <IzakayaLink href={store.reservationUrl} variant="ink" label="ご予約" />
           {telHref ? (
-            <IzakayaLink href={telHref} variant="wood" label="電話する" />
+            <IzakayaLink href={telHref} variant="ink" label="電話する" />
           ) : null}
           {store.instagramUrl ? (
             <IzakayaLink

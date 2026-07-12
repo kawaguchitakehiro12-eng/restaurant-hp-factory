@@ -6,11 +6,21 @@ import { CreateDemoButton } from "@/components/admin/operator/CreateDemoButton";
 import { useOperatorAdmin } from "@/components/admin/operator/OperatorAdminProvider";
 import { StatCard } from "@/components/admin/StatCard";
 import { computeDemoDashboardStats } from "@/lib/admin/demo-create";
+import { SITE_DISPLAY_STATUS_LABELS } from "@/lib/admin/site-display-status";
+import { computeSiteStatusCounts } from "@/lib/admin/site-status-counts";
 import { formatCurrency } from "@/lib/admin/labels";
 
 export function AdminDashboardClient() {
-  const { demoSites, openConvertModal, markAsLost, deleteDemoSite } = useOperatorAdmin();
+  const {
+    demoSites,
+    openPublishModal,
+    openShareModal,
+    markAsLost,
+    deleteDemoSite,
+    shareDataVersion,
+  } = useOperatorAdmin();
   const stats = computeDemoDashboardStats(demoSites);
+  const statusCounts = computeSiteStatusCounts(demoSites);
 
   return (
     <>
@@ -20,15 +30,36 @@ export function AdminDashboardClient() {
       />
 
       <div className="admin-stat-rows mb-6">
-        <div className="admin-stat-grid admin-stat-grid--primary">
-          <StatCard label="デモサイト" value={stats.activeDemos} hint="営業中のデモ" emphasis={1} />
-          <StatCard label="契約済み" value={stats.contractedCount} emphasis={2} />
+        <div className="admin-stat-grid admin-stat-grid--status">
+          <StatCard
+            label={SITE_DISPLAY_STATUS_LABELS.published}
+            value={statusCounts.published}
+            hint="正式公開中"
+            emphasis={1}
+          />
+          <StatCard
+            label={SITE_DISPLAY_STATUS_LABELS.demo}
+            value={statusCounts.demo}
+            hint="営業デモ"
+            emphasis={2}
+          />
+          <StatCard
+            label={SITE_DISPLAY_STATUS_LABELS.suspended}
+            value={statusCounts.suspended}
+            hint="公開停止"
+            emphasis={3}
+          />
+          <StatCard
+            label={SITE_DISPLAY_STATUS_LABELS.lost}
+            value={statusCounts.lost}
+            hint="失注案件"
+            emphasis={4}
+          />
         </div>
         <div className="admin-stat-grid">
-          <StatCard label="提案パイプライン" value={stats.proposalPipeline} emphasis={3} />
-          <StatCard label="公開中" value={stats.publishedCount} emphasis={4} />
+          <StatCard label="契約済み" value={stats.contractedCount} />
+          <StatCard label="提案パイプライン" value={stats.proposalPipeline} />
           <StatCard label="総案件数" value={stats.totalDemoSites} />
-          <StatCard label="失注" value={stats.lostCount} />
           <StatCard label="MRR" value={formatCurrency(stats.monthlyRevenue)} />
           <StatCard label="今月作成" value={stats.createdThisMonth} />
         </div>
@@ -43,16 +74,25 @@ export function AdminDashboardClient() {
 
       <DemoSiteTable
         demoSites={demoSites}
-        onConvert={openConvertModal}
+        onPublish={openPublishModal}
+        onShare={openShareModal}
         onMarkLost={markAsLost}
         onDelete={deleteDemoSite}
+        shareDataVersion={shareDataVersion}
       />
     </>
   );
 }
 
 export function AdminStoresClient() {
-  const { demoSites, openConvertModal, markAsLost, deleteDemoSite } = useOperatorAdmin();
+  const {
+    demoSites,
+    openPublishModal,
+    openShareModal,
+    markAsLost,
+    deleteDemoSite,
+    shareDataVersion,
+  } = useOperatorAdmin();
 
   return (
     <>
@@ -64,9 +104,11 @@ export function AdminStoresClient() {
 
       <DemoSiteTable
         demoSites={demoSites}
-        onConvert={openConvertModal}
+        onPublish={openPublishModal}
+        onShare={openShareModal}
         onMarkLost={markAsLost}
         onDelete={deleteDemoSite}
+        shareDataVersion={shareDataVersion}
       />
     </>
   );

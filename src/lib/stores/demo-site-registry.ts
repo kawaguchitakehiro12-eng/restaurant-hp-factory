@@ -19,6 +19,7 @@ export const RESERVED_SLUGS = new Set([
   "branding",
   "brand",
   "screenshots",
+  "share",
 ]);
 
 export function isReservedSlug(slug: string): boolean {

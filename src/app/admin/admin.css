@@ -2808,3 +2808,240 @@
   font-size: 0.8125rem;
   color: var(--admin-muted);
 }
+
+/* Publish quality check */
+.admin-stat-grid--status {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (min-width: 768px) {
+  .admin-stat-grid--status {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.admin-quality-panel {
+  margin-bottom: 1.25rem;
+  padding: 1rem 1.125rem;
+  border-radius: 12px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+}
+
+.admin-quality-panel[data-level="warn"] {
+  border-color: #fcd34d;
+  background: #fffbeb;
+}
+
+.admin-quality-panel[data-level="critical"] {
+  border-color: #fca5a5;
+  background: #fef2f2;
+}
+
+.admin-quality-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.admin-quality-eyebrow {
+  margin: 0 0 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--admin-muted);
+}
+
+.admin-quality-lead {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--admin-text);
+}
+
+.admin-progress-ring--quality {
+  flex-shrink: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.admin-progress-fill--quality[data-level="good"] {
+  background: #16a34a;
+}
+
+.admin-progress-fill--quality[data-level="warn"] {
+  background: #ca8a04;
+}
+
+.admin-progress-fill--quality[data-level="critical"] {
+  background: #dc2626;
+}
+
+.admin-quality-missing {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.admin-quality-missing li {
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #9a3412;
+  background: #ffedd5;
+  border: 1px solid #fed7aa;
+}
+
+.admin-quality-missing--confirm {
+  margin-bottom: 0.75rem;
+}
+
+.admin-quality-complete {
+  margin: 0.75rem 0 0;
+  font-size: 0.8125rem;
+  color: #15803d;
+  font-weight: 500;
+}
+
+.admin-quality-checklist {
+  margin-top: 0.875rem;
+}
+
+.admin-contract-result-list--after-quality {
+  margin-top: 0.25rem;
+}
+
+.admin-quality-score-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.75rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-quality-score-pill[data-level="good"] {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.admin-quality-score-pill[data-level="warn"] {
+  color: #854d0e;
+  background: #fef9c3;
+}
+
+.admin-quality-score-pill[data-level="critical"] {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.admin-btn--publish-warn {
+  color: #854d0e !important;
+  background: #fef9c3 !important;
+  border: 1px solid #fde047 !important;
+  font-weight: 600;
+}
+
+.admin-btn--publish-warn:hover {
+  background: #fef08a !important;
+}
+
+.admin-btn--publish-warn-solid {
+  color: #422006;
+  background: #facc15;
+  border: 1px solid #eab308;
+  font-weight: 600;
+}
+
+.admin-btn--publish-warn-solid:hover {
+  background: #eab308;
+}
+
+.admin-quality-confirm-body {
+  margin-bottom: 0.5rem;
+}
+
+.admin-quality-panel--compact {
+  padding: 0.875rem 1rem;
+}
+
+/* Demo share modal & table */
+.admin-modal-content--share {
+  max-width: 36rem;
+}
+
+.admin-share-url {
+  display: block;
+  word-break: break-all;
+  font-size: 0.75rem;
+}
+
+.admin-share-meta {
+  margin-bottom: 1rem;
+}
+
+.admin-share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.admin-share-actions .admin-btn {
+  font-size: 0.75rem;
+}
+
+.admin-share-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid var(--admin-border);
+}
+
+.admin-share-manage {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--admin-border);
+}
+
+.admin-share-manage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+}
+
+.admin-share-create {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-share-view-status {
+  font-size: 0.75rem;
+  color: var(--admin-text);
+  white-space: nowrap;
+}
+
+.admin-share-view-status--muted {
+  color: var(--admin-muted);
+}
+
+.admin-form-error--block {
+  margin-bottom: 1rem;
+}

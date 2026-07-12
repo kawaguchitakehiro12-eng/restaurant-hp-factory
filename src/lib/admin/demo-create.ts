@@ -26,6 +26,7 @@ import {
 } from "@/lib/admin/form-utils";
 import { buildDemoDashboardUrl } from "@/lib/admin/demo-dashboard";
 import { getStoreSitePath } from "@/lib/admin/helpers";
+import { isPublishedSite } from "@/lib/admin/site-display-status";
 
 export function buildDemoUrl(slug: string): string {
   return `${APP_BASE_URL}${getStoreSitePath(slug)}`;
@@ -107,7 +108,7 @@ export function createDemoSiteFromForm(input: DemoSiteFormInput): {
     salesStatus: input.salesStatus,
     salesMemo: input.salesMemo.trim(),
     siteContractStatus: "demo",
-    publishStatus: "published",
+    publishStatus: "draft",
     createdAt: today,
     lastUpdatedAt: today,
     isNewlyCreated: true,
@@ -162,6 +163,8 @@ export function convertDemoToContract(
     customerId,
     siteContractStatus: "contracted",
     salesStatus: "contracted",
+    publishStatus: "published",
+    publishedAt: demoSite.publishedAt ?? today,
     contractStartDate: form.contractStartDate,
     minimumTermEndDate,
     monthlyFee: form.monthlyFee,
@@ -214,12 +217,12 @@ export function computeDemoDashboardStats(demoSites: DemoSite[]) {
     totalDemoSites: demoSites.length,
     activeDemos: demos.length,
     contractedCount: contracted.length,
+    publishedCount: demoSites.filter((d) => isPublishedSite(d)).length,
     lostCount: demoSites.filter((d) => d.siteContractStatus === "lost").length,
     proposalPipeline: demoSites.filter((d) =>
       ["proposal_scheduled", "proposed", "considering"].includes(d.salesStatus)
     ).length,
     monthlyRevenue,
-    publishedCount: demoSites.filter((d) => d.publishStatus === "published").length,
     createdThisMonth: demoSites.filter((d) => d.createdAt.startsWith(todayIso().slice(0, 7)))
       .length,
   };

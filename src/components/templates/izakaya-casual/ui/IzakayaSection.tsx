@@ -6,7 +6,7 @@ type IzakayaSectionProps = {
   className?: string;
   narrow?: boolean;
   wide?: boolean;
-  tone?: "default" | "paper" | "wood" | "board";
+  tone?: "default" | "warm" | "wood" | "enji" | "charcoal";
 };
 
 export function IzakayaSection({
@@ -19,13 +19,15 @@ export function IzakayaSection({
 }: IzakayaSectionProps) {
   const width = narrow ? "max-w-3xl" : wide ? "max-w-7xl" : "max-w-6xl";
   const toneClass =
-    tone === "paper"
-      ? "izk-section--paper"
+    tone === "warm"
+      ? "izk-section--warm"
       : tone === "wood"
         ? "izk-section--wood"
-        : tone === "board"
-          ? "izk-section--board"
-          : "";
+        : tone === "enji"
+          ? "izk-section--enji"
+          : tone === "charcoal"
+            ? "izk-section--charcoal"
+            : "";
 
   return (
     <section id={id} className={`izk-section ${toneClass} ${className}`}>

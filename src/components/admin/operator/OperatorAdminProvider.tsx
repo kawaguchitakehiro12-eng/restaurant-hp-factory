@@ -16,11 +16,26 @@ import {
   createDemoSiteFromForm,
   markDemoAsLost,
 } from "@/lib/admin/demo-create";
+import { PublishSiteError, publishDemoSite } from "@/lib/admin/demo-publish";
+import {
+  createDemoSiteViaApi,
+  deleteCustomerViaApi,
+  deleteDemoSiteViaApi,
+  fetchCustomersFromApi,
+  fetchDemoSitesFromApi,
+  isSupabaseConfigured,
+  updateDemoSiteViaApi,
+  upsertCustomerViaApi,
+} from "@/lib/data/site-data-client";
 import {
   isReservedSlug,
   loadDemoSitesFromStorage,
   saveDemoSitesToStorage,
 } from "@/lib/stores/demo-site-registry";
+import {
+  loadCustomersFromStorage,
+  saveCustomersToStorage,
+} from "@/lib/stores/customer-registry";
 import type { CustomerAccount } from "@/types/admin";
 import type {
   ConvertToContractForm,
@@ -28,18 +43,29 @@ import type {
   CreateDemoSiteResult,
   DemoSite,
   DemoSiteFormInput,
+  PublishSiteForm,
+  PublishSiteResult,
 } from "@/types/demo";
 
 type OperatorAdminContextValue = {
   demoSites: DemoSite[];
   customers: CustomerAccount[];
   demoModalOpen: boolean;
+  publishModalDemoId: string | null;
   convertModalDemoId: string | null;
+  shareModalDemoId: string | null;
+  shareDataVersion: number;
   openDemoModal: () => void;
   closeDemoModal: () => void;
+  openPublishModal: (demoSiteId: string) => void;
+  closePublishModal: () => void;
   openConvertModal: (demoSiteId: string) => void;
   closeConvertModal: () => void;
+  openShareModal: (demoSiteId: string) => void;
+  closeShareModal: () => void;
+  refreshShareData: () => void;
   addDemoSite: (input: DemoSiteFormInput) => CreateDemoSiteResult;
+  publishSite: (demoSiteId: string, form: PublishSiteForm) => PublishSiteResult;
   convertToContract: (
     demoSiteId: string,
     form: ConvertToContractForm
@@ -58,18 +84,66 @@ export function OperatorAdminProvider({ children }: { children: ReactNode }) {
   const [demoSites, setDemoSites] = useState<DemoSite[]>(initialDemoSites);
   const [customers, setCustomers] = useState<CustomerAccount[]>(initialDemoCustomers);
   const [demoModalOpen, setDemoModalOpen] = useState(false);
+  const [publishModalDemoId, setPublishModalDemoId] = useState<string | null>(null);
   const [convertModalDemoId, setConvertModalDemoId] = useState<string | null>(null);
+  const [shareModalDemoId, setShareModalDemoId] = useState<string | null>(null);
+  const [shareDataVersion, setShareDataVersion] = useState(0);
   const [hydrated, setHydrated] = useState(false);
+  const useRemote = isSupabaseConfigured();
 
   useEffect(() => {
-    setDemoSites(loadDemoSitesFromStorage(initialDemoSites));
-    setHydrated(true);
-  }, []);
+    let cancelled = false;
+
+    async function hydrate() {
+      if (useRemote) {
+        try {
+          const [sites, customerList] = await Promise.all([
+            fetchDemoSitesFromApi(),
+            fetchCustomersFromApi(),
+          ]);
+          if (!cancelled) {
+            setDemoSites(sites.length > 0 ? sites : initialDemoSites);
+            setCustomers(customerList);
+          }
+        } catch (error) {
+          console.error("[OperatorAdminProvider] Supabase load failed, using localStorage", error);
+          if (!cancelled) {
+            setDemoSites(loadDemoSitesFromStorage(initialDemoSites));
+            setCustomers(loadCustomersFromStorage(initialDemoCustomers));
+          }
+        }
+      } else {
+        setDemoSites(loadDemoSitesFromStorage(initialDemoSites));
+        setCustomers(loadCustomersFromStorage(initialDemoCustomers));
+      }
+      if (!cancelled) setHydrated(true);
+    }
+
+    void hydrate();
+    return () => {
+      cancelled = true;
+    };
+  }, [useRemote]);
 
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || useRemote) return;
     saveDemoSitesToStorage(demoSites);
-  }, [demoSites, hydrated]);
+  }, [demoSites, hydrated, useRemote]);
+
+  useEffect(() => {
+    if (!hydrated || useRemote) return;
+    saveCustomersToStorage(customers);
+  }, [customers, hydrated, useRemote]);
+
+  const persistDemoSite = useCallback(
+    (site: DemoSite) => {
+      if (!useRemote) return;
+      void updateDemoSiteViaApi(site).catch((error) => {
+        console.error("[OperatorAdminProvider] Failed to persist demo site", error);
+      });
+    },
+    [useRemote]
+  );
 
   const isSlugTaken = useCallback(
     (slug: string, excludeDemoId?: string) => {
@@ -91,22 +165,80 @@ export function OperatorAdminProvider({ children }: { children: ReactNode }) {
     [demoSites]
   );
 
-  const saveDemoSite = useCallback((updated: DemoSite) => {
-    setDemoSites((prev) =>
-      prev.map((d) => (d.id === updated.id ? { ...updated, isNewlyCreated: false } : d))
-    );
-  }, []);
+  const saveDemoSite = useCallback(
+    (updated: DemoSite) => {
+      const normalized = { ...updated, isNewlyCreated: false };
+      setDemoSites((prev) =>
+        prev.map((d) => (d.id === normalized.id ? normalized : d))
+      );
+      persistDemoSite(normalized);
+    },
+    [persistDemoSite]
+  );
 
   const getDemoSite = useCallback(
     (id: string) => demoSites.find((d) => d.id === id),
     [demoSites]
   );
 
-  const addDemoSite = useCallback((input: DemoSiteFormInput): CreateDemoSiteResult => {
-    const { demoSite, result } = createDemoSiteFromForm(input);
-    setDemoSites((prev) => [demoSite, ...prev]);
-    return result;
-  }, []);
+  const addDemoSite = useCallback(
+    (input: DemoSiteFormInput): CreateDemoSiteResult => {
+      const { demoSite, result } = createDemoSiteFromForm(input);
+      setDemoSites((prev) => [demoSite, ...prev]);
+      if (useRemote) {
+        void createDemoSiteViaApi(demoSite).catch((error) => {
+          console.error("[OperatorAdminProvider] Failed to create demo site", error);
+        });
+      }
+      return result;
+    },
+    [useRemote]
+  );
+
+  const upsertCustomer = useCallback(
+    (customer: CustomerAccount, initialPassword?: string) => {
+      setCustomers((prev) => {
+        const exists = prev.some((c) => c.id === customer.id);
+        if (exists) {
+          return prev.map((c) => (c.id === customer.id ? customer : c));
+        }
+        return [customer, ...prev];
+      });
+      if (useRemote) {
+        void upsertCustomerViaApi(customer, initialPassword).catch((error) => {
+          console.error("[OperatorAdminProvider] Failed to persist customer", error);
+        });
+      }
+    },
+    [useRemote]
+  );
+
+  const publishSite = useCallback(
+    (demoSiteId: string, form: PublishSiteForm): PublishSiteResult => {
+      const target = demoSites.find((d) => d.id === demoSiteId);
+      if (!target) throw new PublishSiteError("案件が見つかりません");
+
+      const normalizedSlug = form.storeSlug.trim().toLowerCase();
+      if (isSlugTaken(normalizedSlug, demoSiteId)) {
+        throw new PublishSiteError(
+          "このURLはすでに使用されています",
+          "storeSlug"
+        );
+      }
+
+      const { demoSite, customer, result } = publishDemoSite(target, {
+        ...form,
+        storeSlug: normalizedSlug,
+      });
+
+      setDemoSites((prev) => prev.map((d) => (d.id === demoSiteId ? demoSite : d)));
+      upsertCustomer(customer, demoSite.initialPassword);
+      persistDemoSite(demoSite);
+
+      return result;
+    },
+    [demoSites, isSlugTaken, persistDemoSite, upsertCustomer]
+  );
 
   const convertToContract = useCallback(
     (demoSiteId: string, form: ConvertToContractForm): ConvertToContractResult => {
@@ -115,49 +247,73 @@ export function OperatorAdminProvider({ children }: { children: ReactNode }) {
 
       const { demoSite, customer, result } = convertDemoToContract(target, form);
       setDemoSites((prev) => prev.map((d) => (d.id === demoSiteId ? demoSite : d)));
-
-      setCustomers((prev) => {
-        const exists = prev.some((c) => c.id === customer.id);
-        if (exists) {
-          return prev.map((c) => (c.id === customer.id ? customer : c));
-        }
-        return [customer, ...prev];
-      });
+      upsertCustomer(customer, demoSite.initialPassword);
+      persistDemoSite(demoSite);
 
       return result;
     },
-    [demoSites]
+    [demoSites, persistDemoSite, upsertCustomer]
   );
 
-  const markAsLost = useCallback((demoSiteId: string) => {
-    setDemoSites((prev) =>
-      prev.map((d) => (d.id === demoSiteId ? markDemoAsLost(d) : d))
-    );
-  }, []);
+  const markAsLost = useCallback(
+    (demoSiteId: string) => {
+      setDemoSites((prev) =>
+        prev.map((d) => {
+          if (d.id !== demoSiteId) return d;
+          const lost = markDemoAsLost(d);
+          persistDemoSite(lost);
+          return lost;
+        })
+      );
+    },
+    [persistDemoSite]
+  );
 
-  const deleteDemoSite = useCallback((demoSiteId: string) => {
-    setDemoSites((prev) => {
-      const target = prev.find((d) => d.id === demoSiteId);
-      if (target?.customerId) {
-        setCustomers((customers) =>
-          customers.filter((c) => c.id !== target.customerId)
-        );
+  const deleteDemoSite = useCallback(
+    (demoSiteId: string) => {
+      setDemoSites((prev) => {
+        const target = prev.find((d) => d.id === demoSiteId);
+        if (target?.customerId) {
+          setCustomers((customerList) =>
+            customerList.filter((c) => c.id !== target.customerId)
+          );
+          if (useRemote && target.customerId) {
+            void deleteCustomerViaApi(target.customerId).catch((error) => {
+              console.error("[OperatorAdminProvider] Failed to delete customer", error);
+            });
+          }
+        }
+        return prev.filter((d) => d.id !== demoSiteId);
+      });
+      if (useRemote) {
+        void deleteDemoSiteViaApi(demoSiteId).catch((error) => {
+          console.error("[OperatorAdminProvider] Failed to delete demo site", error);
+        });
       }
-      return prev.filter((d) => d.id !== demoSiteId);
-    });
-  }, []);
+    },
+    [useRemote]
+  );
 
   const value = useMemo(
     () => ({
       demoSites,
       customers,
       demoModalOpen,
+      publishModalDemoId,
       convertModalDemoId,
+      shareModalDemoId,
+      shareDataVersion,
       openDemoModal: () => setDemoModalOpen(true),
       closeDemoModal: () => setDemoModalOpen(false),
+      openPublishModal: (demoSiteId: string) => setPublishModalDemoId(demoSiteId),
+      closePublishModal: () => setPublishModalDemoId(null),
       openConvertModal: (demoSiteId: string) => setConvertModalDemoId(demoSiteId),
       closeConvertModal: () => setConvertModalDemoId(null),
+      openShareModal: (demoSiteId: string) => setShareModalDemoId(demoSiteId),
+      closeShareModal: () => setShareModalDemoId(null),
+      refreshShareData: () => setShareDataVersion((v) => v + 1),
       addDemoSite,
+      publishSite,
       convertToContract,
       markAsLost,
       isSlugTaken,
@@ -170,8 +326,12 @@ export function OperatorAdminProvider({ children }: { children: ReactNode }) {
       demoSites,
       customers,
       demoModalOpen,
+      publishModalDemoId,
       convertModalDemoId,
+      shareModalDemoId,
+      shareDataVersion,
       addDemoSite,
+      publishSite,
       convertToContract,
       markAsLost,
       isSlugTaken,
@@ -194,3 +354,5 @@ export function useOperatorAdmin(): OperatorAdminContextValue {
   }
   return ctx;
 }
+
+export { PublishSiteError };
