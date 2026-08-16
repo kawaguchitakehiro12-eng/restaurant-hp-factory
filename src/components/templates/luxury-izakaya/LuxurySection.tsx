@@ -25,7 +25,7 @@ export function LuxurySection({
   return (
     <section
       id={id}
-      className={`luxury-section ${dark ? "luxury-section--dark" : ""} ${className}`}
+      className={`luxury-section atm-surface ${dark ? "luxury-section--dark atm-surface--ink" : ""} ${className}`}
     >
       <div className={`mx-auto ${width} ${pad}`}>{children}</div>
     </section>

@@ -5,34 +5,54 @@ import { CafeSection } from "@/components/templates/cafe/ui/CafeSection";
 import { CafeSectionHeading } from "@/components/templates/cafe/ui/CafeSectionHeading";
 import type { CafeMenuItem } from "@/types/cafe";
 
-type MenuSectionProps = {
-  items: CafeMenuItem[];
-  id: string;
-  label: string;
-  title: string;
-  subtitle: string;
-  reverse?: boolean;
-  warm?: boolean;
-};
+type DrinkCategory = "Coffee" | "Tea" | "Others";
 
-function MenuList({ items }: { items: CafeMenuItem[] }) {
+const TEA_PATTERN = /ティー|tea|抹茶|matcha|チャイ|chai|ハーブ|herbal/i;
+const COFFEE_PATTERN =
+  /ラテ|latte|コーヒー|coffee|エスプレッソ|espresso|cappuccino|americano|macchiato|mocha|brew|flat white|ホワイト|ドリップ|drip/i;
+
+function drinkCategory(item: CafeMenuItem): DrinkCategory {
+  const text = [item.name, item.nameEn, item.description]
+    .filter(Boolean)
+    .join(" ");
+  if (TEA_PATTERN.test(text)) return "Tea";
+  if (COFFEE_PATTERN.test(text)) return "Coffee";
+  return "Others";
+}
+
+function groupDrinks(items: CafeMenuItem[]): { label: DrinkCategory; items: CafeMenuItem[] }[] {
+  const order: DrinkCategory[] = ["Coffee", "Tea", "Others"];
+  const map = new Map<DrinkCategory, CafeMenuItem[]>();
+  for (const item of items) {
+    const cat = drinkCategory(item);
+    const list = map.get(cat) ?? [];
+    list.push(item);
+    map.set(cat, list);
+  }
+  return order
+    .map((label) => ({ label, items: map.get(label) ?? [] }))
+    .filter((g) => g.items.length > 0);
+}
+
+function MenuLedger({ items }: { items: CafeMenuItem[] }) {
   return (
-    <div className="cafe-menu-list">
+    <div className="cafe-ledger">
       {items.map((item) => (
-        <article key={item.name} className="cafe-menu-item">
-          <div className="cafe-menu-item-header">
-            <div>
-              {item.nameEn ? (
-                <span className="cafe-menu-item-name-en">{item.nameEn}</span>
-              ) : null}
-              <h3 className="cafe-menu-item-name">{item.name}</h3>
+        <article key={item.name} className="cafe-ledger-row">
+          <div className="cafe-ledger-main">
+            {item.nameEn ? (
+              <span className="cafe-ledger-en">{item.nameEn}</span>
+            ) : null}
+            <div className="cafe-ledger-line">
+              <h3 className="cafe-ledger-name">{item.name}</h3>
+              <span className="cafe-ledger-dots" aria-hidden />
+              <span className="cafe-ledger-price">{item.price}</span>
             </div>
-            <span className="cafe-menu-item-price">{item.price}</span>
+            {item.description ? (
+              <p className="cafe-ledger-desc">{item.description}</p>
+            ) : null}
+            {item.isSample ? <SampleLabel /> : null}
           </div>
-          {item.description ? (
-            <p className="cafe-menu-item-desc">{item.description}</p>
-          ) : null}
-          {item.isSample ? <SampleLabel /> : null}
         </article>
       ))}
     </div>
@@ -41,73 +61,92 @@ function MenuList({ items }: { items: CafeMenuItem[] }) {
 
 export function FoodMenu({ items }: { items: CafeMenuItem[] }) {
   if (items.length === 0) return null;
+  const photoItem = items.find((item) => item.image);
 
   return (
-    <MenuSection
-      id="food"
-      label="Food"
-      title="フード"
-      subtitle="季節の素材を、シンプルに。"
-      items={items}
-      reverse={false}
-    />
+    <CafeSection id="food" tone="mist">
+      <div className="cafe-food-layout">
+        <CafeSectionHeading
+          label="FOOD"
+          title="フード"
+          subtitle="季節の素材を、シンプルに。"
+          largeEn="Bites"
+          align="left"
+        />
+
+        <div className="cafe-food-grid">
+          <FadeIn className="cafe-food-list-wrap">
+            <MenuLedger items={items} />
+          </FadeIn>
+
+          {photoItem ? (
+            <FadeIn delay={0.1} className="cafe-food-aside">
+              <p className="cafe-food-aside-label" aria-hidden>
+                Seasonal
+              </p>
+              <figure className="cafe-food-photo">
+                <FlexibleImageFill
+                  src={photoItem.image}
+                  alt={photoItem.name}
+                  className="cafe-image-fill object-cover"
+                  sizes="(max-width: 768px) 80vw, 28vw"
+                />
+                {photoItem.isSample ? (
+                  <SampleLabel className="demo-sample-label--image" />
+                ) : null}
+              </figure>
+              <p className="cafe-food-aside-cap">{photoItem.name}</p>
+            </FadeIn>
+          ) : null}
+        </div>
+      </div>
+    </CafeSection>
   );
 }
 
 export function DrinkMenu({ items }: { items: CafeMenuItem[] }) {
   if (items.length === 0) return null;
+  const groups = groupDrinks(items);
+  const leadLabel = groups[0]?.label ?? "Coffee";
 
   return (
-    <MenuSection
-      id="drink"
-      label="Drink"
-      title="ドリンク"
-      subtitle="一杯ずつ、丁寧に。"
-      items={items}
-      reverse
-      warm
-    />
-  );
-}
+    <CafeSection id="drink" tone="sand">
+      <div className="cafe-drink-layout">
+        <div className="cafe-drink-main">
+          <CafeSectionHeading
+            label="COFFEE"
+            title="ドリンク"
+            subtitle="一杯ずつ、丁寧に。"
+            align="left"
+          />
 
-function MenuSection({
-  items,
-  id,
-  label,
-  title,
-  subtitle,
-  reverse = false,
-  warm = false,
-}: MenuSectionProps) {
-  const photoItem = items.find((item) => item.image);
-  const hasPhoto = Boolean(photoItem);
-
-  return (
-    <CafeSection id={id} warm={warm}>
-      <CafeSectionHeading label={label} title={title} subtitle={subtitle} />
-
-      <div
-        className={`cafe-menu-block ${reverse ? "cafe-menu-block--reverse" : ""} ${hasPhoto ? "" : "cafe-menu-block--list-only"}`}
-      >
-        {hasPhoto && photoItem ? (
-          <FadeIn direction={reverse ? "right" : "left"}>
-            <figure className="cafe-menu-photo">
-              <FlexibleImageFill
-                src={photoItem.image}
-                alt={photoItem.name}
-                className="cafe-image-fill object-cover"
-                sizes="(max-width: 768px) 100vw, 45vw"
-              />
-              {photoItem.isSample ? (
-                <SampleLabel className="demo-sample-label--image" />
-              ) : null}
-            </figure>
+          <FadeIn className="cafe-drink-board">
+            {groups.map((group, index) => (
+              <div key={group.label} className="cafe-drink-group">
+                <div className="cafe-drink-cat-row">
+                  <h3 className="cafe-drink-cat">{group.label}</h3>
+                  <span className="cafe-drink-cat-num" aria-hidden>
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                <MenuLedger items={group.items} />
+              </div>
+            ))}
           </FadeIn>
-        ) : null}
+        </div>
 
-        <FadeIn direction={hasPhoto ? (reverse ? "left" : "right") : "up"} delay={0.08}>
-          <MenuList items={items} />
-        </FadeIn>
+        <aside className="cafe-drink-aside" aria-hidden>
+          <p className="cafe-drink-aside-bg">{leadLabel}</p>
+          <p className="cafe-drink-aside-index">01</p>
+          <p className="cafe-drink-aside-label">{leadLabel.toUpperCase()}</p>
+          <div className="cafe-drink-aside-rule" />
+          <p className="cafe-drink-aside-note">
+            Brewed to order,
+            <br />
+            one cup at a time.
+          </p>
+          <p className="cafe-drink-aside-vert">BREW</p>
+        </aside>
       </div>
     </CafeSection>
   );

@@ -1,55 +1,67 @@
 import { FadeIn } from "@/components/ui/FadeIn";
 import { BarLink } from "@/components/templates/bar/ui/BarLink";
 import { BarSection } from "@/components/templates/bar/ui/BarSection";
-import { BarSectionHeading } from "@/components/templates/bar/ui/BarSectionHeading";
 import type { BarStore } from "@/types/bar";
 
 type AccessProps = {
   store: BarStore;
 };
 
-const infoRows = (store: BarStore) => [
-  { label: "住所", value: store.address },
-  { label: "電話", value: store.phone },
-  { label: "営業", value: store.hours.dinner },
-  { label: "定休", value: store.hours.closed },
-  { label: "アクセス", value: store.access },
-];
-
 export function Access({ store }: AccessProps) {
+  const phoneHref = `tel:${store.phone.replace(/[^\d+-]/g, "")}`;
+
   return (
-    <BarSection id="access" narrow>
-      <BarSectionHeading label="Access" title="アクセス" align="center" />
+    <BarSection id="access" tone="charcoal" className="bar-access-section">
+      <div className="bar-access-layout">
+        <FadeIn className="bar-access-intro">
+          <p className="bar-access-kicker">RESERVE</p>
+          <h2 className="bar-access-title">アクセス</h2>
+          <p className="bar-access-address">{store.address}</p>
+          <p className="bar-access-station">{store.access}</p>
 
-      <FadeIn className="bar-info-grid">
-        {infoRows(store).map((row) => (
-          <div key={row.label} className="bar-info-row">
-            <dt className="bar-info-label">{row.label}</dt>
-            <dd className="bar-info-value">{row.value}</dd>
+          <dl className="bar-access-meta">
+            <div className="bar-access-meta-row">
+              <dt>Hours</dt>
+              <dd>{store.hours.dinner}</dd>
+            </div>
+            <div className="bar-access-meta-row">
+              <dt>Closed</dt>
+              <dd>{store.hours.closed}</dd>
+            </div>
+            <div className="bar-access-meta-row">
+              <dt>Phone</dt>
+              <dd>
+                <a href={phoneHref}>{store.phone}</a>
+              </dd>
+            </div>
+          </dl>
+
+          <div id="reservation" className="bar-access-closing">
+            <p className="bar-access-tonight">TONIGHT</p>
+            <p className="bar-access-waiting-en">A seat is waiting.</p>
+            <p className="bar-access-waiting">
+              {store.location}の夜に、静かな席を。
+            </p>
+            <BarLink
+              href={store.reservationUrl}
+              variant="gold"
+              label="席のご予約"
+            />
           </div>
-        ))}
+        </FadeIn>
 
-        <div className="bar-info-actions">
-          <BarLink href={store.reservationUrl} variant="gold" label="席のご予約" />
-          <BarLink
-            href={store.instagramUrl}
-            label="Instagram"
-            external
-          />
-        </div>
-      </FadeIn>
-
-      <FadeIn delay={0.08}>
-        <div className="bar-map-wrap">
-          <iframe
-            src={store.mapEmbedUrl}
-            title={`${store.name}の地図`}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-          />
-        </div>
-      </FadeIn>
+        <FadeIn delay={0.08} className="bar-access-map-col">
+          <div className="bar-map-wrap">
+            <iframe
+              src={store.mapEmbedUrl}
+              title={`${store.name}の地図`}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          </div>
+        </FadeIn>
+      </div>
     </BarSection>
   );
 }

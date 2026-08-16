@@ -5,13 +5,13 @@ import { CafeLink } from "@/components/templates/cafe/ui/CafeLink";
 import type { CafeStore } from "@/types/cafe";
 
 const navItems = [
-  { label: "Concept", href: "#concept" },
+  { label: "Story", href: "#concept" },
   { label: "Menu", href: "#menu" },
   { label: "Food", href: "#food" },
-  { label: "Drink", href: "#drink" },
+  { label: "Coffee", href: "#drink" },
   { label: "Gallery", href: "#gallery" },
-  { label: "News", href: "#news" },
-  { label: "Info", href: "#info" },
+  { label: "Journal", href: "#news" },
+  { label: "Visit", href: "#info" },
 ];
 
 type HeaderProps = {

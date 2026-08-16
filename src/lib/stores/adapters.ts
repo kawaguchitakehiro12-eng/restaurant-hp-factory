@@ -89,6 +89,7 @@ export function toLuxuryIzakayaData(
         name: item.name,
         price: item.price,
         image: item.imageUrl,
+        description: item.description,
       })),
     courses: [...store.courses]
       .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -247,7 +248,7 @@ export function toBarData(
       heroDisplay?.heroObjectPosition ?? DEFAULT_HERO_OBJECT_POSITION,
     conceptImage: concept?.url ?? "",
     space: {
-      image: spacePhoto?.url ?? "",
+      image: spacePhoto?.url ?? concept?.url ?? hero?.url ?? "",
       title: ext.space.title,
       description: ext.space.description,
       features: ext.space.features,
@@ -285,6 +286,7 @@ export function toIzakayaCasualData(
 ): IzakayaCasualData {
   const ext = assertIzakayaCasualExtensions(store);
   const hero = getPhotoByRole(store, "hero");
+  const food = getPhotoByRole(store, "food");
   const spacePhoto = getPhotoById(store, ext.space.photoId);
   const subCopy = Array.isArray(store.subCopy)
     ? store.subCopy.join(" ")
@@ -323,7 +325,7 @@ export function toIzakayaCasualData(
       instagramUrl: store.instagramUrl ?? "",
       mapEmbedUrl: store.mapEmbedUrl,
     },
-    heroImage: hero?.url ?? "",
+    heroImage: hero?.url ?? food?.url ?? "",
     heroImageFit: heroDisplay?.heroFit ?? DEFAULT_HERO_FIT,
     heroObjectPosition:
       heroDisplay?.heroObjectPosition ?? DEFAULT_HERO_OBJECT_POSITION,
@@ -339,7 +341,7 @@ export function toIzakayaCasualData(
         featured: item.isFeatured,
       })),
     space: {
-      image: spacePhoto?.url ?? "",
+      image: spacePhoto?.url ?? food?.url ?? hero?.url ?? "",
       title: ext.space.title,
       description: ext.space.description,
       features: ext.space.features,

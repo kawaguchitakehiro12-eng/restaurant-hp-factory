@@ -258,7 +258,7 @@ export function toBarDataWithSamples(
     conceptImage: concept?.url ?? "",
     conceptImageIsSample: Boolean(sampleFlags.photos.interior),
     space: {
-      image: spacePhoto?.url ?? "",
+      image: spacePhoto?.url ?? concept?.url ?? hero?.url ?? "",
       title: ext.space.title,
       description: ext.space.description,
       features: ext.space.features,
@@ -301,6 +301,7 @@ export function toIzakayaCasualDataWithSamples(
 ): IzakayaCasualData {
   const ext = assertIzakayaCasualExtensions(store);
   const hero = getPhotoByRole(store, "hero");
+  const food = getPhotoByRole(store, "food");
   const spacePhoto = getPhotoById(store, ext.space.photoId);
   const subCopy = Array.isArray(store.subCopy)
     ? store.subCopy.join(" ")
@@ -340,7 +341,7 @@ export function toIzakayaCasualDataWithSamples(
       instagramUrl: store.instagramUrl ?? "",
       mapEmbedUrl: store.mapEmbedUrl,
     },
-    heroImage: hero?.url ?? "",
+    heroImage: hero?.url ?? food?.url ?? "",
     heroImageIsSample: Boolean(sampleFlags.photos.hero),
     heroImageFit: heroDisplay?.heroFit,
     heroObjectPosition: heroDisplay?.heroObjectPosition,
@@ -356,7 +357,7 @@ export function toIzakayaCasualDataWithSamples(
         featured: item.isFeatured,
       })),
     space: {
-      image: spacePhoto?.url ?? "",
+      image: spacePhoto?.url ?? food?.url ?? hero?.url ?? "",
       title: ext.space.title,
       description: ext.space.description,
       features: ext.space.features,

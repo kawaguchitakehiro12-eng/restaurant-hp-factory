@@ -3,6 +3,10 @@ import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
 import { SampleLabel } from "@/components/demo/SampleLabel";
 import { IzakayaSection } from "@/components/templates/izakaya-casual/ui/IzakayaSection";
 import { IzakayaSectionHeading } from "@/components/templates/izakaya-casual/ui/IzakayaSectionHeading";
+import {
+  guessIzkPhotoFocus,
+  izkPhotoFocusClass,
+} from "@/components/templates/izakaya-casual/utils/izkPhotoFocus";
 import type { IzakayaCasualMenuItem } from "@/types/izakaya-casual";
 
 type TodaysSpecialsProps = {
@@ -13,43 +17,42 @@ export function TodaysSpecials({ todaysSpecials }: TodaysSpecialsProps) {
   if (todaysSpecials.length === 0) return null;
 
   return (
-    <IzakayaSection id="specials">
+    <IzakayaSection id="specials" tone="smoke">
       <IzakayaSectionHeading
+        kicker="TODAY"
         title="本日のおすすめ"
-        subtitle="仕入れ次第で変わります"
-        variant="minimal"
+        subtitle="仕入れ次第。見つけたらラッキー。"
       />
 
-      <StaggerContainer className="izk-specials-open">
-        {todaysSpecials.map((item, index) => (
+      <StaggerContainer className="izk-today-grid">
+        {todaysSpecials.map((item) => (
           <StaggerItem key={item.name}>
-            <FadeIn delay={index * 0.05}>
-              <article className="izk-specials-open-item">
-                {item.image ? (
-                  <figure className="izk-specials-open-photo">
-                    <FlexibleImageFill
-                      src={item.image}
-                      alt={item.name}
-                      className="izk-image-fill object-cover"
-                      sizes="(max-width: 768px) 100vw, 360px"
-                    />
-                    {item.isSample ? (
-                      <SampleLabel className="demo-sample-label--image" />
-                    ) : null}
-                  </figure>
+            <article className="izk-today-card">
+              {item.image ? (
+                <FadeIn className="izk-today-photo">
+                  <FlexibleImageFill
+                    src={item.image}
+                    alt={item.name}
+                    className={`izk-image-fill object-cover ${izkPhotoFocusClass(guessIzkPhotoFocus(item.name))}`}
+                    sizes="(max-width: 700px) 100vw, 40vw"
+                  />
+                  <div className="izk-photo-grade" aria-hidden />
+                  {item.isSample ? (
+                    <SampleLabel className="demo-sample-label--image" />
+                  ) : null}
+                </FadeIn>
+              ) : null}
+              <div className="izk-today-body">
+                <h3 className="izk-today-name">{item.name}</h3>
+                {item.price ? (
+                  <p className="izk-today-price izk-price">{item.price}</p>
                 ) : null}
-                <div className="izk-specials-open-body">
-                  <h3 className="izk-specials-open-name">{item.name}</h3>
-                  {item.price ? (
-                    <p className="izk-specials-open-price">{item.price}</p>
-                  ) : null}
-                  {item.description ? (
-                    <p className="izk-specials-open-desc">{item.description}</p>
-                  ) : null}
-                  {item.isSample ? <SampleLabel /> : null}
-                </div>
-              </article>
-            </FadeIn>
+                {item.description ? (
+                  <p className="izk-today-desc">{item.description}</p>
+                ) : null}
+                {item.isSample ? <SampleLabel /> : null}
+              </div>
+            </article>
           </StaggerItem>
         ))}
       </StaggerContainer>

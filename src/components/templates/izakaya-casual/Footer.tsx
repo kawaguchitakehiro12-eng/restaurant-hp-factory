@@ -1,12 +1,10 @@
 import type { IzakayaCasualStore } from "@/types/izakaya-casual";
 
-const footerLinks = [
+const navItems = [
   { label: "名物", href: "#specialty" },
-  { label: "おすすめ", href: "#specials" },
   { label: "メニュー", href: "#menu" },
   { label: "宴会", href: "#banquet" },
   { label: "店内", href: "#space" },
-  { label: "ギャラリー", href: "#gallery" },
   { label: "アクセス", href: "#access" },
 ];
 
@@ -19,6 +17,7 @@ export function Footer({ store }: FooterProps) {
     <footer className="izk-footer">
       <div className="izk-footer-inner">
         <div>
+          <p className="izk-footer-tag">また来てね。</p>
           <p className="izk-footer-name">{store.name}</p>
           {store.nameEn ? (
             <p className="izk-footer-name-en">{store.nameEn}</p>
@@ -26,9 +25,9 @@ export function Footer({ store }: FooterProps) {
         </div>
 
         <nav className="izk-footer-nav" aria-label="フッターナビゲーション">
-          {footerLinks.map((link) => (
-            <a key={link.href} href={link.href}>
-              {link.label}
+          {navItems.map((item) => (
+            <a key={item.href} href={item.href}>
+              {item.label}
             </a>
           ))}
         </nav>

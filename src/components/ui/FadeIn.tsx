@@ -13,10 +13,10 @@ type FadeInProps = {
 };
 
 const directionOffset = {
-  up: { y: 20 },
-  down: { y: -20 },
-  left: { x: 20 },
-  right: { x: -20 },
+  up: { y: 12 },
+  down: { y: -12 },
+  left: { x: 12 },
+  right: { x: -12 },
   none: {},
 };
 
@@ -25,11 +25,16 @@ export function FadeIn({
   className = "",
   delay = 0,
   direction = "up",
-  duration = 0.7,
+  duration = 0.85,
   once = true,
 }: FadeInProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once, margin: "-60px" });
+  // 上端に張り付いた見出しが opacity:0 のまま残らないよう、上方向は縮めない
+  const isInView = useInView(ref, {
+    once,
+    margin: "0px 0px -10% 0px",
+    amount: 0.12,
+  });
 
   const variants: Variants = {
     hidden: { opacity: 0, ...directionOffset[direction] },
@@ -37,7 +42,7 @@ export function FadeIn({
       opacity: 1,
       x: 0,
       y: 0,
-      transition: { duration, delay, ease: [0.25, 0.1, 0.25, 1] },
+      transition: { duration, delay, ease: [0.22, 0.12, 0.25, 1] },
     },
   };
 
@@ -64,7 +69,11 @@ export function StaggerContainer({
   staggerDelay?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-40px" });
+  const isInView = useInView(ref, {
+    once: true,
+    margin: "0px 0px -10% 0px",
+    amount: 0.08,
+  });
 
   return (
     <motion.div
@@ -92,11 +101,11 @@ export function StaggerItem({
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 16 },
+        hidden: { opacity: 0, y: 10 },
         visible: {
           opacity: 1,
           y: 0,
-          transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] },
+          transition: { duration: 0.7, ease: [0.22, 0.12, 0.25, 1] },
         },
       }}
       className={className}

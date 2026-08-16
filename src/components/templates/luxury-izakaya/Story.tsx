@@ -9,8 +9,13 @@ type StoryProps = {
 
 export function Story({ store }: StoryProps) {
   return (
-    <LuxurySection id="story" narrow>
-      <LuxurySectionHeading label="Story" title={`${store.name}のはじまり`} />
+    <LuxurySection id="story" narrow className="luxury-section--washi">
+      <LuxurySectionHeading
+        label="Story"
+        title="灯りのそばで紡ぐ物語"
+        subtitle={`${store.name}のはじまり`}
+        align="left"
+      />
 
       <StaggerContainer className="luxury-story-list">
         {store.story.map((paragraph) => (

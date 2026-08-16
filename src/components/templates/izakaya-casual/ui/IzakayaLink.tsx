@@ -49,7 +49,32 @@ export function IzakayaLink({
     );
   }
 
-  // lantern / wood kept for compatibility but map to restrained ink style
+  if (variant === "lantern") {
+    return (
+      <Link
+        href={href}
+        onClick={onClick}
+        className={`izk-link izk-link--lantern ${className}`}
+        {...externalProps}
+      >
+        {label}
+      </Link>
+    );
+  }
+
+  if (variant === "wood") {
+    return (
+      <Link
+        href={href}
+        onClick={onClick}
+        className={`izk-link izk-link--wood ${className}`}
+        {...externalProps}
+      >
+        {label}
+      </Link>
+    );
+  }
+
   return (
     <Link
       href={href}

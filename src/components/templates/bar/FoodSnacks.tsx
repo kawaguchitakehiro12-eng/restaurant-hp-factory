@@ -1,5 +1,4 @@
 import { FadeIn } from "@/components/ui/FadeIn";
-import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
 import { SampleLabel } from "@/components/demo/SampleLabel";
 import { BarSection } from "@/components/templates/bar/ui/BarSection";
 import { BarSectionHeading } from "@/components/templates/bar/ui/BarSectionHeading";
@@ -9,66 +8,53 @@ type FoodSnacksProps = {
   foodSnacks: BarMenuItem[];
 };
 
-function FoodList({ items }: { items: BarMenuItem[] }) {
-  return (
-    <div className="bar-food-list">
-      {items.map((item) => (
-        <article key={item.name} className="bar-food-item">
-          <div className="bar-food-item-header">
-            <div>
-              {item.nameEn ? (
-                <span className="bar-food-item-name-en">{item.nameEn}</span>
-              ) : null}
-              <h3 className="bar-food-item-name">{item.name}</h3>
-            </div>
-            <span className="bar-food-item-price">{item.price}</span>
-          </div>
-          {item.description ? (
-            <p className="bar-food-item-desc">{item.description}</p>
-          ) : null}
-          {item.isSample ? <SampleLabel /> : null}
-        </article>
-      ))}
-    </div>
-  );
-}
-
 export function FoodSnacks({ foodSnacks }: FoodSnacksProps) {
   if (foodSnacks.length === 0) return null;
 
-  const photoItem = foodSnacks.find((item) => item.image);
-  const hasPhoto = Boolean(photoItem);
-
   return (
-    <BarSection id="food">
-      <BarSectionHeading
-        label="Food"
-        title="フード & スナック"
-        subtitle="グラスと共に楽しむ、軽やかな一皿"
-      />
+    <BarSection id="food" tone="smoke" wide>
+      <div className="bar-food-layout">
+        <div className="bar-food-main">
+          <BarSectionHeading
+            label="LATE BITES"
+            title="フード"
+            subtitle="グラスと共に楽しむ、夜の一皿"
+            largeEn="Food"
+            align="left"
+          />
 
-      <div
-        className={`bar-food-block ${hasPhoto ? "" : "bar-food-block--list-only"}`}
-      >
-        {hasPhoto && photoItem ? (
-          <FadeIn direction="left">
-            <figure className="bar-food-photo">
-              <FlexibleImageFill
-                src={photoItem.image}
-                alt={photoItem.name}
-                className="bar-image-fill object-cover"
-                sizes="(max-width: 768px) 100vw, 45vw"
-              />
-              {photoItem.isSample ? (
-                <SampleLabel className="demo-sample-label--image" />
-              ) : null}
-            </figure>
+          <FadeIn className="bar-food-menu">
+            {foodSnacks.map((item) => (
+              <article key={item.name} className="bar-food-row">
+                <div className="bar-food-leader">
+                  <div className="bar-food-names">
+                    {item.nameEn ? (
+                      <span className="bar-food-name-en">{item.nameEn}</span>
+                    ) : null}
+                    <h3 className="bar-food-name">{item.name}</h3>
+                  </div>
+                  <span className="bar-food-dots" aria-hidden />
+                  <span className="bar-food-price">{item.price}</span>
+                </div>
+                {item.description ? (
+                  <p className="bar-food-desc">{item.description}</p>
+                ) : null}
+                {item.isSample ? <SampleLabel /> : null}
+              </article>
+            ))}
           </FadeIn>
-        ) : null}
+        </div>
 
-        <FadeIn direction={hasPhoto ? "right" : "up"} delay={0.08}>
-          <FoodList items={foodSnacks} />
-        </FadeIn>
+        <aside className="bar-food-aside" aria-hidden>
+          <p className="bar-food-aside-bg">BITES</p>
+          <p className="bar-food-aside-line">AFTER DARK</p>
+          <div className="bar-food-aside-rule" />
+          <p className="bar-food-aside-note">
+            Hotel-night menu.
+            <br />
+            Quiet plates.
+          </p>
+        </aside>
       </div>
     </BarSection>
   );

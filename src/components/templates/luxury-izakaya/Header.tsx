@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import type { StoreInfo } from "@/types/luxury-izakaya";
 
 const baseNavItems = [
-  { label: "紹介", href: "#about" },
-  { label: "こだわり", href: "#commitment" },
-  { label: "料理", href: "#recommendations" },
+  { label: "おもてなし", href: "#about" },
+  { label: "技", href: "#commitment" },
+  { label: "一皿", href: "#recommendations" },
   { label: "空間", href: "#gallery" },
-  { label: "情報", href: "#info" },
+  { label: "案内", href: "#info" },
 ];
 
 type HeaderProps = {

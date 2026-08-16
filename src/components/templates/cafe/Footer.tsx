@@ -1,11 +1,11 @@
 import type { CafeStore } from "@/types/cafe";
 
 const footerLinks = [
-  { label: "Concept", href: "#concept" },
+  { label: "Story", href: "#concept" },
   { label: "Menu", href: "#menu" },
   { label: "Gallery", href: "#gallery" },
-  { label: "News", href: "#news" },
-  { label: "Info", href: "#info" },
+  { label: "Journal", href: "#news" },
+  { label: "Visit", href: "#info" },
 ];
 
 type FooterProps = {
@@ -16,7 +16,11 @@ export function Footer({ store }: FooterProps) {
   return (
     <footer className="cafe-footer">
       <div className="cafe-footer-inner">
-        <div>
+        <p className="cafe-footer-kicker">See you soon</p>
+        <p className="cafe-footer-message">
+          またの午後を、ここで。
+        </p>
+        <div className="cafe-footer-brand">
           <p className="cafe-footer-name">{store.name}</p>
           <p className="cafe-footer-name-en">{store.nameEn}</p>
         </div>
@@ -29,7 +33,7 @@ export function Footer({ store }: FooterProps) {
           ))}
         </nav>
 
-        <p className="cafe-footer-copy">© 2026 {store.name}</p>
+        <p className="cafe-footer-copy">© {new Date().getFullYear()} {store.name}</p>
       </div>
     </footer>
   );

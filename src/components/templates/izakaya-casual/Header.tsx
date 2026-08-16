@@ -6,11 +6,9 @@ import type { IzakayaCasualStore } from "@/types/izakaya-casual";
 
 const navItems = [
   { label: "名物", href: "#specialty" },
-  { label: "おすすめ", href: "#specials" },
   { label: "メニュー", href: "#menu" },
   { label: "宴会", href: "#banquet" },
   { label: "店内", href: "#space" },
-  { label: "ギャラリー", href: "#gallery" },
   { label: "アクセス", href: "#access" },
 ];
 
@@ -23,7 +21,7 @@ export function Header({ store }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 48);
+    const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -37,9 +35,7 @@ export function Header({ store }: HeaderProps) {
 
   return (
     <>
-      <header
-        className={`izk-header ${scrolled ? "izk-header--scrolled" : ""}`}
-      >
+      <header className={`izk-header ${scrolled ? "izk-header--scrolled" : ""}`}>
         <div className="izk-header-inner">
           <a href="#" className="izk-header-logo">
             {store.name}
@@ -54,7 +50,7 @@ export function Header({ store }: HeaderProps) {
             <IzakayaLink
               href={store.reservationUrl}
               variant="header"
-              label="ご予約"
+              label="予約"
             />
           </nav>
 
@@ -71,7 +67,7 @@ export function Header({ store }: HeaderProps) {
       </header>
 
       <div
-        className={`izk-mobile-menu lg:hidden ${menuOpen ? "" : "izk-mobile-menu--closed"}`}
+        className={`izk-mobile-menu ${menuOpen ? "" : "izk-mobile-menu--closed"}`}
       >
         {navItems.map((item) => (
           <a
@@ -84,8 +80,8 @@ export function Header({ store }: HeaderProps) {
         ))}
         <IzakayaLink
           href={store.reservationUrl}
-          variant="ink"
-          label="ご予約"
+          variant="lantern"
+          label="席を予約する"
           onClick={() => setMenuOpen(false)}
         />
       </div>

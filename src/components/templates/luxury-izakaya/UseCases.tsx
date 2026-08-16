@@ -9,18 +9,18 @@ type UseCasesProps = {
 
 export function UseCases({ useCases }: UseCasesProps) {
   return (
-    <LuxurySection id="occasions" dark wide>
+    <LuxurySection id="occasions" wide className="luxury-section--mist">
       <LuxurySectionHeading
         label="Occasions"
-        title="ご利用シーン"
-        subtitle="接待・会食・記念日"
-        light
+        title="特別な夜のために"
+        subtitle="接待・会食・記念日 — 余白のある時間を"
+        align="left"
       />
 
-      <StaggerContainer className="mt-16 flex max-w-3xl flex-col gap-0 sm:mt-24">
+      <StaggerContainer className="luxury-occasion-list">
         {useCases.map((item) => (
           <StaggerItem key={item.label}>
-            <article className="luxury-occasion-item">
+            <article className="luxury-occasion-item luxury-occasion-item--light">
               <span className="luxury-occasion-label">{item.label}</span>
               <h3 className="luxury-occasion-title">{item.title}</h3>
               <p className="luxury-occasion-desc">{item.description}</p>
