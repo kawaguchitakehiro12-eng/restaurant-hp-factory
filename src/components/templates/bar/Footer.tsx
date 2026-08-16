@@ -1,13 +1,12 @@
 import type { BarStore } from "@/types/bar";
 
 const footerLinks = [
-  { label: "Concept", href: "#concept" },
+  { label: "Night", href: "#concept" },
   { label: "Drinks", href: "#drinks" },
   { label: "Food", href: "#food" },
   { label: "Space", href: "#space" },
-  { label: "Gallery", href: "#gallery" },
-  { label: "News", href: "#news" },
-  { label: "Access", href: "#access" },
+  { label: "Notes", href: "#news" },
+  { label: "Visit", href: "#access" },
 ];
 
 type FooterProps = {
@@ -18,10 +17,9 @@ export function Footer({ store }: FooterProps) {
   return (
     <footer className="bar-footer">
       <div className="bar-footer-inner">
-        <div>
-          <p className="bar-footer-name">{store.name}</p>
-          <p className="bar-footer-name-en">{store.nameEn}</p>
-        </div>
+        <p className="bar-footer-kicker">See you after dark</p>
+        <p className="bar-footer-name">{store.name}</p>
+        <p className="bar-footer-name-en">{store.nameEn}</p>
 
         <nav className="bar-footer-nav" aria-label="フッターナビゲーション">
           {footerLinks.map((link) => (
@@ -31,7 +29,9 @@ export function Footer({ store }: FooterProps) {
           ))}
         </nav>
 
-        <p className="bar-footer-copy">© 2026 {store.name}</p>
+        <p className="bar-footer-copy">
+          © {new Date().getFullYear()} {store.name}
+        </p>
       </div>
     </footer>
   );

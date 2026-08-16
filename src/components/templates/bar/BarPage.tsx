@@ -3,6 +3,7 @@ import { Concept } from "./Concept";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { Hero } from "./Hero";
+import { MobileCta } from "./MobileCta";
 import { News } from "./News";
 import { PhotoGallery } from "./PhotoGallery";
 import { SignatureDrinks } from "./SignatureDrinks";
@@ -48,12 +49,13 @@ export function BarPage({ data }: BarPageProps) {
         />
         <SignatureDrinks signatureDrinks={signatureDrinks} />
         <FoodSnacks foodSnacks={foodSnacks} />
-        <Space space={space} />
+        <Space space={space} detailImages={galleryImages} />
         <PhotoGallery galleryImages={galleryImages} />
         <News topics={topics} />
         <Access store={store} />
         <Footer store={store} />
       </main>
+      <MobileCta store={store} />
     </div>
   );
 }

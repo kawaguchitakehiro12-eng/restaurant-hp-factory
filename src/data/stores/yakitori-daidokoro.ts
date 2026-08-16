@@ -35,9 +35,9 @@ export const yakitoriDaidokoroStore: StoreRecord = {
       name: "秘伝つくね",
       nameEn: "Signature Tsukune",
       price: "¥180",
-      description: "甘辛だれが染みた、大道名物のつくね",
+      description: "創業以来継ぎ足した甘辛だれで。",
       imageUrl:
-        "https://images.unsplash.com/photo-1529692236671-f1f6bc6683d4?w=1200&q=90&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1200&q=90&auto=format&fit=crop",
       badge: "名物",
     },
     {
@@ -112,7 +112,7 @@ export const yakitoriDaidokoroStore: StoreRecord = {
       price: "¥450",
       description: "自家製レモンがたっぷり",
       imageUrl:
-        "https://images.unsplash.com/photo-1551024709-8f239be4e341?w=1200&q=90&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1608270586620-248524c67de9?w=1200&q=90&auto=format&fit=crop",
     },
   ],
 
@@ -162,7 +162,7 @@ export const yakitoriDaidokoroStore: StoreRecord = {
       id: "photo-food",
       sortOrder: 3,
       role: "food",
-      url: "https://images.unsplash.com/photo-1529692236671-f1f6bc6683d4?w=1400&q=90&auto=format&fit=crop",
+      url: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1400&q=90&auto=format&fit=crop",
       alt: "炭火焼の串",
     },
     {
@@ -235,8 +235,11 @@ export const yakitoriDaidokoroStore: StoreRecord = {
       description:
         "カウンターで職人の技を眺めたり、テーブルでワイワイ囲んだり。木の温もりと提灯の灯りが、今日の疲れをほどいてくれます。",
       features: [
-        "カウンター12席・テーブル36席",
+        "カウンター12席",
+        "テーブル36席",
         "宴会最大40名対応",
+        "ひとり飲み歓迎",
+        "仕事帰りにどうぞ",
         "喫煙コーナーあり",
       ],
       photoId: "photo-interior",

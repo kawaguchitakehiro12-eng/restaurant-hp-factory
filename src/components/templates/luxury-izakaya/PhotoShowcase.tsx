@@ -48,24 +48,23 @@ export function PhotoShowcase({ photoShowcaseImages }: PhotoShowcaseProps) {
 
   return (
     <>
-      <LuxurySection id="photos" className="bg-brown-dark/40" wide bleed>
+      <LuxurySection id="photos" className="luxury-section--mist" wide bleed>
         <div className="mx-auto max-w-7xl px-6 sm:px-10 md:px-14 lg:px-20 xl:px-24">
           <LuxurySectionHeading
             label="Gallery"
-            title="写真"
-            subtitle="店舗の雰囲気"
-            light
+            title="記憶に残る景色"
+            subtitle="灯り・器・気配の断片"
           />
         </div>
 
-        <StaggerContainer className="luxury-mosaic luxury-mosaic--gallery mt-12 px-3 sm:mt-16 sm:px-5 md:px-8">
+        <StaggerContainer className="luxury-mosaic luxury-mosaic--gallery mt-8 px-2 sm:mt-10 sm:px-4 md:px-5 lg:mt-8 lg:px-6">
           {previewImages.map((image, index) => (
-            <StaggerItem key={image.src}>
-              <figure className={`luxury-mosaic-cell ${luxuryGalleryClass(index)}`}>
+            <StaggerItem key={image.src} className={luxuryGalleryClass(index)}>
+              <figure className="luxury-mosaic-cell atm-photo-frame">
                 <FlexibleImageFill
                   src={image.src}
                   alt={image.alt}
-                  className="luxury-image-fill"
+                  className="luxury-image-fill atm-photo"
                   sizes="(max-width: 768px) 50vw, 33vw"
                 />
                 {image.isSample ? (
@@ -77,7 +76,7 @@ export function PhotoShowcase({ photoShowcaseImages }: PhotoShowcaseProps) {
         </StaggerContainer>
 
         {hasMore ? (
-          <div className="mt-12 flex justify-center sm:mt-16">
+          <div className="mt-10 flex justify-center sm:mt-12 lg:mt-10">
             <button
               type="button"
               className="luxury-photo-grid-btn"

@@ -1,54 +1,63 @@
-import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
-import { FadeIn } from "@/components/ui/FadeIn";
-import { LuxurySection } from "./LuxurySection";
-import { LuxurySectionHeading } from "./LuxurySectionHeading";
-import type { LuxuryIzakayaData } from "@/types/luxury-izakaya";
-
-type AboutProps = {
-  store: LuxuryIzakayaData["store"];
-  aboutImage: string;
-};
-
-export function About({ store, aboutImage }: AboutProps) {
-  return (
-    <LuxurySection id="about" wide bleed>
-      <div className="mx-auto max-w-7xl px-6 sm:px-10 md:px-14 lg:px-20 xl:px-24">
-        <LuxurySectionHeading
-          label="About"
-          title="店舗紹介"
-          subtitle={store.tagline || undefined}
-        />
-      </div>
-
-      <div className="luxury-about-editorial mt-12 px-4 sm:mt-16 sm:px-6 md:px-10">
-        <FadeIn direction="left">
-          <div className="luxury-about-photo-main">
-            <FlexibleImageFill
-              src={aboutImage}
-              alt={`${store.name}の店内`}
-              className="luxury-image-fill"
-              sizes="(max-width: 768px) 100vw, 55vw"
-              priority
-            />
-          </div>
-        </FadeIn>
-
-        <FadeIn direction="right" delay={0.1} className="luxury-about-copy">
-          <p className="luxury-about-text">{store.concept}</p>
-
-          <div className="luxury-about-meta">
-            <div>
-              <p className="luxury-about-meta-label">Seats</p>
-              <p className="luxury-about-meta-value">{store.seats}</p>
-            </div>
-            <div>
-              <p className="luxury-about-meta-label">Access</p>
-              <p className="luxury-about-meta-value">{store.access}</p>
-            </div>
-          </div>
-        </FadeIn>
-      </div>
-    </LuxurySection>
-  );
-}
-
+import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
+import { FadeIn } from "@/components/ui/FadeIn";
+import { LuxurySection } from "./LuxurySection";
+import { LuxurySectionHeading } from "./LuxurySectionHeading";
+import type { LuxuryIzakayaData } from "@/types/luxury-izakaya";
+
+type AboutProps = {
+  store: LuxuryIzakayaData["store"];
+  aboutImage: string;
+};
+
+export function About({ store, aboutImage }: AboutProps) {
+  return (
+    <LuxurySection id="about" wide bleed>
+      <div className="mx-auto max-w-7xl px-6 sm:px-10 md:px-14 lg:px-20 xl:px-24">
+        <LuxurySectionHeading
+          label="Welcome"
+          title="一期一会のおもてなし"
+          subtitle={store.tagline || "静けさと灯りが織りなす、食の時間へ"}
+        />
+      </div>
+
+      <div className="luxury-about-editorial mt-14 px-4 sm:mt-20 sm:px-6 md:px-10">
+        <FadeIn direction="none">
+          <div className="luxury-about-photo-stack">
+            <div className="luxury-about-photo-main atm-photo-frame">
+              <FlexibleImageFill
+                src={aboutImage}
+                alt={`${store.name}の店内`}
+                className="luxury-image-fill atm-photo"
+                sizes="(max-width: 768px) 100vw, 55vw"
+                priority
+              />
+            </div>
+            <div className="luxury-about-photo-accent atm-photo-frame atm-photo-frame--soft" aria-hidden>
+              <FlexibleImageFill
+                src={aboutImage}
+                alt=""
+                className="luxury-image-fill atm-photo"
+                sizes="20vw"
+              />
+            </div>
+          </div>
+        </FadeIn>
+
+        <FadeIn direction="up" delay={0.12} className="luxury-about-copy">
+          <p className="luxury-about-text">{store.concept}</p>
+
+          <div className="luxury-about-meta">
+            <div>
+              <p className="luxury-about-meta-label">Seats</p>
+              <p className="luxury-about-meta-value">{store.seats}</p>
+            </div>
+            <div>
+              <p className="luxury-about-meta-label">Access</p>
+              <p className="luxury-about-meta-value">{store.access}</p>
+            </div>
+          </div>
+        </FadeIn>
+      </div>
+    </LuxurySection>
+  );
+}

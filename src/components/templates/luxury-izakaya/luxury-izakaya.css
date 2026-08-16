@@ -1,13 +1,33 @@
 /* ================================================================
-   Luxury Japanese Template — Full redesign
+   Luxury Japanese Template — Pamphlet-grade editorial redesign
+   Atmosphere tokens live in globals.css (.atm-*)
    ================================================================ */
 
 .luxury-template {
-  --luxury-section-py: clamp(5.5rem, 13vw, 11rem);
+  --luxury-section-py: var(--atm-section-py, clamp(6rem, 14vw, 12rem));
   --luxury-gold: #c4a962;
   --luxury-gold-soft: rgba(196, 169, 98, 0.45);
   --luxury-ink: #0a0908;
   --luxury-washi: #f5f0e8;
+  --luxury-body: 1rem;
+  --luxury-body-sm: 0.9375rem;
+  padding-bottom: 5.5rem;
+}
+
+@media (min-width: 1024px) {
+  .luxury-template {
+    padding-bottom: 0;
+  }
+}
+
+.luxury-template .bg-washi {
+  background:
+    linear-gradient(168deg, #f7f3eb 0%, #f1ebe1 46%, #efe7db 100%);
+}
+
+.luxury-template .bg-washi.atm-surface::before,
+.luxury-template .atm-surface.bg-washi::before {
+  opacity: 0.04;
 }
 
 /* ── Sections ── */
@@ -17,15 +37,36 @@
 }
 
 .luxury-template .luxury-section--dark {
-  background: var(--luxury-ink);
+  background: linear-gradient(172deg, #12100e 0%, #0a0908 50%, #15110d 100%);
   color: var(--luxury-washi);
+}
+
+.luxury-template .luxury-section--dark.atm-surface::before {
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+}
+
+.luxury-template .luxury-section--paper {
+  background: #faf7f2;
+}
+
+.luxury-template .luxury-section--washi {
+  background:
+    linear-gradient(168deg, #f4efe6 0%, #ece4d7 52%, #f2ebe1 100%);
+}
+
+.luxury-template .luxury-section--mist {
+  background:
+    linear-gradient(180deg, #f6f1e9 0%, #efe8dc 100%);
 }
 
 /* ── Section headings ── */
 .luxury-template .luxury-heading {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.75rem;
+  padding-block: clamp(1.5rem, 4vw, 3.5rem);
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
 }
 
 .luxury-template .luxury-heading--center {
@@ -40,24 +81,24 @@
 
 .luxury-template .luxury-heading-label {
   font-family: var(--font-cormorant), serif;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-style: italic;
-  letter-spacing: 0.45em;
+  letter-spacing: 0.42em;
   text-transform: uppercase;
-  color: rgba(196, 169, 98, 0.7);
+  color: rgba(196, 169, 98, 0.72);
 }
 
 .luxury-template .luxury-heading--light .luxury-heading-label {
-  color: rgba(196, 169, 98, 0.5);
+  color: rgba(196, 169, 98, 0.55);
 }
 
 .luxury-template .luxury-heading-title {
   font-family: var(--font-shippori), serif;
-  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  font-size: clamp(1.875rem, 5vw, 3rem);
   font-weight: 400;
-  letter-spacing: 0.28em;
-  line-height: 1.5;
-  color: var(--ink);
+  letter-spacing: 0.22em;
+  line-height: 1.55;
+  color: var(--luxury-ink, var(--ink));
 }
 
 .luxury-template .luxury-heading--light .luxury-heading-title {
@@ -65,11 +106,11 @@
 }
 
 .luxury-template .luxury-heading-subtitle {
-  max-width: 28rem;
-  font-size: 0.875rem;
-  line-height: 2.2;
-  letter-spacing: 0.12em;
-  color: rgba(107, 95, 82, 0.75);
+  max-width: 30rem;
+  font-size: var(--luxury-body-sm);
+  line-height: 2.1;
+  letter-spacing: 0.1em;
+  color: rgba(107, 95, 82, 0.78);
 }
 
 .luxury-template .luxury-heading--center .luxury-heading-subtitle {
@@ -77,30 +118,30 @@
 }
 
 .luxury-template .luxury-heading--light .luxury-heading-subtitle {
-  color: rgba(245, 240, 232, 0.42);
+  color: rgba(245, 240, 232, 0.48);
 }
 
 /* ── Hero ── */
 .luxury-template .hero-overlay {
   background: linear-gradient(
     180deg,
-    rgba(10, 9, 8, 0.15) 0%,
-    rgba(10, 9, 8, 0.08) 35%,
-    rgba(10, 9, 8, 0.35) 70%,
-    rgba(10, 9, 8, 0.72) 100%
+    rgba(10, 9, 8, 0.28) 0%,
+    rgba(10, 9, 8, 0.12) 35%,
+    rgba(10, 9, 8, 0.42) 68%,
+    rgba(10, 9, 8, 0.78) 100%
   );
 }
 
 .luxury-template .hero-vignette {
   background: radial-gradient(
-    ellipse 90% 80% at 50% 45%,
+    ellipse 90% 80% at 50% 40%,
     transparent 0%,
-    rgba(10, 9, 8, 0.35) 100%
+    rgba(10, 9, 8, 0.42) 100%
   );
 }
 
 .luxury-template .luxury-hero-image {
-  filter: brightness(0.95) contrast(1.04) saturate(0.95);
+  filter: brightness(0.82) contrast(1.16) saturate(0.76) sepia(0.12);
 }
 
 .luxury-template .luxury-hero-inner {
@@ -111,7 +152,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 6rem 1.5rem 4rem;
+  padding: 5.5rem 1.25rem 4.5rem;
   text-align: center;
 }
 
@@ -119,6 +160,13 @@
   .luxury-template .luxury-hero-inner {
     padding: 7rem 3rem 5rem;
   }
+}
+
+.luxury-template .luxury-hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 36rem;
 }
 
 .luxury-template .luxury-hero-vertical {
@@ -137,67 +185,91 @@
 
   .luxury-template .luxury-hero-vertical p {
     font-family: var(--font-shippori), serif;
-    font-size: 0.6875rem;
+    font-size: 0.75rem;
     font-weight: 400;
     line-height: 2.4;
     letter-spacing: 0.38em;
-    color: rgba(245, 240, 232, 0.38);
+    color: rgba(245, 240, 232, 0.42);
   }
 }
 
 .luxury-template .luxury-hero-name {
   font-family: var(--font-shippori), serif;
-  font-size: clamp(3rem, 11vw, 5rem);
+  font-size: clamp(2.5rem, 9vw, 4.75rem);
   font-weight: 400;
-  line-height: 1.08;
-  letter-spacing: 0.22em;
+  line-height: 1.12;
+  letter-spacing: 0.18em;
   color: rgba(245, 240, 232, 0.98);
 }
 
 @media (min-width: 768px) {
   .luxury-template .luxury-hero-name {
-    font-size: clamp(4.5rem, 9vw, 7.5rem);
-    letter-spacing: 0.24em;
+    font-size: clamp(4rem, 8.5vw, 6.5rem);
+    letter-spacing: 0.2em;
   }
 }
 
 .luxury-template .luxury-hero-name-en {
-  margin-top: 1.25rem;
+  margin-top: 1rem;
   font-family: var(--font-cormorant), serif;
-  font-size: clamp(0.75rem, 2vw, 0.9375rem);
+  font-size: clamp(0.8125rem, 2vw, 1rem);
   font-style: italic;
-  letter-spacing: 0.55em;
-  color: rgba(196, 169, 98, 0.55);
+  letter-spacing: 0.48em;
+  color: rgba(196, 169, 98, 0.62);
 }
 
-.luxury-template .luxury-hero-tagline {
-  margin-top: 2rem;
+.luxury-template .luxury-hero-story {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  margin-top: 1.75rem;
   max-width: 22rem;
-  font-family: var(--font-shippori), serif;
-  font-size: 0.8125rem;
-  line-height: 2.2;
-  letter-spacing: 0.28em;
-  color: rgba(245, 240, 232, 0.62);
 }
 
 @media (min-width: 768px) {
-  .luxury-template .luxury-hero-tagline {
-    margin-top: 2.5rem;
+  .luxury-template .luxury-hero-story {
+    margin-top: 2.15rem;
     max-width: 28rem;
-    font-size: 0.875rem;
+    gap: 1rem;
   }
+}
+
+.luxury-template .luxury-hero-catch {
+  font-family: var(--font-shippori), serif;
+  font-size: clamp(0.9375rem, 2.4vw, 1.125rem);
+  line-height: 1.9;
+  letter-spacing: 0.18em;
+  color: rgba(245, 240, 232, 0.92);
+}
+
+.luxury-template .luxury-hero-feature {
+  font-family: var(--font-shippori), serif;
+  font-size: clamp(0.8125rem, 2vw, 0.9375rem);
+  line-height: 1.85;
+  letter-spacing: 0.14em;
+  color: rgba(245, 240, 232, 0.68);
+}
+
+.luxury-template .luxury-hero-invite {
+  margin-top: 0.35rem;
+  font-family: var(--font-cormorant), serif;
+  font-size: clamp(0.8125rem, 2vw, 0.9375rem);
+  font-style: italic;
+  letter-spacing: 0.16em;
+  color: rgba(196, 169, 98, 0.78);
 }
 
 .luxury-template .luxury-hero-cta {
   display: inline-flex;
-  margin-top: 2.75rem;
+  margin-top: 2.25rem;
   padding: 1rem 2.75rem;
-  border: 1px solid rgba(196, 169, 98, 0.45);
+  border: 1px solid rgba(196, 169, 98, 0.5);
   font-family: var(--font-shippori), serif;
-  font-size: 0.75rem;
-  letter-spacing: 0.42em;
-  color: rgba(245, 240, 232, 0.92);
-  background: rgba(10, 9, 8, 0.25);
+  font-size: 0.8125rem;
+  letter-spacing: 0.38em;
+  color: rgba(245, 240, 232, 0.95);
+  background: rgba(10, 9, 8, 0.28);
   backdrop-filter: blur(8px);
   transition:
     background 0.35s ease,
@@ -205,8 +277,14 @@
     color 0.35s ease;
 }
 
+@media (min-width: 768px) {
+  .luxury-template .luxury-hero-cta {
+    margin-top: 2.75rem;
+  }
+}
+
 .luxury-template .luxury-hero-cta:hover {
-  border-color: rgba(196, 169, 98, 0.75);
+  border-color: rgba(196, 169, 98, 0.8);
   background: rgba(10, 9, 8, 0.5);
   color: #fff;
 }
@@ -230,16 +308,16 @@
 
 .luxury-template .luxury-hero-scroll span:first-child {
   font-family: var(--font-cormorant), serif;
-  font-size: 0.5625rem;
+  font-size: 0.625rem;
   font-style: italic;
   letter-spacing: 0.35em;
-  color: rgba(196, 169, 98, 0.4);
+  color: rgba(196, 169, 98, 0.45);
 }
 
 .luxury-template .luxury-hero-scroll span:last-child {
   width: 1px;
   height: 3rem;
-  background: linear-gradient(to bottom, rgba(196, 169, 98, 0.35), transparent);
+  background: linear-gradient(to bottom, rgba(196, 169, 98, 0.4), transparent);
 }
 
 /* ── Header ── */
@@ -273,9 +351,9 @@
 
 .luxury-template .luxury-header-logo {
   font-family: var(--font-shippori), serif;
-  font-size: 0.9375rem;
-  letter-spacing: 0.32em;
-  color: rgba(245, 240, 232, 0.9);
+  font-size: 1rem;
+  letter-spacing: 0.28em;
+  color: rgba(245, 240, 232, 0.92);
   opacity: 0;
   transition: opacity 0.4s ease;
 }
@@ -298,21 +376,21 @@
 
 .luxury-template .luxury-header-link {
   font-family: var(--font-shippori), serif;
-  font-size: 0.625rem;
-  letter-spacing: 0.28em;
-  color: rgba(245, 240, 232, 0.45);
+  font-size: 0.75rem;
+  letter-spacing: 0.24em;
+  color: rgba(245, 240, 232, 0.5);
   transition: color 0.25s ease;
 }
 
 .luxury-template .luxury-header-link:hover {
-  color: rgba(196, 169, 98, 0.85);
+  color: rgba(196, 169, 98, 0.9);
 }
 
 .luxury-template .luxury-header-reserve {
   font-family: var(--font-shippori), serif;
-  font-size: 0.625rem;
-  letter-spacing: 0.32em;
-  color: rgba(196, 169, 98, 0.75);
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  color: rgba(196, 169, 98, 0.8);
   opacity: 0;
   transition: opacity 0.4s ease;
 }
@@ -321,102 +399,273 @@
   opacity: 1;
 }
 
-/* ── About (photo-first, balanced) ── */
+/* ── About: stacked + clipped portrait ── */
 .luxury-template .luxury-about-editorial {
   display: grid;
-  gap: 2.5rem;
+  gap: 3rem;
   max-width: 84rem;
   margin-inline: auto;
 }
 
 @media (min-width: 768px) {
   .luxury-template .luxury-about-editorial {
-    grid-template-columns: minmax(0, 50%) minmax(0, 50%);
-    gap: clamp(2.5rem, 5vw, 4rem);
-    align-items: start;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: clamp(3rem, 6vw, 5.5rem);
+    align-items: center;
+  }
+}
+
+.luxury-template .luxury-about-photo-stack {
+  position: relative;
+  padding: 0 1rem 2rem 0;
+}
+
+@media (min-width: 768px) {
+  .luxury-template .luxury-about-photo-stack {
+    padding: 0 2rem 3rem 0;
   }
 }
 
 .luxury-template .luxury-about-photo-main {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 4 / 5;
-  min-height: 20rem;
+  aspect-ratio: 3 / 4;
+  min-height: 22rem;
+  clip-path: inset(0 0 0 0);
 }
 
 @media (min-width: 768px) {
   .luxury-template .luxury-about-photo-main {
+    min-height: 36rem;
+  }
+}
+
+.luxury-template .luxury-about-photo-accent {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .luxury-template .luxury-about-photo-accent {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: block;
+    width: 42%;
     aspect-ratio: 4 / 5;
-    min-height: 32rem;
+    overflow: hidden;
+    border: 1px solid rgba(245, 240, 232, 0.35);
+    box-shadow: none;
+    outline: 10px solid rgba(245, 240, 232, 0.92);
   }
 }
 
 .luxury-template .luxury-about-copy {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 2.75rem;
   padding: 0 0.5rem;
 }
 
 @media (min-width: 768px) {
   .luxury-template .luxury-about-copy {
-    padding-top: 2.5rem;
+    padding-top: 1rem;
   }
 }
 
 .luxury-template .luxury-about-text {
   font-family: var(--font-shippori), serif;
-  font-size: clamp(0.9375rem, 1.6vw, 1rem);
-  line-height: 2.55;
-  letter-spacing: 0.12em;
-  color: rgba(107, 95, 82, 0.88);
+  font-size: clamp(1rem, 1.8vw, 1.0625rem);
+  line-height: 2.35;
+  letter-spacing: 0.08em;
+  color: rgba(107, 95, 82, 0.9);
 }
 
 .luxury-template .luxury-about-meta {
   display: grid;
-  gap: 1.75rem;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(196, 169, 98, 0.12);
+  gap: 2rem;
+  padding-top: 2.25rem;
+  border-top: 1px solid rgba(196, 169, 98, 0.18);
 }
 
 .luxury-template .luxury-about-meta-label {
   font-family: var(--font-cormorant), serif;
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   font-style: italic;
-  letter-spacing: 0.35em;
-  color: rgba(196, 169, 98, 0.6);
+  letter-spacing: 0.32em;
+  color: rgba(196, 169, 98, 0.65);
 }
 
 .luxury-template .luxury-about-meta-value {
-  margin-top: 0.5rem;
+  margin-top: 0.6rem;
   font-family: var(--font-shippori), serif;
-  font-size: 0.8125rem;
-  line-height: 2;
-  letter-spacing: 0.2em;
-  color: rgba(107, 95, 82, 0.75);
+  font-size: 0.9375rem;
+  line-height: 1.9;
+  letter-spacing: 0.14em;
+  color: rgba(107, 95, 82, 0.82);
 }
 
 /* ── Unified photo mosaic ── */
 .luxury-template .luxury-mosaic {
   display: grid;
-  gap: 0.625rem;
-  max-width: 90rem;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: none;
   margin-inline: auto;
 }
 
 @media (min-width: 768px) {
   .luxury-template .luxury-mosaic {
     grid-template-columns: repeat(12, 1fr);
-    grid-auto-rows: 9rem;
-    gap: 0.75rem;
+    grid-auto-flow: dense;
+    grid-auto-rows: 9.5rem;
+    gap: 0.875rem;
   }
 
   .luxury-template .luxury-mosaic--space {
-    grid-auto-rows: 10rem;
+    grid-auto-rows: minmax(10.5rem, 12vh);
   }
 
   .luxury-template .luxury-mosaic--gallery {
-    grid-auto-rows: 8.5rem;
+    grid-auto-rows: minmax(9rem, 11vh);
+  }
+
+  .luxury-template .luxury-mosaic--overlap {
+    gap: 0.5rem;
+  }
+
+  /* サイズクラスはグリッド直下の子（StaggerItem）に付与する */
+  .luxury-template .luxury-mosaic > .luxury-mosaic--hero {
+    grid-column: span 12;
+    grid-row: span 3;
+  }
+
+  .luxury-template .luxury-mosaic > .luxury-mosaic--xl {
+    grid-column: span 8;
+    grid-row: span 3;
+  }
+
+  .luxury-template .luxury-mosaic > .luxury-mosaic--lg {
+    grid-column: span 7;
+    grid-row: span 2;
+  }
+
+  .luxury-template .luxury-mosaic > .luxury-mosaic--md {
+    grid-column: span 5;
+    grid-row: span 2;
+  }
+
+  .luxury-template .luxury-mosaic > .luxury-mosaic--sm {
+    grid-column: span 4;
+    grid-row: span 2;
+  }
+
+  .luxury-template .luxury-mosaic > .luxury-mosaic--xs {
+    grid-column: span 3;
+    grid-row: span 2;
+  }
+
+  .luxury-template .luxury-mosaic > * {
+    min-height: 0;
+    height: 100%;
+  }
+
+  .luxury-template .luxury-mosaic--overlap > *:nth-child(2) {
+    transform: translateY(1.5rem);
+    z-index: 2;
+  }
+
+  .luxury-template .luxury-mosaic--overlap > *:nth-child(3) {
+    transform: translate(-0.5rem, 0.5rem);
+    z-index: 3;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* 空間：大判＋脇に寄せた構図 */
+  .luxury-template .luxury-mosaic--space > .luxury-mosaic--hero {
+    grid-column: 1 / span 12;
+    grid-row: span 3;
+  }
+
+  .luxury-template .luxury-mosaic--space > .luxury-mosaic--lg {
+    grid-column: span 7;
+    grid-row: span 3;
+  }
+
+  .luxury-template .luxury-mosaic--space > .luxury-mosaic--md {
+    grid-column: span 5;
+    grid-row: span 3;
+  }
+
+  .luxury-template .luxury-mosaic--space > .luxury-mosaic--xl {
+    grid-column: span 8;
+    grid-row: span 3;
+  }
+
+  .luxury-template .luxury-mosaic--space > .luxury-mosaic--sm {
+    grid-column: span 4;
+    grid-row: span 3;
+  }
+
+  /* ギャラリー：対角・大小混在で画面幅を使い切る */
+  .luxury-template .luxury-mosaic--gallery > *:nth-child(1) {
+    grid-column: 1 / span 8;
+    grid-row: span 3;
+  }
+
+  .luxury-template .luxury-mosaic--gallery > *:nth-child(2) {
+    grid-column: 9 / span 4;
+    grid-row: span 2;
+    transform: translateY(1.75rem);
+  }
+
+  .luxury-template .luxury-mosaic--gallery > *:nth-child(3) {
+    grid-column: 9 / span 4;
+    grid-row: span 2;
+  }
+
+  .luxury-template .luxury-mosaic--gallery > *:nth-child(4) {
+    grid-column: 1 / span 5;
+    grid-row: span 2;
+  }
+
+  .luxury-template .luxury-mosaic--gallery > *:nth-child(5) {
+    grid-column: 6 / span 7;
+    grid-row: span 2;
+  }
+
+  .luxury-template .luxury-mosaic--gallery > *:nth-child(6) {
+    grid-column: 1 / span 4;
+    grid-row: span 3;
+  }
+
+  .luxury-template .luxury-mosaic--gallery > *:nth-child(7) {
+    grid-column: 5 / span 4;
+    grid-row: span 2;
+    transform: translateY(1.25rem);
+  }
+
+  .luxury-template .luxury-mosaic--gallery > *:nth-child(8) {
+    grid-column: 9 / span 4;
+    grid-row: span 2;
+  }
+
+  .luxury-template .luxury-mosaic--gallery > *:nth-child(9) {
+    grid-column: 5 / span 8;
+    grid-row: span 2;
+  }
+
+  /* 枚数が少ないときの右空きを埋める */
+  .luxury-template .luxury-mosaic--gallery > *:nth-child(4):last-child {
+    grid-column: 1 / span 12;
+    grid-row: span 2;
+    transform: none;
+  }
+
+  .luxury-template .luxury-mosaic--gallery > *:nth-child(3):last-child {
+    grid-column: 9 / span 4;
+    grid-row: span 3;
+    transform: none;
   }
 }
 
@@ -424,78 +673,50 @@
   position: relative;
   overflow: hidden;
   margin: 0;
-  min-height: 13rem;
+  width: 100%;
+  height: 100%;
+  min-height: 14rem;
 }
 
 @media (min-width: 768px) {
   .luxury-template .luxury-mosaic-cell {
     min-height: 100%;
   }
-
-  .luxury-template .luxury-mosaic--hero {
-    grid-column: span 12;
-    grid-row: span 3;
-  }
-
-  .luxury-template .luxury-mosaic--xl {
-    grid-column: span 8;
-    grid-row: span 3;
-  }
-
-  .luxury-template .luxury-mosaic--lg {
-    grid-column: span 7;
-    grid-row: span 2;
-  }
-
-  .luxury-template .luxury-mosaic--md {
-    grid-column: span 5;
-    grid-row: span 2;
-  }
-
-  .luxury-template .luxury-mosaic--sm {
-    grid-column: span 4;
-    grid-row: span 2;
-  }
-
-  .luxury-template .luxury-mosaic--xs {
-    grid-column: span 3;
-    grid-row: span 1;
-  }
 }
 
 .luxury-template .luxury-space-lead {
-  max-width: 32rem;
-  margin: 1.5rem auto 0;
+  max-width: 34rem;
+  margin: 1.25rem auto 0;
   text-align: center;
   font-family: var(--font-shippori), serif;
-  font-size: 0.8125rem;
-  line-height: 2.4;
-  letter-spacing: 0.14em;
-  color: rgba(107, 95, 82, 0.65);
+  font-size: 0.9375rem;
+  line-height: 2.2;
+  letter-spacing: 0.1em;
+  color: rgba(107, 95, 82, 0.72);
 }
 
-/* ── Commitment (editorial — text-led) ── */
+/* ── Commitment: alternating full-bleed / portrait clip ── */
 .luxury-template .luxury-commitment-list {
   display: flex;
   flex-direction: column;
-  gap: clamp(4rem, 9vw, 7rem);
-  margin-top: clamp(3rem, 6vw, 4.5rem);
+  gap: clamp(5rem, 11vw, 8.5rem);
+  margin-top: clamp(3.5rem, 7vw, 5.5rem);
 }
 
 .luxury-template .luxury-commitment-row {
   display: grid;
-  gap: 2rem;
-  align-items: start;
+  gap: 2.25rem;
+  align-items: center;
 }
 
 @media (min-width: 768px) {
   .luxury-template .luxury-commitment-row {
-    grid-template-columns: minmax(0, 40%) minmax(0, 60%);
-    gap: clamp(2.5rem, 5vw, 4rem);
+    grid-template-columns: minmax(0, 42%) minmax(0, 58%);
+    gap: clamp(2.75rem, 5vw, 4.5rem);
   }
 
   .luxury-template .luxury-commitment-row--reverse {
-    grid-template-columns: minmax(0, 60%) minmax(0, 40%);
+    grid-template-columns: minmax(0, 58%) minmax(0, 42%);
   }
 
   .luxury-template .luxury-commitment-row--reverse .luxury-commitment-photo {
@@ -507,6 +728,27 @@
     text-align: right;
     align-items: flex-end;
   }
+
+  .luxury-template .luxury-commitment-row--banner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .luxury-template .luxury-commitment-row--banner .luxury-commitment-photo {
+    order: 0;
+    max-width: none;
+    aspect-ratio: 21 / 9;
+    max-height: none;
+    min-height: 18rem;
+  }
+
+  .luxury-template .luxury-commitment-row--banner .luxury-commitment-text {
+    order: 1;
+    text-align: center;
+    align-items: center;
+    max-width: 40rem;
+    margin-inline: auto;
+  }
 }
 
 .luxury-template .luxury-commitment-photo {
@@ -514,14 +756,26 @@
   overflow: hidden;
   margin: 0;
   width: 100%;
-  max-width: 100%;
-  aspect-ratio: 3 / 2;
-  max-height: 13.75rem;
+  aspect-ratio: 4 / 5;
+  max-height: none;
+}
+
+.luxury-template .luxury-commitment-photo--landscape {
+  aspect-ratio: 16 / 10;
+}
+
+.luxury-template .luxury-commitment-photo--portrait {
+  aspect-ratio: 3 / 4;
+  clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%);
 }
 
 @media (min-width: 768px) {
   .luxury-template .luxury-commitment-photo {
-    max-height: 16.25rem;
+    max-height: 28rem;
+  }
+
+  .luxury-template .luxury-commitment-photo--landscape {
+    max-height: 20rem;
   }
 }
 
@@ -532,76 +786,72 @@
   padding: 0.25rem 0;
 }
 
-@media (min-width: 768px) {
-  .luxury-template .luxury-commitment-text {
-    padding-top: 0.5rem;
-  }
-}
-
 .luxury-template .luxury-commitment-num {
   font-family: var(--font-cormorant), serif;
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   font-style: italic;
   letter-spacing: 0.38em;
-  color: rgba(196, 169, 98, 0.3);
+  color: rgba(196, 169, 98, 0.4);
 }
 
 .luxury-template .luxury-commitment-title {
   font-family: var(--font-shippori), serif;
-  font-size: clamp(1.1875rem, 2vw, 1.5rem);
-  letter-spacing: 0.22em;
-  line-height: 1.8;
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  letter-spacing: 0.18em;
+  line-height: 1.7;
   color: rgba(245, 240, 232, 0.96);
 }
 
 .luxury-template .luxury-commitment-desc {
   max-width: 36rem;
   font-family: var(--font-shippori), serif;
-  font-size: 0.9375rem;
-  line-height: 2.35;
-  letter-spacing: 0.06em;
-  color: rgba(245, 240, 232, 0.58);
+  font-size: 1rem;
+  line-height: 2.2;
+  letter-spacing: 0.05em;
+  color: rgba(245, 240, 232, 0.62);
 }
 
 .luxury-template .luxury-commitment-row--reverse .luxury-commitment-desc {
   margin-left: auto;
 }
 
-/* ── Dish showcase ── */
+/* ── Dish showcase — photo-led experience ── */
 .luxury-template .luxury-dish-showcase {
   display: flex;
   flex-direction: column;
-  gap: clamp(4rem, 8vw, 6.5rem);
+  gap: clamp(4.5rem, 10vw, 8.5rem);
+  margin-top: clamp(1rem, 3vw, 2rem);
 }
 
 .luxury-template .luxury-dish-feature {
-  display: grid;
-  gap: 2rem;
-  align-items: center;
-  max-width: 80rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 92rem;
+  margin-inline: auto;
+  width: 100%;
+}
+
+.luxury-template .luxury-dish-feature--hero {
+  gap: 1.75rem;
+}
+
+.luxury-template .luxury-dish-feature--portrait {
+  max-width: 42rem;
   margin-inline: auto;
   padding-inline: 1rem;
 }
 
-@media (min-width: 768px) {
-  .luxury-template .luxury-dish-feature {
-    grid-template-columns: minmax(0, 50%) minmax(0, 50%);
-    gap: clamp(2.5rem, 5vw, 4.5rem);
-    padding-inline: clamp(1rem, 4vw, 3rem);
+@media (min-width: 900px) {
+  .luxury-template .luxury-dish-feature--portrait {
+    max-width: 36rem;
+    margin-left: clamp(2rem, 12vw, 10rem);
+    margin-right: auto;
   }
 
-  .luxury-template .luxury-dish-feature--reverse {
-    grid-template-columns: minmax(0, 50%) minmax(0, 50%);
-  }
-
-  .luxury-template .luxury-dish-feature--reverse .luxury-dish-photo {
-    order: 2;
-  }
-
-  .luxury-template .luxury-dish-feature--reverse .luxury-dish-copy {
-    order: 1;
-    text-align: right;
-    align-items: flex-end;
+  .luxury-template .luxury-dish-feature--wide {
+    max-width: 70rem;
+    padding-inline: clamp(1rem, 5vw, 4rem);
   }
 }
 
@@ -609,207 +859,235 @@
   position: relative;
   overflow: hidden;
   margin: 0;
+  width: 100%;
 }
 
-.luxury-template .luxury-dish-photo--hero {
-  aspect-ratio: 4 / 3;
-  min-height: 15rem;
+.luxury-template .luxury-dish-photo--xl {
+  aspect-ratio: 16 / 10;
+  min-height: clamp(18rem, 58vw, 36rem);
 }
 
-.luxury-template .luxury-dish-photo--landscape {
-  aspect-ratio: 5 / 4;
-  min-height: 14rem;
-}
-
-.luxury-template .luxury-dish-photo--portrait {
+.luxury-template .luxury-dish-photo--tall {
   aspect-ratio: 3 / 4;
-  min-height: 15rem;
+  min-height: clamp(22rem, 70vw, 40rem);
 }
 
-@media (min-width: 768px) {
-  .luxury-template .luxury-dish-photo--hero {
-    min-height: 24rem;
-  }
-
-  .luxury-template .luxury-dish-photo--landscape {
-    min-height: 19rem;
-  }
-
-  .luxury-template .luxury-dish-photo--portrait {
-    min-height: 22rem;
-  }
+.luxury-template .luxury-dish-photo--wide {
+  aspect-ratio: 2.1 / 1;
+  min-height: clamp(14rem, 40vw, 26rem);
 }
 
 .luxury-template .luxury-dish-copy {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 0.5rem 0;
+  gap: 0.85rem;
+  padding: 0.25rem 1.25rem 0;
+}
+
+@media (min-width: 768px) {
+  .luxury-template .luxury-dish-feature--hero .luxury-dish-copy {
+    max-width: 40rem;
+    margin-inline: auto;
+    text-align: center;
+    padding-inline: 1.5rem;
+  }
+
+  .luxury-template .luxury-dish-feature--hero .luxury-dish-leader {
+    justify-content: center;
+  }
+}
+
+.luxury-template .luxury-dish-leader {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  width: 100%;
 }
 
 .luxury-template .luxury-dish-name {
+  flex: 0 1 auto;
   font-family: var(--font-shippori), serif;
-  font-size: clamp(1.5rem, 3.2vw, 2.125rem);
-  letter-spacing: 0.22em;
-  line-height: 1.55;
+  font-size: clamp(1.25rem, 2.8vw, 1.75rem);
+  letter-spacing: 0.16em;
+  line-height: 1.5;
   color: var(--ink);
+  white-space: normal;
+}
+
+@media (min-width: 640px) {
+  .luxury-template .luxury-dish-name {
+    white-space: nowrap;
+  }
+}
+
+.luxury-template .luxury-dish-leader-dots {
+  flex: 1 1 auto;
+  min-width: 2rem;
+  height: 0;
+  margin-bottom: 0.35em;
+  border-bottom: 1px dotted rgba(107, 95, 82, 0.35);
 }
 
 .luxury-template .luxury-dish-price {
+  flex: 0 0 auto;
   font-family: var(--font-cormorant), serif;
-  font-size: 0.875rem;
+  font-size: clamp(1rem, 2vw, 1.125rem);
   font-style: italic;
-  letter-spacing: 0.12em;
-  color: rgba(196, 169, 98, 0.55);
+  letter-spacing: 0.08em;
+  color: rgba(196, 169, 98, 0.8);
+  white-space: nowrap;
 }
 
 .luxury-template .luxury-dish-desc {
-  max-width: 26rem;
+  max-width: 32rem;
   font-size: 0.875rem;
-  line-height: 2.15;
-  letter-spacing: 0.05em;
-  color: rgba(107, 95, 82, 0.72);
+  line-height: 1.9;
+  letter-spacing: 0.04em;
+  color: rgba(107, 95, 82, 0.7);
 }
 
-/* ── Course cards ── */
-.luxury-template .luxury-course-cards {
+.luxury-template .luxury-dish-feature--hero .luxury-dish-desc {
+  margin-inline: auto;
+}
+
+/* ── Course menu — ryotei ledger ── */
+.luxury-template .luxury-course-menu {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0;
+  margin-top: clamp(1rem, 3vw, 2rem);
+  max-width: 40rem;
+  margin-inline: auto;
+  border-top: 1px solid rgba(196, 169, 98, 0.18);
 }
 
-.luxury-template .luxury-course-card {
-  display: grid;
-  overflow: hidden;
-  border: 1px solid rgba(245, 240, 232, 0.08);
-  background: rgba(255, 255, 255, 0.02);
+.luxury-template .luxury-course-row {
+  padding: 1.85rem 0;
+  border-bottom: 1px solid rgba(196, 169, 98, 0.14);
 }
 
-@media (min-width: 768px) {
-  .luxury-template .luxury-course-card {
-    grid-template-columns: minmax(0, 42%) minmax(0, 58%);
-    min-height: 14rem;
-  }
-
-  .luxury-template .luxury-course-card--featured {
-    grid-template-columns: minmax(0, 50%) minmax(0, 50%);
-    min-height: 18rem;
-  }
+.luxury-template .luxury-course-row--featured {
+  padding-block: 2.35rem;
 }
 
-.luxury-template .luxury-course-card-photo {
-  position: relative;
-  margin: 0;
-  min-height: 12rem;
-}
-
-@media (min-width: 768px) {
-  .luxury-template .luxury-course-card-photo {
-    min-height: 100%;
-  }
-}
-
-.luxury-template .luxury-course-card-photo-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, transparent 40%, rgba(10, 9, 8, 0.35));
-  pointer-events: none;
-}
-
-.luxury-template .luxury-course-card-body {
+.luxury-template .luxury-course-leader {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: baseline;
   gap: 0.75rem;
-  padding: 1.75rem 1.5rem;
 }
 
-@media (min-width: 768px) {
-  .luxury-template .luxury-course-card-body {
-    padding: 2rem 2.5rem;
-  }
+.luxury-template .luxury-course-leader-main {
+  flex: 0 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
 }
 
-.luxury-template .luxury-course-card-badge {
+.luxury-template .luxury-course-badge {
   font-family: var(--font-cormorant), serif;
-  font-size: 0.625rem;
-  font-style: italic;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  color: rgba(196, 169, 98, 0.55);
-}
-
-.luxury-template .luxury-course-card-name {
-  font-family: var(--font-shippori), serif;
-  font-size: clamp(1.125rem, 2vw, 1.375rem);
-  letter-spacing: 0.26em;
-  color: rgba(245, 240, 232, 0.92);
-}
-
-.luxury-template .luxury-course-card-note {
   font-size: 0.6875rem;
-  letter-spacing: 0.2em;
-  color: rgba(245, 240, 232, 0.32);
-}
-
-.luxury-template .luxury-course-card-price {
-  margin-top: 0.25rem;
-  font-family: var(--font-cormorant), serif;
-  font-size: 1.0625rem;
   font-style: italic;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
   color: rgba(196, 169, 98, 0.65);
 }
 
-/* ── Topics ── */
-.luxury-template .luxury-topics-grid {
-  display: grid;
-  gap: 1.25rem;
-  margin-top: clamp(3rem, 6vw, 4.5rem);
+.luxury-template .luxury-course-name {
+  font-family: var(--font-shippori), serif;
+  font-size: clamp(1.125rem, 2.2vw, 1.375rem);
+  letter-spacing: 0.2em;
+  color: rgba(10, 9, 8, 0.84);
+  white-space: normal;
 }
 
-@media (min-width: 768px) {
-  .luxury-template .luxury-topics-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+@media (min-width: 640px) {
+  .luxury-template .luxury-course-name {
+    white-space: nowrap;
   }
 }
 
-.luxury-template .luxury-topic-card {
+.luxury-template .luxury-course-dots {
+  flex: 1 1 auto;
+  min-width: 2rem;
+  height: 0;
+  margin-bottom: 0.35em;
+  border-bottom: 1px dotted rgba(107, 95, 82, 0.32);
+}
+
+.luxury-template .luxury-course-price {
+  flex: 0 0 auto;
+  font-family: var(--font-cormorant), serif;
+  font-size: clamp(1.0625rem, 2vw, 1.25rem);
+  font-style: italic;
+  letter-spacing: 0.06em;
+  color: rgba(196, 169, 98, 0.78);
+  white-space: nowrap;
+}
+
+.luxury-template .luxury-course-note {
+  margin-top: 0.65rem;
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+  color: rgba(107, 95, 82, 0.55);
+}
+
+/* legacy course cards kept for modal/safety — unused */
+.luxury-template .luxury-course-cards {
+  display: none;
+}
+
+/* ── Topics: list, not cards ── */
+.luxury-template .luxury-topics-grid {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  padding: 2rem 1.75rem;
-  border: 1px solid rgba(196, 169, 98, 0.12);
-  background: rgba(255, 255, 255, 0.35);
-  min-height: 10rem;
+  gap: 0;
+  margin-top: clamp(3.5rem, 7vw, 5rem);
+  border-top: 1px solid rgba(196, 169, 98, 0.16);
+}
+
+.luxury-template .luxury-topic-card {
+  display: grid;
+  gap: 0.75rem 2rem;
+  padding: 2rem 0;
+  border: 0;
+  border-bottom: 1px solid rgba(196, 169, 98, 0.14);
+  background: transparent;
+  min-height: 0;
+}
+
+@media (min-width: 640px) {
+  .luxury-template .luxury-topic-card {
+    grid-template-columns: 7rem 1fr;
+    align-items: baseline;
+    padding: 2.25rem 0;
+  }
 }
 
 .luxury-template .luxury-topic-date {
   font-family: var(--font-cormorant), serif;
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   font-style: italic;
-  letter-spacing: 0.12em;
-  color: rgba(196, 169, 98, 0.65);
+  letter-spacing: 0.1em;
+  color: rgba(196, 169, 98, 0.7);
 }
 
 .luxury-template .luxury-topic-title {
   font-family: var(--font-shippori), serif;
-  font-size: 0.9375rem;
-  line-height: 2;
-  letter-spacing: 0.12em;
-  color: rgba(10, 9, 8, 0.72);
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  letter-spacing: 0.1em;
+  color: rgba(10, 9, 8, 0.78);
 }
 
 /* ── Map ── */
 .luxury-template .luxury-map-section {
-  padding-top: clamp(4rem, 8vw, 6rem);
-  padding-bottom: clamp(4rem, 8vw, 6rem);
-  background: var(--luxury-ink);
+  padding-top: clamp(5rem, 10vw, 7.5rem);
+  padding-bottom: clamp(5rem, 10vw, 7.5rem);
+  background: linear-gradient(172deg, #12100e 0%, #0a0908 100%);
 }
 
 .luxury-template .luxury-map-header {
-  margin-bottom: 2.5rem;
+  margin-bottom: 2.75rem;
   text-align: center;
 }
 
@@ -822,15 +1100,64 @@
 .luxury-template .luxury-map-frame iframe {
   width: 100%;
   height: 100%;
-  opacity: 0.82;
-  filter: grayscale(35%) contrast(1.05) sepia(8%);
+  opacity: 0.8;
+  filter: grayscale(40%) contrast(1.08) sepia(10%) brightness(0.92);
 }
 
 /* ── Footer ── */
 .luxury-template .luxury-footer {
-  padding: clamp(4rem, 8vw, 6rem) 0 clamp(2.5rem, 5vw, 3.5rem);
+  padding: clamp(4.5rem, 9vw, 7rem) 0 clamp(2.75rem, 5vw, 4rem);
   background: var(--luxury-ink);
-  border-top: 1px solid rgba(196, 169, 98, 0.12);
+  border-top: 1px solid rgba(196, 169, 98, 0.14);
+}
+
+.luxury-template .luxury-footer-closing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.15rem;
+  margin-bottom: clamp(3.5rem, 8vw, 5.5rem);
+  text-align: center;
+}
+
+.luxury-template .luxury-footer-closing-kicker {
+  font-family: var(--font-cormorant), serif;
+  font-size: 0.75rem;
+  font-style: italic;
+  letter-spacing: 0.4em;
+  color: rgba(196, 169, 98, 0.5);
+}
+
+.luxury-template .luxury-footer-closing-message {
+  max-width: 28rem;
+  font-family: var(--font-shippori), serif;
+  font-size: clamp(1.125rem, 2.8vw, 1.5rem);
+  line-height: 2;
+  letter-spacing: 0.18em;
+  color: rgba(245, 240, 232, 0.88);
+}
+
+.luxury-template .luxury-footer-closing-sub {
+  font-family: var(--font-shippori), serif;
+  font-size: 0.875rem;
+  letter-spacing: 0.14em;
+  color: rgba(245, 240, 232, 0.42);
+}
+
+.luxury-template .luxury-footer-closing-cta {
+  margin-top: 0.75rem;
+  padding: 0.95rem 2rem;
+  border: 1px solid rgba(196, 169, 98, 0.42);
+  font-family: var(--font-shippori), serif;
+  font-size: 0.8125rem;
+  letter-spacing: 0.32em;
+  color: rgba(196, 169, 98, 0.88);
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+
+.luxury-template .luxury-footer-closing-cta:hover {
+  border-color: rgba(196, 169, 98, 0.7);
+  color: rgba(196, 169, 98, 1);
 }
 
 .luxury-template .luxury-footer-grid {
@@ -847,199 +1174,221 @@
 
 .luxury-template .luxury-footer-brand {
   font-family: var(--font-shippori), serif;
-  font-size: 1.25rem;
-  letter-spacing: 0.32em;
-  color: rgba(245, 240, 232, 0.75);
+  font-size: 1.375rem;
+  letter-spacing: 0.28em;
+  color: rgba(245, 240, 232, 0.8);
 }
 
 .luxury-template .luxury-footer-brand-en {
   margin-top: 0.5rem;
   font-family: var(--font-cormorant), serif;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-style: italic;
-  letter-spacing: 0.45em;
-  color: rgba(196, 169, 98, 0.4);
+  letter-spacing: 0.42em;
+  color: rgba(196, 169, 98, 0.45);
 }
 
 .luxury-template .luxury-footer-heading {
   margin-bottom: 1.25rem;
   font-family: var(--font-cormorant), serif;
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   font-style: italic;
-  letter-spacing: 0.38em;
+  letter-spacing: 0.35em;
   text-transform: uppercase;
-  color: rgba(196, 169, 98, 0.5);
+  color: rgba(196, 169, 98, 0.55);
 }
 
 .luxury-template .luxury-footer-text {
   font-family: var(--font-shippori), serif;
-  font-size: 0.75rem;
-  line-height: 2.2;
-  letter-spacing: 0.1em;
-  color: rgba(245, 240, 232, 0.42);
+  font-size: 0.875rem;
+  line-height: 2.1;
+  letter-spacing: 0.08em;
+  color: rgba(245, 240, 232, 0.48);
 }
 
 .luxury-template .luxury-footer-link {
   font-family: var(--font-shippori), serif;
-  font-size: 0.6875rem;
-  letter-spacing: 0.18em;
-  color: rgba(245, 240, 232, 0.38);
+  font-size: 0.8125rem;
+  letter-spacing: 0.14em;
+  color: rgba(245, 240, 232, 0.42);
   transition: color 0.25s ease;
 }
 
 .luxury-template .luxury-footer-link:hover {
-  color: rgba(196, 169, 98, 0.75);
+  color: rgba(196, 169, 98, 0.8);
 }
 
 .luxury-template .luxury-footer-nav {
   display: flex;
   flex-direction: column;
-  gap: 0.625rem;
+  gap: 0.75rem;
   margin-top: 1.5rem;
 }
 
-.luxury-template .luxury-footer-reserve {
-  display: inline-block;
-  margin-top: 2rem;
-  padding: 0.75rem 1.75rem;
-  border: 1px solid rgba(196, 169, 98, 0.35);
-  font-family: var(--font-shippori), serif;
-  font-size: 0.6875rem;
-  letter-spacing: 0.35em;
-  color: rgba(196, 169, 98, 0.75);
-  transition: border-color 0.25s ease, color 0.25s ease;
+.luxury-template .luxury-footer-bottom {
+  margin-top: 3.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid rgba(196, 169, 98, 0.1);
+  text-align: center;
 }
 
-.luxury-template .luxury-footer-reserve:hover {
-  border-color: rgba(196, 169, 98, 0.6);
-  color: rgba(196, 169, 98, 0.95);
+.luxury-template .luxury-footer-copy {
+  font-family: var(--font-shippori), serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.28em;
+  color: rgba(245, 240, 232, 0.22);
 }
 
 /* ── Story / Use cases ── */
 .luxury-template .luxury-story-text {
   font-family: var(--font-shippori), serif;
-  font-size: clamp(0.9375rem, 1.6vw, 1rem);
-  line-height: 2.8;
-  letter-spacing: 0.12em;
-  color: rgba(107, 95, 82, 0.85);
+  font-size: clamp(1rem, 1.8vw, 1.0625rem);
+  line-height: 2.5;
+  letter-spacing: 0.1em;
+  color: rgba(107, 95, 82, 0.9);
 }
 
 .luxury-template .luxury-story-list {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
-  margin-top: clamp(4rem, 8vw, 6rem);
+  gap: 3rem;
+  margin-top: clamp(1rem, 3vw, 2rem);
   max-width: 40rem;
-  margin-inline: auto;
+  margin-inline: 0;
+}
+
+.luxury-template .luxury-occasion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: clamp(1rem, 3vw, 2rem);
+  max-width: 42rem;
 }
 
 .luxury-template .luxury-occasion-item {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  padding-bottom: 2.5rem;
-  border-bottom: 1px solid rgba(245, 240, 232, 0.06);
+  gap: 1.35rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(245, 240, 232, 0.1);
+}
+
+.luxury-template .luxury-occasion-item--light {
+  border-bottom-color: rgba(196, 169, 98, 0.16);
+  padding-block: 2.25rem;
 }
 
 .luxury-template .luxury-occasion-label {
   font-family: var(--font-cormorant), serif;
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   font-style: italic;
-  letter-spacing: 0.35em;
-  color: rgba(196, 169, 98, 0.5);
+  letter-spacing: 0.32em;
+  color: rgba(196, 169, 98, 0.55);
+}
+
+.luxury-template .luxury-occasion-item--light .luxury-occasion-label {
+  color: rgba(196, 169, 98, 0.7);
 }
 
 .luxury-template .luxury-occasion-title {
   font-family: var(--font-shippori), serif;
-  font-size: 1.125rem;
-  letter-spacing: 0.22em;
-  color: rgba(245, 240, 232, 0.9);
+  font-size: 1.25rem;
+  letter-spacing: 0.18em;
+  color: rgba(245, 240, 232, 0.92);
+}
+
+.luxury-template .luxury-occasion-item--light .luxury-occasion-title {
+  color: rgba(10, 9, 8, 0.84);
 }
 
 .luxury-template .luxury-occasion-desc {
   max-width: 32rem;
-  font-size: 0.8125rem;
-  line-height: 2.4;
-  letter-spacing: 0.08em;
-  color: rgba(245, 240, 232, 0.38);
+  font-size: 0.9375rem;
+  line-height: 2.2;
+  letter-spacing: 0.06em;
+  color: rgba(245, 240, 232, 0.48);
+}
+
+.luxury-template .luxury-occasion-item--light .luxury-occasion-desc {
+  color: rgba(107, 95, 82, 0.72);
 }
 
 /* ── Store info ── */
 .luxury-template .luxury-info-grid {
   display: grid;
   gap: 0;
-  margin-top: clamp(4rem, 8vw, 6rem);
+  margin-top: clamp(4.5rem, 9vw, 7rem);
 }
 
 .luxury-template .luxury-info-row {
   display: grid;
-  grid-template-columns: 5rem 1fr;
+  grid-template-columns: 5.5rem 1fr;
   gap: 1.5rem;
-  padding: 1.75rem 0;
-  border-bottom: 1px solid rgba(196, 169, 98, 0.1);
+  padding: 1.85rem 0;
+  border-bottom: 1px solid rgba(196, 169, 98, 0.14);
 }
 
 @media (min-width: 640px) {
   .luxury-template .luxury-info-row {
-    grid-template-columns: 7rem 1fr;
-    padding: 2rem 0;
+    grid-template-columns: 7.5rem 1fr;
+    padding: 2.15rem 0;
   }
 }
 
 .luxury-template .luxury-info-label {
   font-family: var(--font-shippori), serif;
-  font-size: 0.6875rem;
-  letter-spacing: 0.32em;
-  color: rgba(196, 169, 98, 0.55);
+  font-size: 0.8125rem;
+  letter-spacing: 0.28em;
+  color: rgba(196, 169, 98, 0.6);
 }
 
 .luxury-template .luxury-info-value {
   font-family: var(--font-shippori), serif;
-  font-size: 0.875rem;
-  line-height: 2;
-  letter-spacing: 0.08em;
-  color: rgba(10, 9, 8, 0.68);
+  font-size: 1rem;
+  line-height: 1.9;
+  letter-spacing: 0.06em;
+  color: rgba(10, 9, 8, 0.74);
 }
 
 .luxury-template .luxury-info-reserve {
   display: flex;
   justify-content: center;
-  margin-top: 3.5rem;
+  margin-top: 4rem;
   padding-top: 3.5rem;
-  border-top: 1px solid rgba(196, 169, 98, 0.1);
+  border-top: 1px solid rgba(196, 169, 98, 0.14);
 }
 
 .luxury-template .luxury-info-reserve-link {
   font-family: var(--font-shippori), serif;
-  font-size: 0.8125rem;
-  letter-spacing: 0.4em;
+  font-size: 0.9375rem;
+  letter-spacing: 0.34em;
   color: var(--ink);
   transition: color 0.25s ease;
 }
 
 .luxury-template .luxury-info-reserve-link:hover {
-  color: rgba(196, 169, 98, 0.85);
+  color: rgba(196, 169, 98, 0.9);
 }
 
-/* ── Photo modal (retained) ── */
+/* ── Photo modal ── */
 .luxury-template .luxury-photo-grid-btn {
   display: inline-flex;
   align-items: center;
   gap: 1rem;
-  padding: 0.875rem 2rem;
+  padding: 0.95rem 2.15rem;
   font-family: var(--font-shippori), serif;
-  font-size: 0.6875rem;
-  letter-spacing: 0.35em;
-  color: rgba(245, 240, 232, 0.75);
-  border: 1px solid rgba(196, 169, 98, 0.25);
+  font-size: 0.8125rem;
+  letter-spacing: 0.3em;
+  color: rgba(10, 9, 8, 0.65);
+  border: 1px solid rgba(196, 169, 98, 0.35);
   background: transparent;
   cursor: pointer;
   transition: color 0.3s ease, border-color 0.3s ease;
 }
 
 .luxury-template .luxury-photo-grid-btn:hover {
-  color: rgba(245, 240, 232, 0.95);
-  border-color: rgba(196, 169, 98, 0.5);
+  color: rgba(10, 9, 8, 0.9);
+  border-color: rgba(196, 169, 98, 0.6);
 }
 
 .luxury-template .luxury-photo-modal-backdrop {
@@ -1124,7 +1473,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.94) contrast(1.03) saturate(0.94);
+  filter: brightness(0.86) contrast(1.14) saturate(0.78) sepia(0.1);
 }
 
 /* ── Mobile menu ── */
@@ -1149,9 +1498,9 @@
 
 .luxury-template .luxury-mobile-menu-link {
   font-family: var(--font-shippori), serif;
-  font-size: 1.125rem;
-  letter-spacing: 0.35em;
-  color: rgba(245, 240, 232, 0.75);
+  font-size: 1.25rem;
+  letter-spacing: 0.3em;
+  color: rgba(245, 240, 232, 0.8);
 }
 
 .luxury-template .luxury-menu-btn {
@@ -1186,4 +1535,148 @@
 
 .luxury-template .luxury-menu-btn--open span:last-child {
   transform: translateY(-3px) rotate(-45deg);
+}
+
+/* ── Mobile CTA bar (phone / reserve / access) ── */
+.luxury-template .luxury-mobile-cta {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: 1fr 1.15fr 1fr;
+  border-top: 1px solid rgba(196, 169, 98, 0.22);
+  background: rgba(10, 9, 8, 0.94);
+  backdrop-filter: blur(14px);
+  transition: transform 0.45s ease;
+}
+
+@media (min-width: 1024px) {
+  .luxury-template .luxury-mobile-cta {
+    display: none;
+  }
+}
+
+.luxury-template .luxury-mobile-cta--hidden {
+  transform: translateY(100%);
+}
+
+.luxury-template .luxury-mobile-cta-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: 3.75rem;
+  padding: 0.65rem 0.5rem calc(0.65rem + env(safe-area-inset-bottom, 0px));
+  font-family: var(--font-shippori), serif;
+  font-size: 0.6875rem;
+  letter-spacing: 0.28em;
+  color: rgba(245, 240, 232, 0.62);
+  text-decoration: none;
+  border: 0;
+  background: transparent;
+  transition: color 0.25s ease;
+}
+
+.luxury-template .luxury-mobile-cta-link:hover,
+.luxury-template .luxury-mobile-cta-link:focus-visible {
+  color: rgba(196, 169, 98, 0.95);
+}
+
+.luxury-template .luxury-mobile-cta-link--primary {
+  color: rgba(196, 169, 98, 0.9);
+  border-inline: 1px solid rgba(196, 169, 98, 0.18);
+}
+
+.luxury-template .luxury-mobile-cta-kicker {
+  font-family: var(--font-cormorant), serif;
+  font-size: 0.5625rem;
+  font-style: italic;
+  letter-spacing: 0.28em;
+  color: rgba(196, 169, 98, 0.45);
+  text-transform: uppercase;
+}
+
+/* ================================================================
+   Phase 3 — PC density / scroll tempo
+   高級感は維持し、見出しだけの「空白時間」を短縮する
+   ================================================================ */
+@media (min-width: 1024px) {
+  /* 全体のセクション上下を約25%圧縮（12rem → 9rem 上限） */
+  .luxury-template {
+    --luxury-section-py: clamp(4.75rem, 9vw, 9rem);
+  }
+
+  /* 料理・献立・空間・写真：見出し周りの縦余白を約30%圧縮 */
+  .luxury-template #recommendations .luxury-heading,
+  .luxury-template #courses .luxury-heading,
+  .luxury-template #gallery .luxury-heading,
+  .luxury-template #photos .luxury-heading {
+    gap: 1.15rem;
+    padding-block: clamp(0.55rem, 1.4vw, 1.65rem);
+    margin-bottom: clamp(0.4rem, 1.2vw, 1.1rem);
+  }
+
+  /* ご来店のまえに：見出し→情報の距離だけ短縮（罫線レイアウトは維持） */
+  .luxury-template #info .luxury-heading {
+    gap: 1.25rem;
+    padding-block: clamp(0.75rem, 1.6vw, 1.85rem);
+    margin-bottom: 0.25rem;
+  }
+
+  .luxury-template #info .luxury-info-grid {
+    margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
+  }
+
+  /* 見出し直後にコンテンツが視界に入るよう距離を詰める */
+  .luxury-template #recommendations .luxury-dish-showcase {
+    margin-top: 0;
+    gap: clamp(3.25rem, 6.5vw, 6rem);
+  }
+
+  .luxury-template #courses .luxury-course-menu {
+    margin-top: 0.25rem;
+  }
+
+  .luxury-template #gallery .luxury-space-lead {
+    margin-top: 0.65rem;
+    margin-bottom: 0;
+  }
+
+  /* 料理・献立セクション自体の上下もやや強めに圧縮（約30%） */
+  .luxury-template #recommendations.luxury-section,
+  .luxury-template #courses.luxury-section,
+  .luxury-template #photos.luxury-section,
+  .luxury-template #gallery.luxury-section {
+    padding-top: clamp(4rem, 7.5vw, 7.5rem);
+    padding-bottom: clamp(4rem, 7.5vw, 7.5rem);
+  }
+
+  .luxury-template #info.luxury-section {
+    padding-top: clamp(4.5rem, 8vw, 8.25rem);
+    padding-bottom: clamp(4.5rem, 8vw, 8.25rem);
+  }
+
+  .luxury-template #topics .luxury-heading,
+  .luxury-template #occasions .luxury-heading {
+    padding-block: clamp(1rem, 2vw, 2.5rem);
+    margin-bottom: clamp(0.85rem, 2vw, 1.75rem);
+  }
+
+  .luxury-template #topics .luxury-topics-grid {
+    margin-top: 0.5rem;
+  }
+
+  .luxury-template #commitment .luxury-commitment-list {
+    margin-top: clamp(2.25rem, 4.5vw, 3.75rem);
+    gap: clamp(3.75rem, 8vw, 6.5rem);
+  }
+
+  /* About / Story は世界観導入なので圧縮は控えめ（約15%） */
+  .luxury-template #about.luxury-section,
+  .luxury-template #story.luxury-section {
+    padding-top: clamp(5.25rem, 10vw, 10.25rem);
+    padding-bottom: clamp(5.25rem, 10vw, 10.25rem);
+  }
 }

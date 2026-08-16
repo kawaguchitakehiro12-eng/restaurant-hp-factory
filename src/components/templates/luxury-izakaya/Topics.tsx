@@ -12,8 +12,13 @@ export function Topics({ topics }: TopicsProps) {
   const displayTopics = topics.slice(0, Math.max(3, topics.length));
 
   return (
-    <LuxurySection id="topics" wide>
-      <LuxurySectionHeading label="News" title="トピックス" />
+    <LuxurySection id="topics" wide className="luxury-section--paper">
+      <LuxurySectionHeading
+        label="News"
+        title="季節のご案内"
+        subtitle="今日の店から、静かな知らせを"
+        align="left"
+      />
 
       <div className="luxury-topics-grid">
         {displayTopics.map((topic, index) => (

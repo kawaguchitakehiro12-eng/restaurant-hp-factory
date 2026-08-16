@@ -4,6 +4,7 @@ import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { Hero } from "./Hero";
 import { MenuBoard } from "./MenuBoard";
+import { MobileCta } from "./MobileCta";
 import { News } from "./News";
 import { PhotoGallery } from "./PhotoGallery";
 import { Space } from "./Space";
@@ -39,19 +40,25 @@ export function IzakayaCasualPage({ data }: IzakayaCasualPageProps) {
           heroImageIsSample: data.heroImageIsSample,
           heroImageFit: data.heroImageFit,
           heroObjectPosition: data.heroObjectPosition,
+          specialtyDishes,
+          menuItems,
         }}
       />
       <main>
         <SpecialtyDishes specialtyDishes={specialtyDishes} />
-        <Space space={space} />
         <TodaysSpecials todaysSpecials={todaysSpecials} />
         <MenuBoard menuItems={menuItems} />
-        <BanquetCourses courses={courses} />
+        <BanquetCourses
+          courses={courses}
+          reservationUrl={store.reservationUrl}
+        />
+        <Space space={space} galleryImages={galleryImages} />
         <PhotoGallery galleryImages={galleryImages} />
         <News topics={topics} />
         <Access store={store} />
         <Footer store={store} />
       </main>
+      <MobileCta store={store} />
     </div>
   );
 }

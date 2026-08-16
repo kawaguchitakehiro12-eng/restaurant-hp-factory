@@ -10,7 +10,8 @@ function isDrinkItem(item: BarMenuItem): boolean {
   const text = [item.name, item.nameEn, item.description]
     .filter(Boolean)
     .join(" ");
-  if (SNACK_PATTERN.test(text) && !DRINK_PATTERN.test(text)) return false;
+  // おつまみ語が含まれる場合はフード優先（説明に「カクテル」等が入っても誤分類しない）
+  if (SNACK_PATTERN.test(text)) return false;
   return DRINK_PATTERN.test(text);
 }
 
@@ -22,12 +23,12 @@ export function splitBarMenu(items: BarMenuItem[]): {
   const food = items.filter((item) => !isDrinkItem(item));
 
   const badgeDrinks = drinks.filter((item) => item.badge);
+  const restDrinks = drinks.filter((item) => !item.badge);
+  const ranked = [...badgeDrinks, ...restDrinks];
   const signatureDrinks =
-    badgeDrinks.length > 0
-      ? badgeDrinks
-      : drinks.length > 0
-        ? drinks.slice(0, Math.min(3, drinks.length))
-        : items.slice(0, Math.min(3, items.length));
+    ranked.length > 0
+      ? ranked.slice(0, Math.min(4, ranked.length))
+      : items.slice(0, Math.min(3, items.length));
 
   return { signatureDrinks, foodSnacks: food };
 }

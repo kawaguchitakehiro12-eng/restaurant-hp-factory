@@ -1,13 +1,14 @@
 import Link from "next/link";
+import { FadeIn } from "@/components/ui/FadeIn";
 import type { StoreInfo } from "@/types/luxury-izakaya";
 
 const footerNav = [
-  { label: "店舗紹介", href: "#about" },
-  { label: "こだわり", href: "#commitment" },
-  { label: "おすすめ料理", href: "#recommendations" },
-  { label: "店内・空間", href: "#gallery" },
-  { label: "店舗情報", href: "#info" },
-  { label: "アクセス", href: "#map" },
+  { label: "おもてなし", href: "#about" },
+  { label: "技", href: "#commitment" },
+  { label: "一皿", href: "#recommendations" },
+  { label: "空間", href: "#gallery" },
+  { label: "案内", href: "#info" },
+  { label: "道筋", href: "#map" },
 ];
 
 type FooterProps = {
@@ -20,13 +21,23 @@ export function Footer({ store }: FooterProps) {
   return (
     <footer className="luxury-footer">
       <div className="mx-auto max-w-6xl px-6 sm:px-10 md:px-14 lg:px-20 xl:px-24">
+        <FadeIn className="luxury-footer-closing">
+          <p className="luxury-footer-closing-kicker">Closing</p>
+          <p className="luxury-footer-closing-message">
+            季節のご来店を、心よりお待ちしております。
+          </p>
+          <p className="luxury-footer-closing-sub">
+            またのお越しを、静かな灯りとともに。
+          </p>
+          <Link href={store.reservationUrl} className="luxury-footer-closing-cta">
+            御予約のご案内
+          </Link>
+        </FadeIn>
+
         <div className="luxury-footer-grid">
           <div>
             <p className="luxury-footer-brand">{store.name}</p>
             <p className="luxury-footer-brand-en">{store.nameEn}</p>
-            <Link href={store.reservationUrl} className="luxury-footer-reserve">
-              御予約
-            </Link>
           </div>
 
           <div>
@@ -39,7 +50,7 @@ export function Footer({ store }: FooterProps) {
                 定休 {store.hours.closed}
               </p>
               <p>
-                <a href={phoneHref} className="luxury-footer-link hover:text-gold/60">
+                <a href={phoneHref} className="luxury-footer-link">
                   {store.phone}
                 </a>
               </p>
@@ -73,10 +84,8 @@ export function Footer({ store }: FooterProps) {
           </div>
         </div>
 
-        <div className="mt-16 border-t border-gold/8 pt-8 text-center">
-          <p className="font-mincho text-[10px] tracking-[0.3em] text-washi/20">
-            © 2026 {store.name}
-          </p>
+        <div className="luxury-footer-bottom">
+          <p className="luxury-footer-copy">© {new Date().getFullYear()} {store.name}</p>
         </div>
       </div>
     </footer>

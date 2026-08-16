@@ -18,11 +18,11 @@ const infoItems = (store: StoreInfo) => [
 
 export function StoreInfo({ store }: StoreInfoSectionProps) {
   return (
-    <LuxurySection id="info" narrow>
+    <LuxurySection id="info" narrow className="luxury-section--washi">
       <LuxurySectionHeading
         label="Information"
-        title="店舗情報"
-        subtitle={store.exclusivity}
+        title="ご来店のまえに"
+        subtitle={store.exclusivity || "営業時間・アクセスのしおり"}
       />
 
       <FadeIn className="luxury-info-grid">

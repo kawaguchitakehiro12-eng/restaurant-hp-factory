@@ -1,39 +1,41 @@
 import type { ReactNode } from "react";
 
+type IzakayaTone = "default" | "white" | "ink" | "red" | "smoke";
+
 type IzakayaSectionProps = {
   id?: string;
   children: ReactNode;
   className?: string;
+  /** full-bleed content (no inner max-width pad) */
+  bleed?: boolean;
+  /** slightly constrained reading width */
   narrow?: boolean;
-  wide?: boolean;
-  tone?: "default" | "warm" | "wood" | "enji" | "charcoal";
+  tone?: IzakayaTone;
 };
 
 export function IzakayaSection({
   id,
   children,
   className = "",
+  bleed = false,
   narrow = false,
-  wide = false,
   tone = "default",
 }: IzakayaSectionProps) {
-  const width = narrow ? "max-w-3xl" : wide ? "max-w-7xl" : "max-w-6xl";
-  const toneClass =
-    tone === "warm"
-      ? "izk-section--warm"
-      : tone === "wood"
-        ? "izk-section--wood"
-        : tone === "enji"
-          ? "izk-section--enji"
-          : tone === "charcoal"
-            ? "izk-section--charcoal"
-            : "";
+  const toneClass = tone !== "default" ? `izk-section--${tone}` : "";
+
+  if (bleed) {
+    return (
+      <section id={id} className={`izk-section izk-section--bleed ${toneClass} ${className}`}>
+        {children}
+      </section>
+    );
+  }
+
+  const width = narrow ? "izk-shell--narrow" : "izk-shell";
 
   return (
     <section id={id} className={`izk-section ${toneClass} ${className}`}>
-      <div className={`mx-auto ${width} px-5 sm:px-8 md:px-12 lg:px-16`}>
-        {children}
-      </div>
+      <div className={width}>{children}</div>
     </section>
   );
 }

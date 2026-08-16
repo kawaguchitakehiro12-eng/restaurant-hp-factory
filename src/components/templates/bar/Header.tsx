@@ -5,13 +5,13 @@ import { BarLink } from "@/components/templates/bar/ui/BarLink";
 import type { BarStore } from "@/types/bar";
 
 const navItems = [
-  { label: "Concept", href: "#concept" },
+  { label: "Night", href: "#concept" },
   { label: "Drinks", href: "#drinks" },
   { label: "Food", href: "#food" },
   { label: "Space", href: "#space" },
   { label: "Gallery", href: "#gallery" },
-  { label: "News", href: "#news" },
-  { label: "Access", href: "#access" },
+  { label: "Notes", href: "#news" },
+  { label: "Visit", href: "#access" },
 ];
 
 type HeaderProps = {

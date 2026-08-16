@@ -2,8 +2,19 @@
 
 export type LuxuryMosaicSize = "hero" | "xl" | "lg" | "md" | "sm" | "xs";
 
-const SPACE_PATTERN: LuxuryMosaicSize[] = ["hero", "lg", "sm", "md", "xl", "xs"];
-const GALLERY_PATTERN: LuxuryMosaicSize[] = ["hero", "sm", "md", "xs", "xl", "sm", "lg", "xs"];
+/* 各行の span 合計が 12 になる並び（PCで右が空洞にならない） */
+const SPACE_PATTERN: LuxuryMosaicSize[] = ["hero", "lg", "md", "xl", "sm", "md", "lg"];
+const GALLERY_PATTERN: LuxuryMosaicSize[] = [
+  "hero",
+  "md",
+  "lg",
+  "xl",
+  "sm",
+  "lg",
+  "md",
+  "sm",
+  "xl",
+];
 const COMMITMENT_PATTERN: LuxuryMosaicSize[] = ["xl", "md", "hero"];
 
 export function luxuryMosaicClass(
@@ -28,7 +39,9 @@ export function luxuryCommitmentPhotoClass(index: number): string {
 
 export function luxuryDishPhotoClass(index: number): string {
   if (index === 0) return "luxury-dish-photo--hero";
-  return index % 2 === 1 ? "luxury-dish-photo--portrait" : "luxury-dish-photo--landscape";
+  if (index === 1) return "luxury-dish-photo--portrait";
+  if (index % 3 === 2) return "luxury-dish-photo--landscape";
+  return index % 2 === 1 ? "luxury-dish-photo--portrait" : "luxury-dish-photo--hero";
 }
 
 export function luxuryCoursePhotoClass(index: number): string {

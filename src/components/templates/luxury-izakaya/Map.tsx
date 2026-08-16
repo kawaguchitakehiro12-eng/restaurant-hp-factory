@@ -14,8 +14,8 @@ export function Map({ store }: MapProps) {
             <p className="font-en text-[10px] italic tracking-[0.4em] text-gold/50">
               Access
             </p>
-            <h2 className="mt-3 font-mincho text-xl tracking-[0.28em] text-washi/85 sm:text-2xl">
-              アクセス
+            <h2 className="mt-3 font-mincho text-2xl tracking-[0.22em] text-washi/90 sm:text-3xl">
+              足音が近づく道筋
             </h2>
             <p className="mt-4 font-mincho text-sm tracking-[0.12em] text-washi/40">
               {store.access}

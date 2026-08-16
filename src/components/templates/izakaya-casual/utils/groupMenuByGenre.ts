@@ -6,10 +6,19 @@ export type IzakayaMenuGenre = {
 };
 
 const GENRE_RULES: { name: string; pattern: RegExp }[] = [
-  { name: "焼き鳥・串", pattern: /串|焼|つくね|ねぎ|レバ|もも|ささみ|やき|鳥/i },
+  {
+    name: "焼きもの",
+    pattern: /串|焼|つくね|ねぎ|レバ|もも|ささみ|やき|鳥|ぼんじり/i,
+  },
   { name: "刺身・海鮮", pattern: /刺|盛|魚|海|鮮/i },
-  { name: "ドリンク", pattern: /ビール|酒|サワー|ハイボール|日本酒|ワイン|焼酎|レモン|梅|ドリンク|生/i },
-  { name: "一品・逸品", pattern: /煮|サラダ|唐揚|揚|豆腐|卵|鍋|逸品|おつまみ/i },
+  {
+    name: "ドリンク",
+    pattern: /ビール|酒|サワー|ハイボール|日本酒|ワイン|焼酎|レモン|梅|ドリンク|生/i,
+  },
+  {
+    name: "酒の肴",
+    pattern: /煮|サラダ|唐揚|揚|豆腐|卵|鍋|逸品|おつまみ|枝豆|冷奴|奴/i,
+  },
 ];
 
 export function groupMenuByGenre(
@@ -32,7 +41,9 @@ export function groupMenuByGenre(
   const orderedNames = [
     ...GENRE_RULES.map((rule) => rule.name),
     fallback,
-  ].filter((name, index, arr) => buckets.has(name) && arr.indexOf(name) === index);
+  ].filter(
+    (name, index, arr) => buckets.has(name) && arr.indexOf(name) === index
+  );
 
   return orderedNames.map((name) => ({
     name,

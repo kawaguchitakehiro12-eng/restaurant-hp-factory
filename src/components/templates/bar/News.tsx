@@ -1,7 +1,6 @@
 import { FadeIn } from "@/components/ui/FadeIn";
 import { SampleLabel } from "@/components/demo/SampleLabel";
 import { BarSection } from "@/components/templates/bar/ui/BarSection";
-import { BarSectionHeading } from "@/components/templates/bar/ui/BarSectionHeading";
 import type { BarTopic } from "@/types/bar";
 
 type NewsProps = {
@@ -12,23 +11,27 @@ export function News({ topics }: NewsProps) {
   if (topics.length === 0) return null;
 
   return (
-    <BarSection id="news" narrow elevated>
-      <BarSectionHeading label="News" title="お知らせ" />
+    <BarSection id="news" tone="brown">
+      <FadeIn className="bar-news-head">
+        <p className="bar-news-kicker">NIGHT NOTES</p>
+        <h2 className="bar-news-heading">お知らせ</h2>
+        <div className="bar-news-rule" aria-hidden />
+      </FadeIn>
 
       <div className="bar-news-list">
         {topics.map((topic, index) => (
-          <FadeIn key={topic.title} delay={index * 0.06}>
+          <FadeIn key={`${topic.title}-${index}`} delay={index * 0.05}>
             <article className="bar-news-item">
-              <div className="bar-news-meta">
-                <time className="bar-news-date">{topic.date}</time>
-                {topic.category ? (
-                  <span className="bar-news-category">{topic.category}</span>
-                ) : null}
-              </div>
-              <div>
-                <h3 className="bar-news-title">{topic.title}</h3>
+              <time className="bar-news-date">{topic.date}</time>
+              {topic.category ? (
+                <span className="bar-news-category">{topic.category}</span>
+              ) : (
+                <span className="bar-news-category bar-news-category--empty" />
+              )}
+              <h3 className="bar-news-title">
+                {topic.title}
                 {topic.isSample ? <SampleLabel /> : null}
-              </div>
+              </h3>
             </article>
           </FadeIn>
         ))}

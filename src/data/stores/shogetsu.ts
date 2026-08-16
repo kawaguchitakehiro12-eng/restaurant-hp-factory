@@ -39,6 +39,7 @@ export const shogetsuStore: StoreRecord = {
       sortOrder: 1,
       name: "本日のお造り",
       price: "¥3,800",
+      description: "朝に届いた旬を、そのままの姿で。",
       imageUrl:
         "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=1200&q=92&auto=format&fit=crop",
     },
@@ -47,6 +48,7 @@ export const shogetsuStore: StoreRecord = {
       sortOrder: 2,
       name: "宵月の焼き鳥",
       price: "¥2,400",
+      description: "備長炭で、芯まで丁寧に。",
       imageUrl:
         "https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=92&auto=format&fit=crop",
     },
@@ -55,6 +57,7 @@ export const shogetsuStore: StoreRecord = {
       sortOrder: 3,
       name: "季節の煮物",
       price: "¥1,800",
+      description: "出汁の余韻が、静かに残る一皿。",
       imageUrl:
         "https://images.unsplash.com/photo-1547592166-23ac45744acd?w=1200&q=92&auto=format&fit=crop",
     },
