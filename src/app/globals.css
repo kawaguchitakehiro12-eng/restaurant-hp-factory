@@ -99,6 +99,92 @@ body::before {
   filter: brightness(0.9) contrast(1.04) saturate(0.92) sepia(0.06);
 }
 
+/* ================================================================
+   Atmosphere — shared design system for public templates
+   (Luxury / Bar / Cafe / Izakaya can opt in)
+   ================================================================ */
+
+:root {
+  --atm-noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --atm-section-py: clamp(6rem, 14vw, 12rem);
+  --atm-hairline: rgba(10, 9, 8, 0.1);
+  --atm-hairline-light: rgba(245, 240, 232, 0.12);
+}
+
+/* Subtle washi / fabric / stone texture — almost invisible */
+.atm-surface {
+  position: relative;
+  isolation: isolate;
+}
+
+.atm-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: var(--atm-noise);
+  background-size: 180px 180px;
+  mix-blend-mode: soft-light;
+}
+
+.atm-surface > * {
+  position: relative;
+  z-index: 1;
+}
+
+.atm-surface--warm {
+  background:
+    linear-gradient(165deg, rgba(245, 240, 232, 0.92) 0%, rgba(236, 228, 214, 0.96) 48%, rgba(242, 236, 226, 0.98) 100%);
+}
+
+.atm-surface--ink {
+  background:
+    linear-gradient(170deg, #100e0c 0%, #0a0908 42%, #14100c 100%);
+}
+
+/* Photo grading — lodge / pamphlet look (works on phone snaps) */
+.atm-photo {
+  filter:
+    brightness(0.86)
+    contrast(1.14)
+    saturate(0.78)
+    sepia(0.1);
+}
+
+.atm-photo-frame {
+  position: relative;
+  overflow: hidden;
+}
+
+.atm-photo-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(10, 9, 8, 0.12) 0%, transparent 32%, rgba(10, 9, 8, 0.28) 100%),
+    radial-gradient(ellipse at 50% 40%, transparent 35%, rgba(10, 9, 8, 0.32) 100%);
+  mix-blend-mode: multiply;
+}
+
+.atm-photo-frame--soft::after {
+  background:
+    linear-gradient(180deg, rgba(10, 9, 8, 0.06) 0%, transparent 40%, rgba(10, 9, 8, 0.2) 100%);
+}
+
+/* Hairline dividers instead of cards */
+.atm-rule {
+  border: 0;
+  border-top: 1px solid var(--atm-hairline);
+}
+
+.atm-rule--light {
+  border-top-color: var(--atm-hairline-light);
+}
+
 .hero-overlay {
   background: linear-gradient(
     to bottom,
