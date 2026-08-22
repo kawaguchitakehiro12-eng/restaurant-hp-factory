@@ -1,8 +1,8 @@
 import { FadeIn } from "@/components/ui/FadeIn";
-import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
 import { SampleLabel } from "@/components/demo/SampleLabel";
 import { IzakayaSection } from "@/components/templates/izakaya-casual/ui/IzakayaSection";
 import { IzakayaSectionHeading } from "@/components/templates/izakaya-casual/ui/IzakayaSectionHeading";
+import { IzakayaFillImage } from "@/components/templates/izakaya-casual/ui/IzakayaFillImage";
 import { groupMenuByGenre } from "@/components/templates/izakaya-casual/utils/groupMenuByGenre";
 import {
   guessIzkPhotoFocus,
@@ -40,12 +40,16 @@ export function MenuBoard({ menuItems }: MenuBoardProps) {
       {spotlight.length > 0 ? (
         <FadeIn className="izk-menu-spotlight">
           {spotlight.map((item) => (
-            <figure key={item.name} className="izk-menu-spot">
-              <FlexibleImageFill
+            <figure
+              key={item.name}
+              className="izk-menu-spot"
+              style={{ position: "relative", aspectRatio: "3 / 2" }}
+            >
+              <IzakayaFillImage
                 src={item.image!}
                 alt={item.name}
                 className={`izk-image-fill object-cover ${izkPhotoFocusClass(guessIzkPhotoFocus(item.name))}`}
-                sizes="(max-width: 768px) 45vw, 28vw"
+                sizes="(max-width: 768px) 45vw, 14rem"
               />
               <div className="izk-photo-grade" aria-hidden />
               <figcaption>

@@ -12,7 +12,8 @@
   --izk-smoke: #e8e8e6;
   --izk-ink: #121212;
   --izk-ink-soft: #2a2a2a;
-  --izk-muted: #5e5e5a;
+  --izk-charcoal: #2e2e2c;
+  --izk-muted: #3c3c39;
   --izk-red: #c41e2a;
   --izk-red-deep: #9a1520;
   --izk-red-hot: #e02a2a;
@@ -68,6 +69,26 @@
   filter: brightness(1.03) contrast(1.09) saturate(1.18);
 }
 
+/* fill 画像の絶対配置ホスト（IzakayaFillImage） */
+.izakaya-casual-template .izk-fill-abs {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+}
+
+/* fill 親フレームの共通保証 */
+.izakaya-casual-template .izk-hero-media,
+.izakaya-casual-template .izk-feat-photo,
+.izakaya-casual-template .izk-today-photo,
+.izakaya-casual-template .izk-menu-spot,
+.izakaya-casual-template .izk-space-scene-photo,
+.izakaya-casual-template .izk-moments-figure,
+.izakaya-casual-template .izk-frame {
+  position: relative;
+  overflow: hidden;
+}
+
 /* ── Photo frame system (intentional sizes, not random) ──
    HERO     … viewport / section fill (FV only)
    LARGE    … 3:2  — 名物・MENUスポット・MOMENTS大判
@@ -76,8 +97,6 @@
    SQUARE   … 1:1  — 本日のおすすめ
 */
 .izakaya-casual-template .izk-frame {
-  position: relative;
-  overflow: hidden;
   width: 100%;
   background: #1c1c1c;
 }
@@ -187,7 +206,8 @@
 
 .izakaya-casual-template .izk-heading-sub {
   margin-top: 0.45rem;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  font-weight: 500;
   line-height: 1.7;
   color: var(--izk-muted);
 }
@@ -201,7 +221,7 @@
 }
 
 .izakaya-casual-template .izk-heading--light .izk-heading-sub {
-  color: rgba(255, 248, 240, 0.7);
+  color: rgba(255, 248, 240, 0.84);
 }
 
 /* Links */
@@ -553,9 +573,15 @@
   color: var(--izk-ink);
 }
 
-/* ── Specialty ── */
+/* ── Specialty ──
+   名物3品をコンパクトに。写真 ≈ 現サイズの 75〜80%
+*/
+.izakaya-casual-template .izk-specialty.izk-section {
+  padding-block: clamp(1.5rem, 3vw, 2.35rem);
+}
+
 .izakaya-casual-template .izk-specialty-intro {
-  padding-bottom: 1.25rem;
+  padding-bottom: 0.4rem;
 }
 
 .izakaya-casual-template .izk-specialty-lead {
@@ -567,8 +593,9 @@
 }
 
 .izakaya-casual-template .izk-specialty-lead-sub {
-  margin-top: 0.4rem;
-  font-size: 0.95rem;
+  margin-top: 0.3rem;
+  font-size: 1rem;
+  font-weight: 500;
   color: var(--izk-muted);
 }
 
@@ -582,10 +609,10 @@
 }
 
 @media (min-width: 900px) {
-  /* Photo ~57% / copy ~43% — 写真が画面を支配しない */
+  /* 左右振りは維持しつつ、ブロック幅を一段小さく */
   .izakaya-casual-template .izk-feat--lead {
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-    width: min(100% - 3.5rem, 80rem);
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    width: min(100% - 3.5rem, 50rem);
     margin-inline: auto;
   }
 }
@@ -595,14 +622,23 @@
   overflow: hidden;
   width: 100%;
   aspect-ratio: 3 / 2;
+  max-height: 18.5rem;
   background: #1c1c1c;
+}
+
+@media (min-width: 900px) {
+  .izakaya-casual-template .izk-feat--lead .izk-feat-photo,
+  .izakaya-casual-template .izk-feat--split .izk-feat-photo {
+    max-height: 18.5rem;
+    width: 100%;
+  }
 }
 
 .izakaya-casual-template .izk-feat-copy {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: clamp(1.35rem, 3.5vw, 2.75rem);
+  padding: clamp(0.85rem, 2vw, 1.35rem) clamp(1rem, 2.4vw, 1.55rem);
   background: var(--izk-off);
 }
 
@@ -611,45 +647,49 @@
   font-weight: 700;
   letter-spacing: 0.2em;
   color: var(--izk-red);
-  margin-bottom: 0.55rem;
+  margin-bottom: 0.35rem;
 }
 
 .izakaya-casual-template .izk-feat-name {
   font-family: var(--font-izakaya-display);
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(1.7rem, 3.6vw, 2.55rem);
   font-weight: 700;
   letter-spacing: 0.06em;
   line-height: 1.15;
 }
 
 .izakaya-casual-template .izk-feat-price {
-  margin-top: 0.65rem;
-  font-size: clamp(2rem, 4vw, 3rem);
+  margin-top: 0.4rem;
+  font-size: clamp(1.7rem, 3.2vw, 2.3rem);
   line-height: 1;
 }
 
 .izakaya-casual-template .izk-feat-desc {
-  margin-top: 0.85rem;
+  margin-top: 0.5rem;
   max-width: 22rem;
-  font-size: 0.95rem;
-  line-height: 1.8;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.7;
   color: var(--izk-muted);
 }
 
 .izakaya-casual-template .izk-feat-stack {
   display: flex;
   flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
 }
 
 .izakaya-casual-template .izk-feat--overlay {
   position: relative;
   aspect-ratio: 3 / 2;
+  max-height: 13.75rem;
 }
 
 @media (min-width: 900px) {
   .izakaya-casual-template .izk-feat--overlay {
-    width: min(100% - 3.5rem, calc(24rem * 3 / 2));
-    max-height: 24rem;
+    width: min(100% - 3.5rem, calc(13.75rem * 3 / 2));
+    max-height: 13.75rem;
     margin-inline: auto;
   }
 }
@@ -659,6 +699,8 @@
   inset: 0;
   aspect-ratio: auto;
   height: 100%;
+  max-height: none;
+  width: 100%;
 }
 
 .izakaya-casual-template .izk-feat-overlay-copy {
@@ -669,10 +711,10 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: clamp(1.5rem, 4vw, 2.75rem);
+  padding: clamp(0.85rem, 2vw, 1.25rem);
   background: linear-gradient(
     180deg,
-    transparent 20%,
+    transparent 28%,
     rgba(20, 18, 16, 0.78) 100%
   );
   color: #fff;
@@ -687,7 +729,7 @@
 }
 
 .izakaya-casual-template .izk-feat-overlay-copy .izk-feat-desc {
-  color: rgba(255, 248, 240, 0.8);
+  color: rgba(255, 248, 240, 0.9);
 }
 
 .izakaya-casual-template .izk-feat--split {
@@ -697,13 +739,13 @@
 
 @media (min-width: 900px) {
   .izakaya-casual-template .izk-feat--split {
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-    width: min(100% - 3.5rem, 80rem);
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    width: min(100% - 3.5rem, 50rem);
     margin-inline: auto;
   }
 
   .izakaya-casual-template .izk-feat--rev {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
   }
 
   .izakaya-casual-template .izk-feat--rev .izk-feat-copy {
@@ -715,15 +757,19 @@
   .izakaya-casual-template .izk-feat-photo,
   .izakaya-casual-template .izk-feat--overlay {
     aspect-ratio: 3 / 2;
-    max-height: 14rem;
-    /* 比率維持のため、高さ上限に合わせて幅も抑える */
-    width: min(100%, calc(14rem * 3 / 2));
+    max-height: 10.5rem;
+    width: min(100%, calc(10.5rem * 3 / 2));
     margin-inline: auto;
   }
 
   .izakaya-casual-template .izk-feat--overlay {
-    width: min(100%, calc(14rem * 3 / 2));
-    max-height: 14rem;
+    width: min(100%, calc(10.5rem * 3 / 2));
+    max-height: 10.5rem;
+  }
+
+  .izakaya-casual-template .izk-feat-stack {
+    gap: 0.45rem;
+    margin-top: 0.45rem;
   }
 }
 
@@ -780,7 +826,8 @@
 
 .izakaya-casual-template .izk-today-desc {
   margin-top: 0.35rem;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
   line-height: 1.7;
   color: var(--izk-muted);
 }
@@ -1107,21 +1154,27 @@
 
 .izakaya-casual-template .izk-space-scene-line {
   margin-top: 0.3rem;
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
   line-height: 1.65;
-  color: rgba(255, 248, 240, 0.78);
+  color: rgba(255, 248, 240, 0.86);
 }
 
 .izakaya-casual-template .izk-space-caption {
   margin-top: 1.5rem;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  font-weight: 500;
   letter-spacing: 0.08em;
-  color: rgba(255, 248, 240, 0.5);
+  color: rgba(255, 248, 240, 0.72);
 }
 
-/* ── Moments: LARGE 1 on top + equal supporting row ── */
+/* ── Moments: 軽く流す編集グループ（名物と差別化） ── */
+.izakaya-casual-template .izk-moments.izk-section {
+  padding-block: clamp(1.75rem, 3.5vw, 2.75rem);
+}
+
 .izakaya-casual-template .izk-moments-head {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .izakaya-casual-template .izk-moments-kicker {
@@ -1135,24 +1188,24 @@
 .izakaya-casual-template .izk-moments-title {
   margin-top: 0.25rem;
   font-family: var(--font-izakaya-display);
-  font-size: clamp(1.35rem, 2.8vw, 1.75rem);
+  font-size: clamp(1.25rem, 2.5vw, 1.55rem);
   font-weight: 700;
   letter-spacing: 0.06em;
 }
 
 .izakaya-casual-template .izk-moments-strip {
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-  width: min(100% - 2rem, 64rem);
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: 0.4rem;
+  width: min(100% - 2rem, 42rem);
   margin-inline: auto;
   padding-inline: 0;
 }
 
 @media (min-width: 800px) {
   .izakaya-casual-template .izk-moments-strip {
-    gap: 0.65rem;
-    width: min(100% - 3.5rem, 68rem);
+    gap: 0.45rem;
+    width: min(100% - 3.5rem, 46rem);
   }
 }
 
@@ -1166,52 +1219,68 @@
   margin: 0;
   width: 100%;
   background: #1c1c1c;
+  /* 高さ0防止のデフォルト。wide / side で上書き */
+  aspect-ratio: 3 / 2;
+  min-height: 4rem;
 }
 
-/* LARGE — hero moment（ページの一部として収める） */
+/* メインも補助と同系サイズ — 「巨大料理写真」感を消す */
+.izakaya-casual-template .izk-moments-cell--wide {
+  grid-column: 1 / -1;
+}
+
 .izakaya-casual-template .izk-moments-cell--wide .izk-moments-figure {
-  aspect-ratio: 3 / 2;
-  max-height: 24rem;
-  width: min(100%, calc(24rem * 3 / 2));
+  aspect-ratio: 16 / 10;
+  max-height: 13.5rem;
+  width: 100%;
   margin-inline: auto;
 }
 
 @media (max-width: 639px) {
+  .izakaya-casual-template .izk-moments-strip {
+    grid-template-columns: 1fr;
+    width: min(100% - 1.5rem, 22rem);
+    gap: 0.35rem;
+  }
+
   .izakaya-casual-template .izk-moments-cell--wide .izk-moments-figure {
-    max-height: 12.5rem;
-    width: min(100%, calc(12.5rem * 3 / 2));
+    max-height: 9.5rem;
+    aspect-ratio: 16 / 10;
+  }
+
+  .izakaya-casual-template .izk-moments-side {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .izakaya-casual-template .izk-moments-side .izk-moments-figure {
-    max-height: 8.5rem;
-    width: min(100%, 8.5rem);
+    max-height: 7.5rem;
     aspect-ratio: 1 / 1;
-    margin-inline: auto;
   }
 
   .izakaya-casual-template
     .izk-moments-side
     .izk-moments-cell:last-child:nth-child(odd)
     .izk-moments-figure {
-    max-height: 12.5rem;
-    width: min(100%, calc(12.5rem * 3 / 2));
-    aspect-ratio: 3 / 2;
+    max-height: 7.5rem;
+    aspect-ratio: 16 / 10;
   }
 }
 
-/* Supporting — equal frames */
+/* Supporting — 通常グリッド（display:contents は高さ計算が不安定なため使わない） */
 .izakaya-casual-template .izk-moments-side {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.55rem;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: inherit;
 }
 
 .izakaya-casual-template .izk-moments-side .izk-moments-figure {
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 3 / 2;
+  max-height: 10.5rem;
 }
 
 .izakaya-casual-template .izk-moments-side .izk-moments-cell:last-child:nth-child(odd) {
-  grid-column: 1 / -1;
+  grid-column: auto;
 }
 
 .izakaya-casual-template
@@ -1219,16 +1288,13 @@
   .izk-moments-cell:last-child:nth-child(odd)
   .izk-moments-figure {
   aspect-ratio: 3 / 2;
+  max-height: 10.5rem;
 }
 
 @media (min-width: 700px) {
-  .izakaya-casual-template .izk-moments-side {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.65rem;
-  }
-
   .izakaya-casual-template .izk-moments-side .izk-moments-figure {
     aspect-ratio: 3 / 2;
+    max-height: 11rem;
   }
 
   .izakaya-casual-template .izk-moments-side .izk-moments-cell:last-child:nth-child(odd) {
@@ -1279,7 +1345,7 @@
   gap: 0.2rem;
   padding-block: 0.55rem;
   border-bottom: 1px solid var(--izk-line);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 @media (min-width: 600px) {
@@ -1298,7 +1364,9 @@
 
 .izakaya-casual-template .izk-news-text {
   letter-spacing: 0.02em;
-  line-height: 1.5;
+  line-height: 1.55;
+  font-weight: 500;
+  color: var(--izk-charcoal);
 }
 
 /* ── Access closing ── */
@@ -1350,7 +1418,8 @@
 
 .izakaya-casual-template .izk-access-address {
   margin-top: 0.55rem;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  font-weight: 500;
   line-height: 1.6;
   color: var(--izk-muted);
 }
@@ -1366,7 +1435,9 @@
   gap: 0.75rem;
   padding-block: 0.7rem;
   border-bottom: 1px solid var(--izk-line);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--izk-charcoal);
 }
 
 .izakaya-casual-template .izk-access-facts dt {
@@ -1504,3 +1575,4 @@
 .izakaya-casual-template .izk-mobile-cta-link--primary {
   background: var(--izk-red);
 }
+

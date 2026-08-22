@@ -1,7 +1,7 @@
 import { FadeIn } from "@/components/ui/FadeIn";
-import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
 import { SampleLabel } from "@/components/demo/SampleLabel";
 import { IzakayaSection } from "@/components/templates/izakaya-casual/ui/IzakayaSection";
+import { IzakayaFillImage } from "@/components/templates/izakaya-casual/ui/IzakayaFillImage";
 import {
   guessIzkPhotoFocus,
   izkPhotoFocusClass,
@@ -12,11 +12,12 @@ type PhotoGalleryProps = {
   galleryImages: IzakayaCasualGalleryImage[];
 };
 
-/** Compact photo strip — LARGE hero + supporting frames */
+/** Light moments group — compact frames, not specialty-scale */
 export function PhotoGallery({ galleryImages }: PhotoGalleryProps) {
   if (galleryImages.length === 0) return null;
 
-  const [hero, ...rest] = galleryImages;
+  const frames = galleryImages.slice(0, 4);
+  const [hero, ...rest] = frames;
 
   return (
     <IzakayaSection id="gallery" bleed tone="white" className="izk-moments">
@@ -29,12 +30,15 @@ export function PhotoGallery({ galleryImages }: PhotoGalleryProps) {
 
       <div className="izk-moments-strip">
         <FadeIn className="izk-moments-cell izk-moments-cell--wide">
-          <figure className="izk-moments-figure">
-            <FlexibleImageFill
+          <figure
+            className="izk-moments-figure"
+            style={{ position: "relative", aspectRatio: "16 / 10" }}
+          >
+            <IzakayaFillImage
               src={hero.src}
               alt={hero.alt}
               className={`izk-image-fill object-cover ${izkPhotoFocusClass(guessIzkPhotoFocus(hero.alt))}`}
-              sizes="(max-width: 800px) 100vw, 58vw"
+              sizes="(max-width: 800px) 90vw, 42rem"
             />
             <div className="izk-photo-grade" aria-hidden />
             {hero.isSample ? (
@@ -51,12 +55,15 @@ export function PhotoGallery({ galleryImages }: PhotoGalleryProps) {
                 delay={0.04 + index * 0.04}
                 className="izk-moments-cell"
               >
-                <figure className="izk-moments-figure">
-                  <FlexibleImageFill
+                <figure
+                  className="izk-moments-figure"
+                  style={{ position: "relative", aspectRatio: "3 / 2" }}
+                >
+                  <IzakayaFillImage
                     src={image.src}
                     alt={image.alt}
                     className={`izk-image-fill object-cover ${izkPhotoFocusClass(guessIzkPhotoFocus(image.alt))}`}
-                    sizes="(max-width: 800px) 50vw, 28vw"
+                    sizes="(max-width: 800px) 45vw, 14rem"
                   />
                   <div className="izk-photo-grade" aria-hidden />
                   {image.isSample ? (

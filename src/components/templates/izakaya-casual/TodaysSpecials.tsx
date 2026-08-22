@@ -1,8 +1,8 @@
-import { FadeIn, StaggerContainer, StaggerItem } from "@/components/ui/FadeIn";
-import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
+import { StaggerContainer, StaggerItem } from "@/components/ui/FadeIn";
 import { SampleLabel } from "@/components/demo/SampleLabel";
 import { IzakayaSection } from "@/components/templates/izakaya-casual/ui/IzakayaSection";
 import { IzakayaSectionHeading } from "@/components/templates/izakaya-casual/ui/IzakayaSectionHeading";
+import { IzakayaFillImage } from "@/components/templates/izakaya-casual/ui/IzakayaFillImage";
 import {
   guessIzkPhotoFocus,
   izkPhotoFocusClass,
@@ -29,18 +29,21 @@ export function TodaysSpecials({ todaysSpecials }: TodaysSpecialsProps) {
           <StaggerItem key={item.name}>
             <article className="izk-today-card">
               {item.image ? (
-                <FadeIn className="izk-today-photo">
-                  <FlexibleImageFill
+                <div
+                  className="izk-today-photo"
+                  style={{ position: "relative", aspectRatio: "1 / 1" }}
+                >
+                  <IzakayaFillImage
                     src={item.image}
                     alt={item.name}
                     className={`izk-image-fill object-cover ${izkPhotoFocusClass(guessIzkPhotoFocus(item.name))}`}
-                    sizes="(max-width: 700px) 100vw, 40vw"
+                    sizes="(max-width: 700px) 100vw, 10rem"
                   />
                   <div className="izk-photo-grade" aria-hidden />
                   {item.isSample ? (
                     <SampleLabel className="demo-sample-label--image" />
                   ) : null}
-                </FadeIn>
+                </div>
               ) : null}
               <div className="izk-today-body">
                 <h3 className="izk-today-name">{item.name}</h3>
