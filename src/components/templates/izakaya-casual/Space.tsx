@@ -1,8 +1,8 @@
 import { FadeIn } from "@/components/ui/FadeIn";
-import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
 import { SampleLabel } from "@/components/demo/SampleLabel";
 import { IzakayaSection } from "@/components/templates/izakaya-casual/ui/IzakayaSection";
 import { IzakayaSectionHeading } from "@/components/templates/izakaya-casual/ui/IzakayaSectionHeading";
+import { IzakayaFillImage } from "@/components/templates/izakaya-casual/ui/IzakayaFillImage";
 import {
   guessIzkPhotoFocus,
   izkPhotoFocusClass,
@@ -112,16 +112,19 @@ export function Space({ space, galleryImages = [] }: SpaceProps) {
       <div className="izk-space-scenes">
         {scenes.map((scene, i) => (
           <FadeIn key={scene.key} delay={i * 0.05} className="izk-space-scene">
-            <div className="izk-space-scene-photo">
+            <div
+              className="izk-space-scene-photo"
+              style={{ position: "relative", aspectRatio: "16 / 10" }}
+            >
               {scene.image ? (
                 <>
-                  <FlexibleImageFill
+                  <IzakayaFillImage
                     src={scene.image}
                     alt={scene.alt || scene.title}
                     className={`izk-image-fill object-cover ${izkPhotoFocusClass(
                       guessIzkPhotoFocus(`${scene.alt ?? ""} ${scene.title}`),
                     )}`}
-                    sizes="(max-width: 900px) 100vw, 33vw"
+                    sizes="(max-width: 900px) 100vw, 24rem"
                   />
                   <div className="izk-photo-grade" aria-hidden />
                   {scene.isSample ? (

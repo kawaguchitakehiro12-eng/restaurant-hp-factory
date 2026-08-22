@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
 import { SampleLabel } from "@/components/demo/SampleLabel";
 import { IzakayaLink } from "@/components/templates/izakaya-casual/ui/IzakayaLink";
+import { IzakayaFillImage } from "@/components/templates/izakaya-casual/ui/IzakayaFillImage";
 import type {
   IzakayaCasualData,
   IzakayaCasualMenuItem,
@@ -67,8 +67,8 @@ export function Hero({ data }: HeroProps) {
 
   return (
     <section className="izk-hero">
-      <div className="izk-hero-media">
-        <FlexibleImageFill
+      <div className="izk-hero-media" style={{ position: "absolute", inset: 0 }}>
+        <IzakayaFillImage
           src={heroImage}
           alt={`${store.name}の料理`}
           priority

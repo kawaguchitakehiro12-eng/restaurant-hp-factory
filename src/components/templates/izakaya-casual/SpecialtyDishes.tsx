@@ -1,7 +1,7 @@
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/ui/FadeIn";
-import { FlexibleImageFill } from "@/components/ui/FlexibleImageFill";
 import { SampleLabel } from "@/components/demo/SampleLabel";
 import { IzakayaSection } from "@/components/templates/izakaya-casual/ui/IzakayaSection";
+import { IzakayaFillImage } from "@/components/templates/izakaya-casual/ui/IzakayaFillImage";
 import {
   guessIzkPhotoFocus,
   izkPhotoFocusClass,
@@ -33,10 +33,13 @@ export function SpecialtyDishes({ specialtyDishes }: SpecialtyDishesProps) {
       </div>
 
       <article className="izk-feat izk-feat--lead">
-        <div className="izk-feat-photo izk-frame izk-frame--large">
+        <div
+          className="izk-feat-photo izk-frame izk-frame--large"
+          style={{ position: "relative", aspectRatio: "3 / 2" }}
+        >
           {hero.image ? (
             <>
-              <FlexibleImageFill
+              <IzakayaFillImage
                 src={hero.image}
                 alt={hero.name}
                 className={foodImgClass(hero.name)}
@@ -71,13 +74,19 @@ export function SpecialtyDishes({ specialtyDishes }: SpecialtyDishesProps) {
             if (overlay && item.image) {
               return (
                 <StaggerItem key={item.name}>
-                  <article className="izk-feat izk-feat--overlay">
-                    <div className="izk-feat-photo">
-                      <FlexibleImageFill
+                  <article
+                    className="izk-feat izk-feat--overlay"
+                    style={{ position: "relative", aspectRatio: "3 / 2" }}
+                  >
+                    <div
+                      className="izk-feat-photo"
+                      style={{ position: "absolute", inset: 0 }}
+                    >
+                      <IzakayaFillImage
                         src={item.image}
                         alt={item.name}
                         className={foodImgClass(item.name)}
-                        sizes="100vw"
+                        sizes="(max-width: 900px) 90vw, 28rem"
                       />
                       <div className="izk-photo-grade" aria-hidden />
                       {item.isSample ? (
@@ -104,10 +113,13 @@ export function SpecialtyDishes({ specialtyDishes }: SpecialtyDishesProps) {
                 <article
                   className={`izk-feat izk-feat--split${reverse ? " izk-feat--rev" : ""}`}
                 >
-                  <div className="izk-feat-photo izk-frame izk-frame--large">
+                  <div
+                    className="izk-feat-photo izk-frame izk-frame--large"
+                    style={{ position: "relative", aspectRatio: "3 / 2" }}
+                  >
                     {item.image ? (
                       <>
-                        <FlexibleImageFill
+                        <IzakayaFillImage
                           src={item.image}
                           alt={item.name}
                           className={foodImgClass(item.name)}
