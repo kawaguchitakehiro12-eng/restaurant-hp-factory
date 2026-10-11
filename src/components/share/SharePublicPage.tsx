@@ -12,6 +12,7 @@ import type { PublicStoreResolution } from "@/lib/stores/demo-to-store";
 import "@/app/bar/bar.css";
 import "@/app/cafe/cafe.css";
 import "@/app/izakaya/izakaya.css";
+import "@/app/bal/bal.css";
 
 const FETCH_TIMEOUT_MS = 15_000;
 

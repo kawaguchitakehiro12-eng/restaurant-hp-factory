@@ -1,3 +1,4 @@
+import { buildBalData } from "@/lib/stores/bal-data";
 import { splitBarMenu } from "@/lib/stores/bar-menu-split";
 import { splitCafeMenu } from "@/lib/stores/cafe-menu-split";
 import { splitIzakayaCasualMenu } from "@/lib/stores/izakaya-casual-menu-split";
@@ -11,6 +12,7 @@ import {
   DEFAULT_HERO_FIT,
   DEFAULT_HERO_OBJECT_POSITION,
 } from "@/types/hero-display";
+import type { BalData } from "@/types/bal";
 import type { BarData } from "@/types/bar";
 import type { CafeData } from "@/types/cafe";
 import type { IzakayaCasualData } from "@/types/izakaya-casual";
@@ -268,6 +270,14 @@ export function toBarData(
         title: item.title,
       })),
   };
+}
+
+/** StoreRecord → バルテンプレ用データ */
+export function toBalData(
+  store: StoreRecord,
+  heroDisplay?: { heroFit: HeroImageFit; heroObjectPosition: HeroObjectPosition }
+): BalData {
+  return buildBalData(store, { heroDisplay });
 }
 
 function assertIzakayaCasualExtensions(

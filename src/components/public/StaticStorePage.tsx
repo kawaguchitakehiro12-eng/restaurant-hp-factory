@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { notFound } from "next/navigation";
+import { BalPage } from "@/components/templates/bal/BalPage";
 import { BarPage } from "@/components/templates/bar/BarPage";
 import { CafePage } from "@/components/templates/cafe/CafePage";
 import { IzakayaCasualPage } from "@/components/templates/izakaya-casual/IzakayaCasualPage";
 import { LuxuryIzakayaPage } from "@/components/templates/luxury-izakaya/LuxuryIzakayaPage";
 import { mergeStoreWithPhotoContent } from "@/lib/admin/demo-photo-library";
 import {
+  toBalData,
   toBarData,
   toCafeData,
   toIzakayaCasualData,
@@ -23,6 +25,7 @@ import {
 import "@/app/cafe/cafe.css";
 import "@/app/bar/bar.css";
 import "@/app/izakaya/izakaya.css";
+import "@/app/bal/bal.css";
 
 type StaticStorePageProps = {
   slug: string;
@@ -40,6 +43,7 @@ export function StaticStorePage({ slug }: StaticStorePageProps) {
   const [izakayaData, setIzakayaData] = useState<ReturnType<typeof toIzakayaCasualData> | null>(
     null
   );
+  const [balData, setBalData] = useState<ReturnType<typeof toBalData> | null>(null);
 
   useEffect(() => {
     const load = () => {
@@ -61,6 +65,7 @@ export function StaticStorePage({ slug }: StaticStorePageProps) {
       setBarData(null);
       setLuxuryData(null);
       setIzakayaData(null);
+      setBalData(null);
 
       if (store.templateType === "cafe") {
         setCafeData(toCafeData(store, heroDisplay));
@@ -68,6 +73,8 @@ export function StaticStorePage({ slug }: StaticStorePageProps) {
         setBarData(toBarData(store, heroDisplay));
       } else if (store.templateType === "izakaya-casual") {
         setIzakayaData(toIzakayaCasualData(store, heroDisplay));
+      } else if (store.templateType === "bal") {
+        setBalData(toBalData(store, heroDisplay));
       } else {
         setLuxuryData(toLuxuryIzakayaData(store, heroDisplay));
       }
@@ -98,6 +105,7 @@ export function StaticStorePage({ slug }: StaticStorePageProps) {
   if (cafeData) return <CafePage data={cafeData} />;
   if (barData) return <BarPage data={barData} />;
   if (izakayaData) return <IzakayaCasualPage data={izakayaData} />;
+  if (balData) return <BalPage data={balData} />;
   if (luxuryData) return <LuxuryIzakayaPage data={luxuryData} />;
 
   notFound();

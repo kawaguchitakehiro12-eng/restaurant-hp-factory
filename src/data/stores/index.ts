@@ -1,4 +1,5 @@
 import { amberStore } from "./amber";
+import { mesaStore } from "./mesa";
 import { nueeStore } from "./nuee";
 import { shogetsuStore } from "./shogetsu";
 import { yakitoriDaidokoroStore } from "./yakitori-daidokoro";
@@ -11,6 +12,7 @@ export const stores: StoreRecord[] = [
   nueeStore,
   amberStore,
   yakitoriDaidokoroStore,
+  mesaStore,
 ];
 
 const storeMap = new Map(stores.map((store) => [store.slug, store]));
@@ -34,5 +36,6 @@ export function getStoresByTemplate(
 
 export { shogetsuStore } from "./shogetsu";
 export { amberStore } from "./amber";
+export { mesaStore } from "./mesa";
 export { nueeStore } from "./nuee";
 export { yakitoriDaidokoroStore } from "./yakitori-daidokoro";

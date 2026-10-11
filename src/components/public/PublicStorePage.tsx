@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { StoreSeoHead } from "@/components/public/StoreSeoHead";
+import { BalPage } from "@/components/templates/bal/BalPage";
 import { BarPage } from "@/components/templates/bar/BarPage";
 import { CafePage } from "@/components/templates/cafe/CafePage";
 import { IzakayaCasualPage } from "@/components/templates/izakaya-casual/IzakayaCasualPage";
 import { LuxuryIzakayaPage } from "@/components/templates/luxury-izakaya/LuxuryIzakayaPage";
 import {
+  toBalDataWithSamples,
   toBarDataWithSamples,
   toCafeDataWithSamples,
   toIzakayaCasualDataWithSamples,
@@ -32,6 +34,7 @@ import { StoreUnpublished } from "@/components/public/StoreUnpublished";
 import "@/app/bar/bar.css";
 import "@/app/cafe/cafe.css";
 import "@/app/izakaya/izakaya.css";
+import "@/app/bal/bal.css";
 
 type PublicStorePageProps = {
   slug: string;
@@ -162,6 +165,15 @@ export function PublicStorePage({ slug }: PublicStorePageProps) {
         <IzakayaCasualPage
           data={toIzakayaCasualDataWithSamples(store, sampleFlags, heroDisplay)}
         />
+      </>
+    );
+  }
+
+  if (store.templateType === "bal") {
+    return (
+      <>
+        <StoreSeoHead store={store} isDemo canonicalPath={`/${slug}`} />
+        <BalPage data={toBalDataWithSamples(store, sampleFlags, heroDisplay)} />
       </>
     );
   }

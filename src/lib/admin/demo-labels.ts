@@ -91,5 +91,6 @@ export function inferTemplateId(templateType: DemoSite["templateType"]): Contrac
   if (templateType === "cafe") return "cafe";
   if (templateType === "bar") return "bar";
   if (templateType === "izakaya-casual") return "izakaya-casual";
+  if (templateType === "bal") return "bal";
   return "luxury-japanese";
 }

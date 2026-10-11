@@ -10,7 +10,7 @@ export const CONTRACT_TEMPLATE_OPTIONS: {
   { id: "luxury-japanese", label: "高級和風", templateType: "luxury-izakaya" },
   { id: "cafe", label: "Cafe", templateType: "cafe" },
   { id: "bar", label: "Bar", templateType: "bar" },
-  { id: "bal", label: "バル", templateType: "luxury-izakaya" },
+  { id: "bal", label: "バル", templateType: "bal" },
   { id: "izakaya-casual", label: "大衆居酒屋", templateType: "izakaya-casual" },
 ];
 
@@ -31,6 +31,18 @@ export function getTemplateType(id: ContractTemplateId): TemplateType {
   return (
     CONTRACT_TEMPLATE_OPTIONS.find((t) => t.id === id)?.templateType ?? "luxury-izakaya"
   );
+}
+
+/**
+ * バル専用テンプレ追加前に保存されたデモは templateId "bal" / templateType "luxury-izakaya"
+ * のままなので、templateId を優先して "bal" に寄せる。
+ */
+export function normalizeDemoTemplateType(
+  templateId: ContractTemplateId | string | undefined,
+  templateType: TemplateType
+): TemplateType {
+  if (templateId === "bal") return "bal";
+  return templateType;
 }
 
 export function getDomainStatusLabel(status: DomainStatus): string {

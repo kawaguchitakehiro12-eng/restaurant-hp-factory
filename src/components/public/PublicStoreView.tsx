@@ -1,11 +1,13 @@
 import type { ReactNode } from "react";
 import type { PublicStoreResolution } from "@/lib/stores/demo-to-store";
 import { StoreSeoHead } from "@/components/public/StoreSeoHead";
+import { BalPage } from "@/components/templates/bal/BalPage";
 import { BarPage } from "@/components/templates/bar/BarPage";
 import { CafePage } from "@/components/templates/cafe/CafePage";
 import { IzakayaCasualPage } from "@/components/templates/izakaya-casual/IzakayaCasualPage";
 import { LuxuryIzakayaPage } from "@/components/templates/luxury-izakaya/LuxuryIzakayaPage";
 import {
+  toBalDataWithSamples,
   toBarDataWithSamples,
   toCafeDataWithSamples,
   toIzakayaCasualDataWithSamples,
@@ -43,6 +45,9 @@ export function PublicStoreView({
           data={toIzakayaCasualDataWithSamples(store, sampleFlags, heroDisplay)}
         />
       );
+    }
+    if (store.templateType === "bal") {
+      return <BalPage data={toBalDataWithSamples(store, sampleFlags, heroDisplay)} />;
     }
     return (
       <LuxuryIzakayaPage

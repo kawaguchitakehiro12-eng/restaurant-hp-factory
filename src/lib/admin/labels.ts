@@ -10,6 +10,7 @@ export const templateTypeLabels: Record<TemplateType, string> = {
   cafe: "Cafe",
   bar: "Bar",
   "izakaya-casual": "大衆居酒屋",
+  bal: "バル",
 };
 
 export const contractStatusLabels: Record<ContractStatus, string> = {
