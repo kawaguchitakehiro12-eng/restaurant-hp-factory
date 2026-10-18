@@ -1,5 +1,5 @@
 /** テンプレート種別（Supabase: stores.template_type） */
-export type TemplateType = "luxury-izakaya" | "cafe" | "bar" | "izakaya-casual";
+export type TemplateType = "luxury-izakaya" | "cafe" | "bar" | "izakaya-casual" | "bal";
 
 /** 公開状態（Supabase: stores.publish_status） */
 export type PublishStatus = "draft" | "published" | "archived";
@@ -119,11 +119,28 @@ export type IzakayaCasualExtensions = {
   };
 };
 
+export type BalExtensions = {
+  templateType: "bal";
+  highlights: string[];
+  happyHour: {
+    time: string;
+    offer: string;
+    note?: string;
+  };
+  table: {
+    title: string;
+    description: string;
+    features: string[];
+    photoId: string;
+  };
+};
+
 export type StoreTemplateExtensions =
   | LuxuryIzakayaExtensions
   | CafeExtensions
   | BarExtensions
-  | IzakayaCasualExtensions;
+  | IzakayaCasualExtensions
+  | BalExtensions;
 
 /**
  * 店舗マスタ（Supabase移行時は stores + 関連テーブルに分割）

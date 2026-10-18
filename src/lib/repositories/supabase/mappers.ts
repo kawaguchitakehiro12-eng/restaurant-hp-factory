@@ -2,6 +2,7 @@ import type { CustomerAccount } from "@/types/admin";
 import type { DemoSite } from "@/types/demo";
 import type { DemoSiteContent } from "@/types/demo-content";
 import { ensureDemoContent } from "@/types/demo-content";
+import { normalizeDemoTemplateType } from "@/lib/admin/contract-templates";
 
 export type DemoSiteRow = {
   id: string;
@@ -108,7 +109,10 @@ export function rowToDemoSite(
     sourceUrl: row.source_url,
     address: row.address ?? undefined,
     templateId: row.template_id as DemoSite["templateId"],
-    templateType: row.template_type as DemoSite["templateType"],
+    templateType: normalizeDemoTemplateType(
+      row.template_id,
+      row.template_type as DemoSite["templateType"]
+    ),
     prospectName: row.prospect_name,
     contactPersonName: row.contact_person_name,
     phone: row.phone,

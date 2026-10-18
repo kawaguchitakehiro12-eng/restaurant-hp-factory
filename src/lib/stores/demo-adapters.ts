@@ -1,3 +1,4 @@
+import { buildBalData } from "@/lib/stores/bal-data";
 import { splitBarMenu } from "@/lib/stores/bar-menu-split";
 import { splitCafeMenu } from "@/lib/stores/cafe-menu-split";
 import { splitIzakayaCasualMenu } from "@/lib/stores/izakaya-casual-menu-split";
@@ -7,6 +8,7 @@ import {
   resolveCommitmentItems,
 } from "@/lib/stores/luxury-photo-layout";
 import type { HeroImageFit, HeroObjectPosition } from "@/types/hero-display";
+import type { BalData } from "@/types/bal";
 import type { BarData } from "@/types/bar";
 import type { CafeData } from "@/types/cafe";
 import type { IzakayaCasualData } from "@/types/izakaya-casual";
@@ -292,6 +294,14 @@ function assertIzakayaCasualExtensions(
     throw new Error(`Store "${store.slug}" is not an izakaya-casual template`);
   }
   return store.templateExtensions;
+}
+
+export function toBalDataWithSamples(
+  store: StoreRecord,
+  sampleFlags: DemoSampleFlags,
+  heroDisplay?: { heroFit: HeroImageFit; heroObjectPosition: HeroObjectPosition }
+): BalData {
+  return buildBalData(store, { heroDisplay, sampleFlags });
 }
 
 export function toIzakayaCasualDataWithSamples(

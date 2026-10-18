@@ -1,4 +1,5 @@
 import { amberStore } from "@/data/stores/amber";
+import { mesaStore } from "@/data/stores/mesa";
 import { nueeStore } from "@/data/stores/nuee";
 import { shogetsuStore } from "@/data/stores/shogetsu";
 import { yakitoriDaidokoroStore } from "@/data/stores/yakitori-daidokoro";
@@ -11,6 +12,7 @@ import type {
   DemoTopicItem,
 } from "@/types/demo-content";
 import { ensureDemoContent } from "@/types/demo-content";
+import { normalizeDemoTemplateType } from "@/lib/admin/contract-templates";
 import { getExcludedPhotoUrls, urlIfUsable } from "@/lib/admin/demo-photo-exclusions";
 import { getTemplateSamples } from "@/lib/stores/demo-samples";
 import { getHeroDisplayFromPhotos } from "@/lib/stores/store-photo-overrides";
@@ -138,7 +140,11 @@ export type ResolvedDemoStore = {
   heroObjectPosition: HeroObjectPosition;
 };
 
-export function resolveDemoStore(demo: DemoSite): ResolvedDemoStore {
+export function resolveDemoStore(rawDemo: DemoSite): ResolvedDemoStore {
+  const demo: DemoSite = {
+    ...rawDemo,
+    templateType: normalizeDemoTemplateType(rawDemo.templateId, rawDemo.templateType),
+  };
   const content = ensureDemoContent(demo.content);
   const excludedUrls = getExcludedPhotoUrls(content.importedPhotos ?? []);
   const samples = getTemplateSamples(demo.templateId);
@@ -156,7 +162,9 @@ export function resolveDemoStore(demo: DemoSite): ResolvedDemoStore {
         ? cloneStore(amberStore)
         : demo.templateType === "izakaya-casual"
           ? cloneStore(yakitoriDaidokoroStore)
-          : cloneStore(shogetsuStore);
+          : demo.templateType === "bal"
+            ? cloneStore(mesaStore)
+            : cloneStore(shogetsuStore);
   const bi = content.basicInfo;
 
   const catchCopy = pickString(bi.catchCopy, samples.catchCopy, "catchCopy", flags);
@@ -395,6 +403,17 @@ export function resolveDemoStore(demo: DemoSite): ResolvedDemoStore {
       ],
       space: {
         ...store.templateExtensions.space,
+        photoId: "photo-interior",
+      },
+    };
+  }
+
+  if (store.templateExtensions.templateType === "bal") {
+    store.templateExtensions = {
+      ...store.templateExtensions,
+      highlights: ["ワインとタパスの店", "2〜4人のテーブル中心", "ご契約後に自由に編集可能"],
+      table: {
+        ...store.templateExtensions.table,
         photoId: "photo-interior",
       },
     };

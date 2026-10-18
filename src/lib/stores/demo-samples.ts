@@ -21,6 +21,20 @@ const IMG = {
     "https://images.unsplash.com/photo-1617196034796-73dfa7b1fd56?w=1200&q=92&auto=format&fit=crop",
   cafeMenu:
     "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=1200&q=90&auto=format&fit=crop",
+  balHero:
+    "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=2400&q=90&auto=format&fit=crop",
+  balInterior:
+    "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1600&q=90&auto=format&fit=crop",
+  balPaella:
+    "https://images.unsplash.com/photo-1515443961218-a51367888e4b?w=1200&q=90&auto=format&fit=crop",
+  balTerrace:
+    "https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=1600&q=90&auto=format&fit=crop",
+  balCharcuterie:
+    "https://images.unsplash.com/photo-1541529086526-db283c563270?w=1200&q=90&auto=format&fit=crop",
+  balAjillo:
+    "https://images.unsplash.com/photo-1559847844-5315695dadae?w=1200&q=90&auto=format&fit=crop",
+  balBruschetta:
+    "https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?w=1200&q=90&auto=format&fit=crop",
 };
 
 type TemplateSamples = {
@@ -176,28 +190,40 @@ const SAMPLES: Record<ContractTemplateId, TemplateSamples> = {
     weekdayHours: "",
     weekendHours: "",
     closedDays: "不定休",
-    hero: IMG.exterior,
-    interior: IMG.interior,
-    food: IMG.food,
-    exterior: IMG.exterior,
+    hero: IMG.balHero,
+    interior: IMG.balInterior,
+    food: IMG.balPaella,
+    exterior: IMG.balTerrace,
     menus: [
       {
-        name: "生ハムとチーズ",
-        price: "¥1,680",
-        description: "イタリア直輸の生ハム盛り合わせ",
-        imageUrl: IMG.food,
+        name: "生ハムとチーズの盛り合わせ",
+        price: "¥1,480",
+        description: "イタリア直輸の生ハムと熟成チーズ",
+        imageUrl: IMG.balCharcuterie,
       },
       {
-        name: "ワイン",
-        price: "¥780〜",
-        description: "ソムリエ厳選のグラスワイン",
-        imageUrl: IMG.food,
+        name: "海老のアヒージョ",
+        price: "¥980",
+        description: "にんにくオイルはバゲットと一緒に",
+        imageUrl: IMG.balAjillo,
       },
       {
-        name: "タパス盛り合わせ",
-        price: "¥2,200",
-        description: "シェフのおすすめ前菜5種",
-        imageUrl: IMG.food,
+        name: "トマトのブルスケッタ",
+        price: "¥580",
+        description: "最初の一皿にどうぞ",
+        imageUrl: IMG.balBruschetta,
+      },
+      {
+        name: "グラスワイン 赤／白",
+        price: "¥600〜",
+        description: "ソムリエ厳選のハウスワイン",
+        imageUrl: IMG.balHero,
+      },
+      {
+        name: "本日の魚介パエリア",
+        price: "¥2,280",
+        description: "鉄鍋ごとテーブルへ。2〜3人前",
+        imageUrl: IMG.balPaella,
       },
     ],
     topics: [

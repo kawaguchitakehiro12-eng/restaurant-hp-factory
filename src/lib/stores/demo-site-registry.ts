@@ -2,6 +2,7 @@ import type { DemoSite } from "@/types/demo";
 import type { DemoSiteContent } from "@/types/demo-content";
 import { ensureDemoContent } from "@/types/demo-content";
 import { initialDemoSites } from "@/data/admin/demo-mock";
+import { normalizeDemoTemplateType } from "@/lib/admin/contract-templates";
 import { todayIso } from "@/lib/admin/form-utils";
 
 export const DEMO_SITES_STORAGE_KEY = "sakupage:demo-sites";
@@ -13,6 +14,7 @@ export const RESERVED_SLUGS = new Set([
   "cafe",
   "bar",
   "izakaya",
+  "bal",
   "api",
   "_next",
   "favicon.ico",
@@ -32,7 +34,11 @@ export function loadDemoSitesFromStorage(fallback: DemoSite[] = initialDemoSites
     const raw = localStorage.getItem(DEMO_SITES_STORAGE_KEY);
     if (!raw) return fallback;
     const parsed = JSON.parse(raw) as DemoSite[];
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : fallback;
+    if (!Array.isArray(parsed) || parsed.length === 0) return fallback;
+    return parsed.map((site) => ({
+      ...site,
+      templateType: normalizeDemoTemplateType(site.templateId, site.templateType),
+    }));
   } catch {
     return fallback;
   }
