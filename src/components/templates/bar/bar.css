@@ -1044,6 +1044,7 @@
 
 .bar-template .bar-space {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(2.25rem, 5vw, 3.5rem);
   align-items: start;
 }
