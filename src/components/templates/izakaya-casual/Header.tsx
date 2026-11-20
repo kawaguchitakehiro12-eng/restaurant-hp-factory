@@ -1,4 +1,5 @@
 "use client";
+import {StoreLogo} from "@/components/public/StoreLogo";
 
 import { useEffect, useState } from "react";
 import { IzakayaLink } from "@/components/templates/izakaya-casual/ui/IzakayaLink";
@@ -38,7 +39,7 @@ export function Header({ store }: HeaderProps) {
       <header className={`izk-header ${scrolled ? "izk-header--scrolled" : ""}`}>
         <div className="izk-header-inner">
           <a href="#" className="izk-header-logo">
-            {store.name}
+            <StoreLogo src={store.logoUrl} name={store.name}/>
           </a>
 
           <nav className="izk-header-nav" aria-label="メインナビゲーション">

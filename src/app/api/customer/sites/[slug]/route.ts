@@ -1,3 +1,4 @@
+import {sanitizeLogo} from '@/lib/images/logo-server';
 import { NextResponse } from "next/server";
 import { CustomerAccessError, getCustomerSite, requireCustomerUser } from "@/lib/customer/server";
 import { CustomerInputError, parseCustomerSave } from "@/lib/customer/validation";
@@ -28,6 +29,7 @@ export async function PATCH(request:Request,{params}:Context) {
   const bytes=new Uint8Array(length);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
   let body:unknown;try{body=JSON.parse(new TextDecoder().decode(bytes));}catch{throw new CustomerInputError("入力形式が正しくありません。");}
   const save=parseCustomerSave(body);
+  try{save.content.photos.logo=await sanitizeLogo(save.content.photos.logo)}catch{throw new CustomerInputError("ロゴ画像を検証できません。形式・容量を確認してください。");}
   const {error}=await createAdminDbClient().rpc("save_customer_site_content",{p_user_id:user.id,p_slug:slug,p_content:save.content,p_expected_updated_at:save.revision});
   if(error){
     if(["PT409","40001"].includes(error.code))return NextResponse.json({error:"別の画面で更新されています。再読み込みしてから編集してください。"},{status:409,headers});

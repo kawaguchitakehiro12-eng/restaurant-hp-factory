@@ -1,4 +1,5 @@
 "use client";
+import {StoreLogo} from "@/components/public/StoreLogo";
 
 import { useEffect, useState } from "react";
 import { balNavItems } from "@/components/templates/bal/nav";
@@ -31,7 +32,7 @@ export function Header({ store }: HeaderProps) {
       <header className={`bal-header ${scrolled ? "bal-header--scrolled" : ""}`}>
         <div className="bal-header-inner">
           <a href="#" className="bal-logo" aria-label={`${store.name} トップへ`}>
-            {store.name}
+            <StoreLogo src={store.logoUrl} name={store.name}/>
           </a>
 
           <nav className="bal-nav" aria-label="メインナビゲーション">

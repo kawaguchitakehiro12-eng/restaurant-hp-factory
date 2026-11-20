@@ -1,4 +1,5 @@
 export type StoreInfo = {
+  logoUrl?: string;
   name: string;
   nameEn: string;
   location: string;

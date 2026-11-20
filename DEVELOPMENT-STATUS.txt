@@ -58,3 +58,23 @@ For notifications, live-provider idempotency/ambiguous-outcome policy requires p
 only simulated delivery exists now. No real delivery retry policy is assumed.
 Contracts/legal/privacy/provider/retention/refund/retry decisions remain with the owner.
 Never push main before approved backup, DB change, audit, configuration and deployment gates.
+
+
+Demo/logo/provider continuation — 2026-11-20
+Completed locally: recipient-bound seven-day demo offers, verified-email account claim,
+multiple stores, atomic first-contract expiry/revocation guard and preserved demo content.
+Logo: PNG/JPEG/WebP, 2MiB limit, signature/decode/re-encode, 512px output, all five headers.
+Provider mocks: domain quote/availability/renewal stop; explicit SMS confirmation;
+mail failure/unknown states and explicit known-failure retry, no automatic unknown retry.
+Share validity caps historical long/unlimited links at seven days after creation;
+this changes visibility only after a future approved deployment. No live links modified.
+Tests: 341 passed / 0 failed; isolated PostgreSQL 17: 20 groups passed / 0 failed.
+Actual route/repository/SQL exercised with synthetic Auth and providers, not hosted Auth.
+TypeScript and lint: PASS. Component bundle: PASS, not browser E2E or production build.
+Production build: BLOCKED. Webpack EPERM mkdir in original and independent writable root;
+Turbopack did not complete and was stopped. No ACL change or privilege escalation.
+Browser E2E: NOT RUN; verified browser URL environment still required.
+Real providers, real Auth and hosted RLS verification remain pending approval/configuration.
+New commerce-offers-v3.sql is a local proposal only, never applied to Supabase.
+Original Desktop project: all 442 manifest hashes match; manifest SHA matches.
+SQL007 unchanged: a1650b5f4e0b72d94bf7114cc222c97a4a07f615a710be7e3a41fa29646ae127.

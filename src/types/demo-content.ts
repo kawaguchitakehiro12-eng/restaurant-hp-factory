@@ -38,6 +38,7 @@ export type DemoGalleryPhoto = {
 
 /** 写真スロット */
 export type DemoPhotos = {
+  logo?: string;
   hero: string;
   interior: string;
   food: string;
@@ -120,6 +121,7 @@ export function createEmptyDemoContent(): DemoSiteContent {
       reservationUrl: "",
     },
     photos: {
+      logo: "",
       hero: "",
       interior: "",
       food: "",

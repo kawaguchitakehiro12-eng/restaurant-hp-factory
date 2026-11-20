@@ -1,4 +1,5 @@
 "use client";
+import {StoreLogo} from "@/components/public/StoreLogo";
 
 import { useEffect, useState } from "react";
 import { CafeLink } from "@/components/templates/cafe/ui/CafeLink";
@@ -42,7 +43,7 @@ export function Header({ store }: HeaderProps) {
       >
         <div className="cafe-header-inner">
           <a href="#" className="cafe-header-logo">
-            {store.name}
+            <StoreLogo src={store.logoUrl} name={store.name}/>
           </a>
 
           <nav className="cafe-header-nav" aria-label="メインナビゲーション">

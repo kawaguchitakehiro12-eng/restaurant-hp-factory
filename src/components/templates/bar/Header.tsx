@@ -1,4 +1,5 @@
 "use client";
+import {StoreLogo} from "@/components/public/StoreLogo";
 
 import { useEffect, useState } from "react";
 import { BarLink } from "@/components/templates/bar/ui/BarLink";
@@ -42,7 +43,7 @@ export function Header({ store }: HeaderProps) {
       >
         <div className="bar-header-inner">
           <a href="#" className="bar-header-logo">
-            {store.name}
+            <StoreLogo src={store.logoUrl} name={store.name}/>
           </a>
 
           <nav className="bar-header-nav" aria-label="メインナビゲーション">

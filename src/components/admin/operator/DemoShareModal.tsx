@@ -13,7 +13,7 @@ import {
   formatShareExpiry,
   formatShareViewStatus,
 } from "@/lib/admin/demo-share-messages";
-import { isDemoShareValid } from "@/lib/admin/demo-share-utils";
+import { effectiveShareExpiry, isDemoShareValid } from "@/lib/admin/demo-share-utils";
 import { useOperatorAdmin } from "@/components/admin/operator/OperatorAdminProvider";
 import { isApiAuthError } from "@/lib/data/api-errors";
 import {
@@ -48,6 +48,9 @@ function DemoShareModalInner({ demoSite, onClose, onShareUpdated }: DemoShareMod
   const [refreshedAt, setRefreshedAt] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const [applicationRecipient,setApplicationRecipient]=useState(demoSite?.email??"");
+  const [applicationNotice,setApplicationNotice]=useState("");
+  async function prepareApplication(event:React.FormEvent){event.preventDefault();if(!share||!demoSite||loading)return;setLoading(true);setApplicationNotice("");try{const r=await fetch("/api/commerce",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"offer",siteId:demoSite.id,data:{shareId:share.id,recipient:applicationRecipient},requestId:crypto.randomUUID()}),signal:AbortSignal.timeout(15000)});setApplicationNotice(r.ok?"申込宛先を設定しました。共有デモの申込ボタンから進めます。実メールは送信していません。":"宛先・期限・モック設定を確認してください。既存の宛先は上書きしていません。");}catch{setApplicationNotice("結果を確認できません。自動再試行はしません。")}finally{setLoading(false)}}
   const open = Boolean(demoSite);
   const supabaseReady = isSupabaseConfigured();
   const { reportAuthError } = useOperatorAdmin();
@@ -235,6 +238,7 @@ function DemoShareModalInner({ demoSite, onClose, onShareUpdated }: DemoShareMod
           </div>
         ) : (
           <>
+            <form onSubmit={prepareApplication} className="admin-card"><h3>デモからの申込を準備（モック）</h3><p>この宛先の確認済みメールを持つ顧客だけがデモを引き継げます。URLだけでは取得できません。</p><label>申込者メール<input type="email" value={applicationRecipient} onChange={e=>setApplicationRecipient(e.target.value)} required maxLength={254} className="admin-form-input"/></label><button className="admin-btn admin-btn--secondary" disabled={loading||!isDemoShareValid(share)}>この宛先で申込を準備</button><p role="status">{applicationNotice}</p></form>
             <dl className="admin-contract-result-list admin-share-meta">
               <div>
                 <dt>共有URL</dt>
@@ -248,7 +252,7 @@ function DemoShareModalInner({ demoSite, onClose, onShareUpdated }: DemoShareMod
               </div>
               <div>
                 <dt>有効期限</dt>
-                <dd>{formatShareExpiry(share.expiresAt, share.isActive)}</dd>
+                <dd>{formatShareExpiry(new Date(effectiveShareExpiry(share)).toISOString(), share.isActive)}</dd>
               </div>
               <div>
                 <dt>ページ表示回数</dt>

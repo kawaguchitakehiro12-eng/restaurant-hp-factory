@@ -1,4 +1,5 @@
 "use client";
+import {customerLanding} from "@/lib/browser/demo-application";
 import {isAuthUnavailable} from "@/lib/browser/auth-fetch";
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
@@ -12,7 +13,7 @@ export function CustomerLogin() {
   try {
    const {error}=await createBrowserSupabaseClient().auth.signInWithPassword({email:email.trim(),password});
    if(error){setError(isAuthUnavailable(error)?"認証サービスに接続できません。時間をおいて再度お試しください。":"メールアドレスまたはパスワードを確認してください。");setBusy(false);return;}
-   window.location.assign("/customer");
+   window.location.assign(customerLanding(window.location.hash));
   }catch{setError("接続できません。時間をおいて再度お試しください。");setBusy(false);}
  }
  return <div className="admin-root admin-login-page"><main className="admin-login-card"><SakupageLogo variant="header"/><h1 className="admin-login-title">店舗管理ログイン</h1><form className="admin-login-form" onSubmit={submit}>

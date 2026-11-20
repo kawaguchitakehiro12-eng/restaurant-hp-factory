@@ -13,7 +13,7 @@ function urlPhotoId(url: string): string {
   return `lib-${url.slice(-24).replace(/[^a-zA-Z0-9]/g, "")}-${url.length}`;
 }
 
-function slotLabel(slot: keyof Omit<DemoPhotos, "gallery" | "heroFit" | "heroObjectPosition">): string {
+function slotLabel(slot: keyof Omit<DemoPhotos, "logo" | "gallery" | "heroFit" | "heroObjectPosition">): string {
   const labels = {
     hero: "ファーストビュー",
     interior: "店内",
@@ -249,7 +249,7 @@ export function syncAssignment(
 }
 
 export function syncSlotUpload(
-  slot: keyof Omit<DemoPhotos, "gallery" | "heroFit" | "heroObjectPosition">,
+  slot: keyof Omit<DemoPhotos, "logo" | "gallery" | "heroFit" | "heroObjectPosition">,
   url: string,
   state: PhotoEditorState
 ): PhotoEditorState {

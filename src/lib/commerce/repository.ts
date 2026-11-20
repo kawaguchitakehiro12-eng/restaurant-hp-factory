@@ -15,7 +15,8 @@ export async function execute(actor:Actor,site:string,action:string,data:Record<
  if(old.replayed)return{state:viewFor(old.state,old.role),revision:old.revision,replayed:true};
  const user={...actor,role:old.role};let next:State;let appliedAction=action;
  if(action==='card-register'){if(old.role!=='owner')throw new CommerceError(403,'本人のカード登録操作が必要です。');next=transition(old.state,'card-result',await new MockCardGateway().setup(id),{...user,role:'system'},now,id,configuredPolicy());appliedAction='card-result';}
- else if(action==='domain-advance'){if(old.role!=='operator')throw new CommerceError(403,'処理担当者専用です。');next=transition(old.state,'domain-result',await new MockDomainGateway().advance(old.state.domain.state,id),{...user,role:'system'},now,id,configuredPolicy());appliedAction='domain-result';}
+ else if(action==='domain-request'){const quote=await new MockDomainGateway().availability(String(data.domain));if(!quote.available)throw new CommerceError(409,'ドメインを取得できません。');next=transition(old.state,action,{domain:data.domain,quote},user,now,id,configuredPolicy());}
+ else if(action==='domain-advance'){if(old.role!=='operator')throw new CommerceError(403,'処理担当者専用です。');const gateway=new MockDomainGateway();const result=old.state.domain.state==='requested'&&old.state.domain.quote?await gateway.request(old.state.domain.name,id,old.state.domain.quote):await gateway.advance(old.state.domain.state,id);next=transition(old.state,'domain-result',result,{...user,role:'system'},now,id,configuredPolicy());appliedAction='domain-result';}
  else if(action==='payment-dispatch'){if(old.role!=='operator')throw new CommerceError(403,'決済処理専用です。');next=transition(old.state,action,data,{...user,role:'system'},now,id,configuredPolicy());}
  else if(action==='message-dispatch'){
   if(old.role!=='operator')throw new CommerceError(403,'配信担当者専用です。');
@@ -23,8 +24,8 @@ export async function execute(actor:Actor,site:string,action:string,data:Record<
   const claim=await rpc<Snapshot>('commerce_commit_v2',{p_actor:actor.id,p_admin:true,p_site:site,p_revision:old.revision,p_document:claimed,p_request:id,p_hash:hash,p_action:'message-claim',p_email:''});
   // Claim is persisted before provider invocation. Unknown outcomes stay processing, never auto-retry.
   if(claim.replayed)return{state:viewFor(claim.state,old.role),replayed:true};
-  await new MockMailGateway().send(String(data.id));const finish=randomUUID();
-  const completed=transition(claim.state,'message-result',data,{...user,role:'system'},now,finish,configuredPolicy());
+  let delivery:'simulated'|'failed'|'unknown';try{delivery=(await new MockMailGateway().send(String(data.id)+':'+claim.state.outbox.find(m=>m.id===data.id)?.attempts)).state}catch{delivery='unknown'}const finish=randomUUID();
+  const completed=transition(claim.state,'message-result',{...data,status:delivery},{...user,role:'system'},now,finish,configuredPolicy());
   const saved=await rpc<Snapshot>('commerce_commit_v2',{p_actor:actor.id,p_admin:true,p_site:site,p_revision:claim.revision,p_document:completed,p_request:finish,p_hash:createHash('sha256').update(id+':complete').digest('hex'),p_action:'message-result',p_email:''});
   return{state:viewFor(saved.state,old.role),revision:saved.revision};
  }

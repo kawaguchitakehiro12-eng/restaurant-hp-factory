@@ -1,6 +1,7 @@
 import type { HeroImageFit, HeroObjectPosition } from "@/types/hero-display";
 
 export type BalStore = {
+  logoUrl?: string;
   name: string;
   nameEn: string;
   location: string;

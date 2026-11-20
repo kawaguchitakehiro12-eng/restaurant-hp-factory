@@ -1,3 +1,4 @@
+import {safeLogo} from '@/lib/images/logo';
 import { createEmptyDemoContent } from "@/types/demo-content";
 import type { CustomerContent } from "@/types/customer-site";
 
@@ -58,11 +59,12 @@ export function parseCustomerContent(value: unknown): CustomerContent {
     if(!["www.google.com","maps.google.com","www.google.co.jp"].includes(map.hostname) || !map.pathname.startsWith("/maps")) throw new CustomerInputError("地図にはGoogleマップの埋め込みURLを入力してください。");
   }
   const photo=record(input.photos);
-  keys(photo,["hero","interior","food","exterior","gallery","heroFit","heroObjectPosition"]);
+  keys(photo,["logo","hero","interior","food","exterior","gallery","heroFit","heroObjectPosition"]);
   if(photo.heroFit!==undefined && !["cover","contain"].includes(String(photo.heroFit))) throw new CustomerInputError("写真表示の設定が正しくありません。");
   const positions=["center center","center top","center bottom","left center","right center"] as const;
   if(photo.heroObjectPosition!==undefined && !positions.includes(photo.heroObjectPosition as typeof positions[number])) throw new CustomerInputError("写真の位置が正しくありません。");
-  const photos:CustomerContent["photos"]={hero:safeUrl(photo.hero,true),interior:safeUrl(photo.interior,true),food:safeUrl(photo.food,true),exterior:safeUrl(photo.exterior,true),
+  let logo:string;try{logo=safeLogo(photo.logo)}catch{throw new CustomerInputError("ロゴ画像の形式・容量を確認してください。");}
+  const photos:CustomerContent["photos"]={logo,hero:safeUrl(photo.hero,true),interior:safeUrl(photo.interior,true),food:safeUrl(photo.food,true),exterior:safeUrl(photo.exterior,true),
     heroFit:photo.heroFit as "cover"|"contain"|undefined,heroObjectPosition:photo.heroObjectPosition as typeof positions[number]|undefined,
     gallery:unique(array(photo.gallery,40).map(value=>{const x=record(value);keys(x,["id","url","alt","caption","sortOrder"]);return {id:text(x.id,100),url:safeUrl(x.url,true),alt:text(x.alt,300),caption:text(x.caption,1000),sortOrder:order(x.sortOrder)};}))};
   const menus=unique(array(input.menus,100).map(value=>{const x=record(value);keys(x,["id","name","price","description","imageUrl","visible","sortOrder"]);return {id:text(x.id,100),name:text(x.name,200),price:text(x.price,80),description:text(x.description,2000),imageUrl:safeUrl(x.imageUrl,true),visible:bool(x.visible),sortOrder:order(x.sortOrder)};}));

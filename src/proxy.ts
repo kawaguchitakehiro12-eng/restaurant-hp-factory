@@ -14,7 +14,7 @@ export async function proxy(request: NextRequest) {
   const isApi = pathname.startsWith("/api/");
   const isLogin = pathname === "/login";
   const isCustomer = pathname === "/customer" || pathname.startsWith("/customer/") || pathname.startsWith("/api/customer/");
-  const isCustomerPublic = ["/customer/signup", "/customer/login", "/customer/recover", "/customer/password", "/customer/auth/callback"].includes(pathname);
+  const isCustomerPublic = ["/customer/apply", "/customer/signup", "/customer/login", "/customer/recover", "/customer/password", "/customer/auth/callback"].includes(pathname);
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

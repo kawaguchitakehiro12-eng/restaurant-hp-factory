@@ -1,3 +1,4 @@
+import {MockSmsGateway,MockMailGateway} from '@/lib/commerce/providers';
 import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getOperatorAuth } from "@/lib/auth/operator";
@@ -70,7 +71,8 @@ export async function POST(request: Request) {
       throw error;
     }
     if (!reservation.claimed) return json({ delivery: reservation.delivery });
-    const result = mode === "test" ? { status: "tested" as const } : await dispatchMessage({ id: body.requestId, channel, recipient, text, subject });
+    let result:{status:string;providerId?:string};
+    if(mode==="test"){const message={id:body.requestId,channel,recipient,text,subject};const sms=new MockSmsGateway();const simulated=channel==="sms"?await sms.send(message,sms.preview(message).hash):await new MockMailGateway().send(body.requestId);result={status:simulated.state==="simulated"?"tested":simulated.state};}else result=await dispatchMessage({id:body.requestId,channel,recipient,text,subject});
     const { data, error: saveError } = await db.from("demo_deliveries").update({ status: result.status, provider_id: "providerId" in result ? result.providerId : null, updated_at: new Date().toISOString() }).eq("id", body.requestId).eq("status", "processing").select(columns).single();
     if (saveError) throw saveError;
     return json({ delivery: data });

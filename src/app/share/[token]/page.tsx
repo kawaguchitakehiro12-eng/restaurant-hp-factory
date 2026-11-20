@@ -1,3 +1,4 @@
+import {assertMockMode} from '@/lib/commerce/providers';
 import type { Metadata } from "next";
 import { SharePublicPage } from "@/components/share/SharePublicPage";
 import { ShareNotFoundPage } from "@/components/share/ShareStatusPages";
@@ -42,5 +43,6 @@ export default async function SharePage({ params }: SharePageProps) {
     return <ShareNotFoundPage />;
   }
 
-  return <SharePublicPage shareToken={token} />;
+  let applicationEnabled=false;try{assertMockMode();applicationEnabled=true}catch{}
+  return <SharePublicPage shareToken={token} applicationEnabled={applicationEnabled}/>;
 }

@@ -69,6 +69,7 @@ export function toLuxuryIzakayaDataWithSamples(
   return {
     store: {
       name: store.name,
+      logoUrl: store.logoUrl,
       nameEn: store.nameEn,
       location: store.location,
       exclusivity: ext.exclusivity,
@@ -147,6 +148,7 @@ export function toCafeDataWithSamples(
   return {
     store: {
       name: store.name,
+      logoUrl: store.logoUrl,
       nameEn: store.nameEn,
       location: store.location,
       tagline: store.catchCopy,
@@ -236,6 +238,7 @@ export function toBarDataWithSamples(
   return {
     store: {
       name: store.name,
+      logoUrl: store.logoUrl,
       nameEn: store.nameEn,
       location: store.location,
       tagline: store.catchCopy,
@@ -334,6 +337,7 @@ export function toIzakayaCasualDataWithSamples(
   return {
     store: {
       name: store.name,
+      logoUrl: store.logoUrl,
       nameEn: store.nameEn,
       location: store.location,
       tagline: store.catchCopy,

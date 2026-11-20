@@ -330,6 +330,7 @@ export function resolveDemoStore(rawDemo: DemoSite): ResolvedDemoStore {
     templateType: demo.templateType,
     publishStatus: "published",
     name: demo.storeName,
+    logoUrl: content.photos.logo || "",
     nameEn,
     location: locationFromAddress(address),
     catchCopy,

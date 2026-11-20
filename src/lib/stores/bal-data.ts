@@ -92,6 +92,7 @@ export function buildBalData(
   return {
     store: {
       name: store.name,
+      logoUrl: store.logoUrl,
       nameEn: store.nameEn,
       location: store.location,
       tagline: store.catchCopy,

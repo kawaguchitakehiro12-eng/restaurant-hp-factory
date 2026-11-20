@@ -1,4 +1,5 @@
 export type IzakayaCasualStore = {
+  logoUrl?: string;
   name: string;
   nameEn: string;
   location: string;

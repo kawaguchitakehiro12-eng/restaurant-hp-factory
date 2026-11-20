@@ -1,6 +1,6 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');const{load}=require('./load-ts.cjs');
 function setup(){
- const state={auth:{status:'ok',user:{id:'operator-test'}},share:{id:'share-test',demoSiteId:'site-test',shareToken:'token-test',isActive:true,expiresAt:null},site:{storeName:'Test',prospectName:'Test',siteContractStatus:'demo',publishStatus:'draft'},writes:0,sends:0,saveError:false,replay:false,rpcError:null};
+ const state={auth:{status:'ok',user:{id:'operator-test'}},share:{id:'share-test',demoSiteId:'site-test',shareToken:'token-test',isActive:true,createdAt:new Date().toISOString(),expiresAt:null},site:{storeName:'Test',prospectName:'Test',siteContractStatus:'demo',publishStatus:'draft'},writes:0,sends:0,saveError:false,replay:false,rpcError:null};
  const api=load('src/app/api/admin/demo-deliveries/route.ts',{
   '@/lib/auth/operator':{getOperatorAuth:async()=>state.auth},
   '@/lib/repositories/supabase/demo-share-supabase':{getDemoShareRepository:()=>({findById:async()=>state.share})},

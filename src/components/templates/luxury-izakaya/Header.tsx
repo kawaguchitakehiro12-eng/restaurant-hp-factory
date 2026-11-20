@@ -1,4 +1,5 @@
 "use client";
+import {StoreLogo} from "@/components/public/StoreLogo";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -44,7 +45,7 @@ export function Header({ store, showPhotoShowcase = false }: HeaderProps) {
       >
         <div className="luxury-header-inner">
           <a href="#" className="luxury-header-logo">
-            {store.name}
+            <StoreLogo src={store.logoUrl} name={store.name}/>
           </a>
 
           <nav className="luxury-header-nav" aria-label="メインナビゲーション">

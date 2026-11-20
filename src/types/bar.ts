@@ -1,4 +1,5 @@
 export type BarStore = {
+  logoUrl?: string;
   name: string;
   nameEn: string;
   location: string;

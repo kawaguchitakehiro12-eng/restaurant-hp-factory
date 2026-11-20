@@ -146,6 +146,7 @@ export type StoreTemplateExtensions =
  * 店舗マスタ（Supabase移行時は stores + 関連テーブルに分割）
  */
 export type StoreRecord = {
+  logoUrl?: string;
   id: string;
   slug: string;
   templateType: TemplateType;

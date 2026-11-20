@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit --incremental false",
     "test:operations:postgres": "node tests/operations-postgres.cjs",
     "test:commerce:postgres": "node tests/commerce-postgres.cjs",
-    "test:commerce:browser": "node scripts/commerce-browser-fixture.cjs"
+    "test:commerce:browser": "node scripts/commerce-browser-fixture.cjs",
+    "build:isolated": "node scripts/build-isolated.cjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

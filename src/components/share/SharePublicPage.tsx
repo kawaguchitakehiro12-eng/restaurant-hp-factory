@@ -26,6 +26,7 @@ type ShareApiResponse =
     };
 
 type SharePublicPageProps = {
+  applicationEnabled?:boolean;
   shareToken: string;
 };
 
@@ -33,7 +34,7 @@ type SharePublicPageProps = {
  * 共有ページは PublicStorePage と同様、クライアント取得後にテンプレートを描画する。
  * fetch は必ず相対 URL（同一オリジン）のみ使用する。
  */
-export function SharePublicPage({ shareToken }: SharePublicPageProps) {
+export function SharePublicPage({ shareToken, applicationEnabled=false }: SharePublicPageProps) {
   const [state, setState] = useState<
     ShareApiResponse | "loading" | { status: "error"; message: string }
   >("loading");
@@ -116,6 +117,7 @@ export function SharePublicPage({ shareToken }: SharePublicPageProps) {
 
   return (
     <div className="share-page-root">
+      {applicationEnabled&&<p style={{padding:16,textAlign:'center'}}><a href={'/customer/apply#demo='+encodeURIComponent(shareToken)} rel="noreferrer">このデモを引き継いで申し込む（モック）</a></p>}
       <PublicStoreView
         resolution={state.resolution}
         canonicalPath={`/share/${shareToken}`}

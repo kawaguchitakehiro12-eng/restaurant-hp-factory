@@ -1,4 +1,5 @@
 export type CafeStore = {
+  logoUrl?: string;
   name: string;
   nameEn: string;
   location: string;

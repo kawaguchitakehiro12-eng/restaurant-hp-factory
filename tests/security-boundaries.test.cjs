@@ -9,7 +9,7 @@ test('normal and shared visibility matrix excludes all suspended/lost/unknown st
 test('all five templates respect normal public API and shared loader boundaries',async()=>{
  for(const template of ['luxury-izakaya','cafe','bar','bal','izakaya-casual']){
   let site={id:'fixture',storeSlug:'fixture',storeName:'Fixture',prospectName:'Fixture',templateType:template,siteContractStatus:'demo',publishStatus:'draft'};
-  let share={id:'share',demoSiteId:'fixture',isActive:true,expiresAt:null};const mocks={'@/lib/repositories':{getDemoSiteRepository:()=>({findById:async()=>site,findBySlug:async()=>site})},'@/lib/repositories/supabase/demo-share-supabase':{getDemoShareRepository:()=>({findByToken:async()=>share})},'@/lib/stores/demo-content-resolver':{resolveDemoStore:()=>({store:{name:'fixture'}})},'@/lib/api/supabase-route':{requireSupabaseAdmin:()=>null}};
+  let share={id:'share',demoSiteId:'fixture',isActive:true,createdAt:new Date().toISOString(),expiresAt:null};const mocks={'@/lib/repositories':{getDemoSiteRepository:()=>({findById:async()=>site,findBySlug:async()=>site})},'@/lib/repositories/supabase/demo-share-supabase':{getDemoShareRepository:()=>({findByToken:async()=>share})},'@/lib/stores/demo-content-resolver':{resolveDemoStore:()=>({store:{name:'fixture'}})},'@/lib/api/supabase-route':{requireSupabaseAdmin:()=>null}};
   const loader=load('src/lib/share/load-shared-demo.ts',mocks),route=load('src/app/api/public/sites/[slug]/route.ts',mocks);
   const get=async()=>JSON.parse(await(await route.GET(new Request('https://fixture.invalid/api/public/sites/fixture'),{params:Promise.resolve({slug:'fixture'})})).text());
   assert.equal((await get()).visible,false);assert.equal((await loader.peekSharedDemoPage('fixture')).status,'found');
