@@ -1,3 +1,4 @@
+import {apiKeyFetch} from "@/lib/supabase/api-key-fetch";
 import {boundedBrowserAuthFetch} from "@/lib/browser/auth-fetch";
 import { createBrowserClient } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -13,7 +14,7 @@ export function createBrowserSupabaseClient(): SupabaseClient {
   }
 
   if (!browserClient) {
-    browserClient = createBrowserClient(url, key,{global:{fetch:boundedBrowserAuthFetch}});
+    browserClient = createBrowserClient(url, key,{global:{fetch:apiKeyFetch(key,"anon",boundedBrowserAuthFetch)}});
   }
   return browserClient;
 }

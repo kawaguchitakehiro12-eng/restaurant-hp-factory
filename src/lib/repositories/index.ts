@@ -1,4 +1,4 @@
-import { isSupabaseAdminConfigured } from "@/lib/supabase/config";
+import { isSupabaseAdminConfigured } from "@/lib/supabase/server-config";
 import type { CustomerRepository, DemoSiteRepository } from "@/lib/repositories/types";
 import { createSupabaseCustomerRepository } from "@/lib/repositories/supabase/customer-supabase";
 import { createSupabaseDemoSiteRepository } from "@/lib/repositories/supabase/demo-site-supabase";
@@ -17,6 +17,7 @@ export function getCustomerRepository(): CustomerRepository {
   return createSupabaseCustomerRepository();
 }
 
-export { isSupabaseConfigured, isSupabaseAdminConfigured } from "@/lib/supabase/config";
+export { isSupabaseConfigured } from "@/lib/supabase/config";
+export { isSupabaseAdminConfigured } from "@/lib/supabase/server-config";
 
 export {createSupabaseCommercialRepository as getCommercialRepository} from "@/lib/repositories/supabase/commercial-supabase";

@@ -1,7 +1,7 @@
 import { initialDemoCustomers, initialDemoSites } from "@/data/admin/demo-mock";
 import { getCustomerRepository, getDemoSiteRepository } from "@/lib/repositories";
 import { createAdminDbClient } from "@/lib/supabase/admin";
-import { isSupabaseAdminConfigured } from "@/lib/supabase/config";
+import { isSupabaseAdminConfigured } from "@/lib/supabase/server-config";
 
 export function requireSupabaseAdmin() {
   if (!isSupabaseAdminConfigured()) {

@@ -2,7 +2,6 @@ import {minimumTermEndDate as fixedTermEndDate} from "@/lib/admin/minimum-term";
 import {resolveMinimumTermMonths} from "@/lib/admin/minimum-term";
 import type { CustomerAccount } from "@/types/admin";
 import {
-  DEFAULT_MONTHLY_FEE,
   getDomainStatusLabel,
 } from "@/lib/admin/contract-templates";
 import {
@@ -37,6 +36,7 @@ export function publishDemoSite(
   customer: CustomerAccount;
   result: PublishSiteResult;
 } {
+  if(!Number.isSafeInteger(form.monthlyFee)||form.monthlyFee<0||form.monthlyFee>1000000)throw new Error("合意済みの月額料金を入力してください。");
   const today = todayIso();
   const slug = normalizeSlug(form.storeSlug);
   if (!slug) {
@@ -69,7 +69,7 @@ export function publishDemoSite(
     publishedAt: today,
     contractStartDate: form.contractStartDate,
     minimumTermEndDate,
-    monthlyFee: form.monthlyFee ?? DEFAULT_MONTHLY_FEE,
+    monthlyFee: form.monthlyFee,
     domainStatus: form.domainStatus,
     loginEmail,
     initialPassword: password,

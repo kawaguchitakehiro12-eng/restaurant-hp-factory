@@ -1,0 +1,50 @@
+SAKUPAGE sales development — 2026-11-20
+Independent local repository: feature/sales-operations. No remote is configured.
+Imported baseline e1d88c0 preserves the original 442-file frozen release.
+Original release and SQL007 are not modified by this development.
+
+Implemented, local/mock validation:
+- Contract-month six-month eligibility; no cancellation reservation during the minimum.
+- Consent to explicitly entered terms/price; no default price or initial fee.
+- Month-end cancellation, no new invoices after end, public read expiry guard.
+- Manual monthly invoice/payment/void/collection ledger with request idempotency and revision checks.
+- Costs and monthly billing/receipt/receivable/active-contract summaries.
+- Owner inquiries and operator replies; tenant filtering and operation audit.
+- Domain tracking only; no DNS or Vercel provisioning.
+- Previously tested API-key/Auth429/Proxy503-cookie/server-only fixes reused.
+
+New development SQL: supabase/proposals/sales-operations-v1.sql.
+Requires reviewed SQL001..007. Applies only to fresh local synthetic databases in tests.
+NO production migration applied. This is not a finalized production execution package.
+All new operations default OFF unless SALES_OPERATIONS_ENABLED=true.
+Do not enable without SQL review, isolated integration tests and separate production approval.
+Keep OPERATOR_ATOMIC_WRITES_ENABLED and delivery controls under their existing rules.
+
+Limitations:
+- Consent screen currently records terms for an already provisioned contracted site.
+  It is not a complete pre-account public application / electronic contract flow.
+  Existing manual contracting remains necessary; never represent the new screen as a legal finalization.
+- Reminder registration and local outbox queue exist; scheduled dispatch/provider integration is NOT complete.
+  Registering a reminder never schedules cancellation.
+- Month-end public visibility and invoice prohibition are checked on reads/writes.
+  Persisted lifecycle reconciliation is currently an explicit operator action, not a scheduled job.
+- Domain data is a manual registry, not a functioning custom-host routing implementation.
+- No actual email/SMS, payment, production DB/RLS/Auth or deployed UI validation took place.
+- Build blocked by local EPERM creating .next/static/chunks/app/admin/demo/[slug].
+  No ACL change/elevation/workaround attempted. Browser E2E therefore NOT executed.
+- Existing backup/recovery production blockers remain unchanged.
+- Fees, payment provider, billing due policy, legal text, unpaid suspension and retention require owner decision.
+
+Checks:
+  npm test
+  npm run typecheck
+  npm run lint -- --max-warnings=0
+  npm run test:operations:postgres
+PostgreSQL test uses fresh fake data, single-user PG17, no network listener.
+The existing local runtime at ../pg17-lab/runtime/pgsql/bin is required; no package/network install.
+New SQL data must be included in the future approved encrypted backup scope (public schema).
+Never use production data in this unprotected development directory.
+
+Next: run successful production build and browser integration in an authorized normal local process;
+review the new database proposal before any environment application.
+Do not push main: it triggers Vercel production deployment.

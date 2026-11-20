@@ -6,9 +6,3 @@ export function isSupabaseConfigured(): boolean {
   );
 }
 
-/** Returns true when server-side admin operations are available. */
-export function isSupabaseAdminConfigured(): boolean {
-  return Boolean(
-    isSupabaseConfigured() && process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
-}

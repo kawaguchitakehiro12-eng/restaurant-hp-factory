@@ -21,7 +21,6 @@ export const DOMAIN_STATUS_OPTIONS: { id: DomainStatus; label: string }[] = [
 ];
 
 export const MINIMUM_TERM_MONTHS = 6;
-export const DEFAULT_MONTHLY_FEE = 2980;
 
 export function getTemplateLabel(id: ContractTemplateId): string {
   return CONTRACT_TEMPLATE_OPTIONS.find((t) => t.id === id)?.label ?? id;

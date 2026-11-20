@@ -1,3 +1,4 @@
+import {apiKeyFetch} from "@/lib/supabase/api-key-fetch";
 import {boundedServerFetch} from "@/lib/supabase/server-fetch";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
@@ -14,7 +15,7 @@ export async function createServerSupabaseClient(): Promise<SupabaseClient> {
   const cookieStore = await cookies();
 
   return createServerClient(url, key, {
-    global:{fetch:boundedServerFetch},
+    global:{fetch:apiKeyFetch(key,"anon",boundedServerFetch)},
     cookies: {
       getAll() {
         return cookieStore.getAll();

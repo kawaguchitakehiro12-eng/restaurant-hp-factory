@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SharePublicPage } from "@/components/share/SharePublicPage";
 import { ShareNotFoundPage } from "@/components/share/ShareStatusPages";
-import { isSupabaseAdminConfigured } from "@/lib/supabase/config";
+import { isSupabaseAdminConfigured } from "@/lib/supabase/server-config";
 import { peekSharedDemoPage } from "@/lib/share/load-shared-demo";
 import { BRAND } from "@/lib/admin/brand";
 import "@/app/share/share.css";

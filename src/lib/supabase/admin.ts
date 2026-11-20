@@ -1,3 +1,5 @@
+import "server-only";
+import {apiKeyFetch, apiKeyKind} from "@/lib/supabase/api-key-fetch";
 import {boundedServerFetch} from "@/lib/supabase/server-fetch";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
@@ -12,13 +14,14 @@ function getAdminCredentials(): { url: string; serviceRoleKey: string } {
     throw new Error("Supabase admin credentials are not configured");
   }
 
+  apiKeyKind(serviceRoleKey,"service_role");
   return { url, serviceRoleKey };
 }
 
 /**
  * PostgREST (DB) 用 service_role クライアント。
  * - リクエストごとに新規インスタンス（シングルトン禁止）
- * - Authorization を service_role キーで固定（PGRST303 対策）
+ * - legacy Bearer固定を維持。新形式は最終fetchでapikeyのみ送信。
  */
 export function createAdminDbClient(): SupabaseClient {
   const { url, serviceRoleKey } = getAdminCredentials();
@@ -30,9 +33,9 @@ export function createAdminDbClient(): SupabaseClient {
       detectSessionInUrl: false,
     },
     global: {
-      fetch:boundedServerFetch,
+      fetch:apiKeyFetch(serviceRoleKey,"service_role",boundedServerFetch),
       headers: {
-        Authorization: `Bearer ${serviceRoleKey}`,
+        ...(apiKeyKind(serviceRoleKey,"service_role")==="legacy"?{Authorization: `Bearer ${serviceRoleKey}`} : {}),
         apikey: serviceRoleKey,
       },
     },
@@ -47,7 +50,7 @@ export function createAdminAuthClient(): SupabaseClient {
   const { url, serviceRoleKey } = getAdminCredentials();
 
   return createClient(url, serviceRoleKey, {
-    global:{fetch:boundedServerFetch},
+    global:{fetch:apiKeyFetch(serviceRoleKey,"service_role",boundedServerFetch)},
     auth: {
       persistSession: false,
       autoRefreshToken: false,

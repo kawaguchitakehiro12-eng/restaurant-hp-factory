@@ -143,6 +143,7 @@ export function convertDemoToContract(
   customer: CustomerAccount;
   result: ConvertToContractResult;
 } {
+  if(!Number.isSafeInteger(form.monthlyFee)||form.monthlyFee<0||form.monthlyFee>1000000)throw new Error("合意済みの月額料金を入力してください。");
   const today = todayIso();
   const customerId = demoSite.customerId ?? generateId("cust");
   const minimumTermEndDate = (resolveMinimumTermMonths(form.minimumTermMonths), fixedTermEndDate(form.contractStartDate));

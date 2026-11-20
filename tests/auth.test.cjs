@@ -11,7 +11,7 @@ test('origin check accepts incoming Host despite Next internal hostname, and rej
 });
 test('proxy keeps customer and operator areas separate and permits password callbacks',async()=>{
  const oldUrl=process.env.NEXT_PUBLIC_SUPABASE_URL,oldKey=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
- process.env.NEXT_PUBLIC_SUPABASE_URL='https://example.invalid';process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY='test-only';
+ process.env.NEXT_PUBLIC_SUPABASE_URL='https://example.invalid';process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY='sb_publishable_synthetic';
  try{
   let user=null;const {proxy,config}=load('src/proxy.ts',{'@supabase/ssr':{createServerClient:()=>({auth:{getUser:async()=>({data:{user}})}})}});
   assert.ok(config.matcher.includes('/customer/:path*'));
@@ -39,7 +39,7 @@ test('Auth service 5xx returns 503 without redirecting or exposing details',asyn
  const {requireCustomerUser}=load('src/lib/customer/server.ts',mocks);await assert.rejects(()=>requireCustomerUser(),error=>error.status===503);
 });
 test('proxy rejects Auth returned 5xx as unavailable while missing sessions remain 401',async()=>{
- const oldUrl=process.env.NEXT_PUBLIC_SUPABASE_URL,oldKey=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;process.env.NEXT_PUBLIC_SUPABASE_URL='https://example.invalid';process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY='fixture';
+ const oldUrl=process.env.NEXT_PUBLIC_SUPABASE_URL,oldKey=process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;process.env.NEXT_PUBLIC_SUPABASE_URL='https://example.invalid';process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY='sb_publishable_synthetic';
  try{let error={status:500};const{proxy}=load('src/proxy.ts',{'@supabase/ssr':{createServerClient:()=>({auth:{getUser:async()=>({data:{user:null},error})}})}});let response=await proxy(new NextRequest('https://test.invalid/api/demo-sites'));assert.equal(response.status,503);error={status:401};response=await proxy(new NextRequest('https://test.invalid/api/demo-sites'));assert.equal(response.status,401)}finally{if(oldUrl===undefined)delete process.env.NEXT_PUBLIC_SUPABASE_URL;else process.env.NEXT_PUBLIC_SUPABASE_URL=oldUrl;if(oldKey===undefined)delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;else process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY=oldKey}
 });
 
