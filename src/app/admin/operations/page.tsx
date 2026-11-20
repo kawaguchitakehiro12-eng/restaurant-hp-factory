@@ -1,2 +1,1 @@
-import {OperationsPanel} from '@/components/operations/OperationsPanel';
-export default function Page(){return <OperationsPanel operator/>;}
+import {CommercePanel} from '@/components/operations/CommercePanel';export default function Page(){return <CommercePanel operator/>;}

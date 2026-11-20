@@ -1,6 +1,6 @@
 // HTTP simulation only: not a Postgres/RLS implementation. Never loads .env files.
 const http=require('node:http'),crypto=require('node:crypto');
-const ANON='fixture-anon-key',SERVICE='fixture-service-key';
+const ANON='sb_publishable_SYNTHETIC_LOCAL_ONLY',SERVICE='sb_secret_SYNTHETIC_LOCAL_ONLY';
 const clone=value=>JSON.parse(JSON.stringify(value));
 function createFixtureBackend(){
  const state={tables:{demo_sites:[],customers:[],store_content:[],photos:[],demo_shares:[],contract_operations:[],demo_deliveries:[],demo_delivery_usage:[],manual_invoices:[],commercial_terms:[]},users:[],failure:null,calls:[],providerCalls:0};

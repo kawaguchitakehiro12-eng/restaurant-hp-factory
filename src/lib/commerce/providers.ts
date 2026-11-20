@@ -1,0 +1,11 @@
+import 'server-only';
+import {createHmac,timingSafeEqual} from 'node:crypto';
+import {CommerceError} from './engine';
+export interface CardGateway{setup(id:string):Promise<{provider:'mock';ref:string;valid:boolean}>;charge(id:string,gross:number):Promise<{reference:string;status:'succeeded'|'failed';fee:number}>}
+export interface DomainGateway{advance(state:string,id:string):Promise<{state:'registering'|'dns_pending'|'active'|'failed';reference:string}>}
+export interface MailGateway{send(id:string):Promise<{state:'simulated'}>}
+export class MockCardGateway implements CardGateway{constructor(private outcome:'succeeded'|'failed'='succeeded'){}async setup(id:string){return{provider:'mock' as const,ref:'mock_setup_'+id,valid:true}}async charge(id:string,gross:number){if(!Number.isSafeInteger(gross)||gross<0)throw new CommerceError(400,'金額を確認してください。');return{reference:id,status:this.outcome,fee:0}}}
+export class MockDomainGateway implements DomainGateway{async advance(state:string,id:string){const next={requested:'registering',registering:'dns_pending',dns_pending:'active'}[state];if(!next)throw new CommerceError(409,'ドメイン処理の対象外です。');return{state:next as 'registering'|'dns_pending'|'active',reference:'mock_domain_'+id}}}
+export class MockMailGateway implements MailGateway{async send(id:string){if(!id)throw new CommerceError(400,'配信IDを確認してください。');return{state:'simulated' as const}}}
+export function assertMockMode(){let local=false;try{const app=new URL(process.env.NEXT_PUBLIC_APP_URL??''),db=new URL(process.env.NEXT_PUBLIC_SUPABASE_URL??'');local=app.protocol==='http:'&&db.protocol==='http:'&&['127.0.0.1','[::1]'].includes(app.hostname)&&['127.0.0.1','[::1]'].includes(db.hostname)&&!app.username&&!db.username&&!app.password&&!db.password;}catch{}if(process.env.SAKUPAGE_COMMERCE_MODE!=='mock'||process.env.VERCEL||!local||process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!=='sb_publishable_SYNTHETIC_LOCAL_ONLY'||process.env.SUPABASE_SERVICE_ROLE_KEY!=='sb_secret_SYNTHETIC_LOCAL_ONLY')throw new CommerceError(503,'外部サービス未確定のため本申込は無効です。固定の架空キーとループバックの検証先のみ利用できます。');}
+export function verifyMockWebhook(body:string,signature:string|null,secret:string){if(!secret||!signature||!/^[0-9a-f]{64}$/.test(signature))return false;const expected=createHmac('sha256',secret).update(body).digest();return timingSafeEqual(expected,Buffer.from(signature,'hex'))}

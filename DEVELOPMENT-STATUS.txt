@@ -1,50 +1,60 @@
-SAKUPAGE sales development — 2026-11-20
-Independent local repository: feature/sales-operations. No remote is configured.
-Imported baseline e1d88c0 preserves the original 442-file frozen release.
-Original release and SQL007 are not modified by this development.
+SAKUPAGE current-spec development — 2026-11-20
+Repository: work/sales-development-20261120, branch feature/sales-operations.
+This is an independent local repository, not the original fixed release.
+No remote push, production access, real messages/payments/domains or ACL changes.
 
-Implemented, local/mock validation:
-- Contract-month six-month eligibility; no cancellation reservation during the minimum.
-- Consent to explicitly entered terms/price; no default price or initial fee.
-- Month-end cancellation, no new invoices after end, public read expiry guard.
-- Manual monthly invoice/payment/void/collection ledger with request idempotency and revision checks.
-- Costs and monthly billing/receipt/receivable/active-contract summaries.
-- Owner inquiries and operator replies; tenant filtering and operation audit.
-- Domain tracking only; no DNS or Vercel provisioning.
-- Previously tested API-key/Auth429/Proxy503-cookie/server-only fixes reused.
+Latest approved business specification:
+2980 JPY net + 10% tax = 3278 JPY per store/month, no initial fee or first-month proration.
+Snapshot price/tax and agreement version/text/hash/doc reference per contract and invoice.
+Contract only after applicant + agreement + mock card verification; no operator contract approval.
+Six calendar months including contract month; cancellation from month seven; withdrawal before end.
+Final service month charged on following month's twentieth, debts retained after termination.
+Public shutdown at next-month day1 01:00 JST; renewal/public-domain use stop separately from expiry.
+No automatic public shutdown solely because payment failed.
 
-New development SQL: supabase/proposals/sales-operations-v1.sql.
-Requires reviewed SQL001..007. Applies only to fresh local synthetic databases in tests.
-NO production migration applied. This is not a finalized production execution package.
-All new operations default OFF unless SALES_OPERATIONS_ENABLED=true.
-Do not enable without SQL review, isolated integration tests and separate production approval.
-Keep OPERATOR_ATOMIC_WRITES_ENABLED and delivery controls under their existing rules.
+Implemented current-spec modules:
+src/lib/commerce/engine.ts: contracts, application, tax snapshots, billing, cancellation,
+withdrawal, reminders, invoices, payment claim/results/idempotency, domain states/history,
+support/notices, calls, costs/fees/metrics, adjustment records, audit.
+src/lib/commerce/repository.ts: server-only persistence via CAS RPC and verified actor identity.
+src/lib/commerce/providers.ts: adapter interfaces and mock implementations only.
+src/lib/commerce/jobs.ts: explicit scheduler entry, payment/message/domain work, no live provider.
+supabase/proposals/commerce-v2.sql: NEW local-only proposal, 3 RLS tables and 5 server-only RPCs.
+Direct anon/authenticated table access denied. Site ownership/agent assignment checked by RPC.
+Owner can switch multiple independent stores; agents see assigned sales records only.
+Old cardless contract API is disabled in production; legacy tests require an internal test switch.
+Old v1 operations SQL/API remain for regression comparison; do not enable them for new-spec sales.
 
-Limitations:
-- Consent screen currently records terms for an already provisioned contracted site.
-  It is not a complete pre-account public application / electronic contract flow.
-  Existing manual contracting remains necessary; never represent the new screen as a legal finalization.
-- Reminder registration and local outbox queue exist; scheduled dispatch/provider integration is NOT complete.
-  Registering a reminder never schedules cancellation.
-- Month-end public visibility and invoice prohibition are checked on reads/writes.
-  Persisted lifecycle reconciliation is currently an explicit operator action, not a scheduled job.
-- Domain data is a manual registry, not a functioning custom-host routing implementation.
-- No actual email/SMS, payment, production DB/RLS/Auth or deployed UI validation took place.
-- Build blocked by local EPERM creating .next/static/chunks/app/admin/demo/[slug].
-  No ACL change/elevation/workaround attempted. Browser E2E therefore NOT executed.
-- Existing backup/recovery production blockers remain unchanged.
-- Fees, payment provider, billing due policy, legal text, unpaid suspension and retention require owner decision.
+Runtime:
+SAKUPAGE_COMMERCE_MODE defaults OFF. Only mock is currently implemented.
+Mock requires literal HTTP loopback APP and Supabase URLs, exact synthetic local-only API keys,
+and no VERCEL marker. Real Supabase endpoints are explicitly rejected.
+COMMERCE_AGREEMENT_METHOD web/electronic and TERMS_VERSION/TEXT have no real default.
+COMMERCE_JOB_SECRET / COMMERCE_WORKER_ACTOR_ID and COMMERCE_WEBHOOK_SECRET are unset.
+No scheduler, provider, legal agreement or billing was enabled.
+Webhook validates HMAC over raw bounded body, then reconciles event/reference/amount.
+Signup accepts example.invalid users only, preserves credentials only in mock Auth service memory.
 
-Checks:
-  npm test
-  npm run typecheck
-  npm run lint -- --max-warnings=0
-  npm run test:operations:postgres
-PostgreSQL test uses fresh fake data, single-user PG17, no network listener.
-The existing local runtime at ../pg17-lab/runtime/pgsql/bin is required; no package/network install.
-New SQL data must be included in the future approved encrypted backup scope (public schema).
-Never use production data in this unprotected development directory.
+Validation:
+npm test; npm run typecheck; npm run lint -- --max-warnings=0
+npm run test:commerce:postgres (fresh PG17 single-user synthetic DB, no network listener)
+npm run test:commerce:browser starts component + actual route handler harness on 127.0.0.1:32620.
+The browser harness mocks Auth and repository; it is NOT full Next/Auth/RLS E2E.
+Local component bundle compiled. Browser connection timed out; Windows UI URL verification
+was rejected by Computer Use safety controls. Browser interactions did not run.
+Next production build failed EPERM in alternate .next-sales output too.
+Precreating ordinary build directories did not resolve it. No ACL/elevation retries.
+Do not call production build or browser E2E PASS.
+The fixture server was stopped after the attempt.
 
-Next: run successful production build and browser integration in an authorized normal local process;
-review the new database proposal before any environment application.
-Do not push main: it triggers Vercel production deployment.
+Remaining local work:
+Normal-permission successful full Next build + real browser integration with synthetic DB.
+Production-grade account/demo ownership invitation binding (currently operator binds existing Auth IDs).
+Logo editing and formal custom-host route verification are not newly implemented here.
+External provider adapter implementations after selection; scheduler deployment/configuration.
+Real Supabase Auth/role/managed-schema integration not verified by single-user PG tests.
+Full migration/backup/recovery approval package for new SQL, separate from frozen SQL007.
+For notifications, live-provider idempotency/ambiguous-outcome policy requires provider integration;
+only simulated delivery exists now. No real delivery retry policy is assumed.
+Contracts/legal/privacy/provider/retention/refund/retry decisions remain with the owner.
+Never push main before approved backup, DB change, audit, configuration and deployment gates.

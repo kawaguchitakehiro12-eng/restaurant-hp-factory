@@ -13,6 +13,7 @@ function getDevAllowedOrigins(): string[] {
 const devAllowedOrigins = getDevAllowedOrigins();
 
 const nextConfig: NextConfig = {
+  distDir: process.env.SAKUPAGE_ISOLATED_BUILD === "true" ? ".next-sales" : ".next",
   async headers(){return [
     {source:'/:path*',headers:[{key:'X-Content-Type-Options',value:'nosniff'},{key:'Referrer-Policy',value:'strict-origin-when-cross-origin'}]},
     ...['/api/demo-sites/:path*','/api/customers/:path*','/api/admin/:path*','/api/customer/:path*'].map(source=>({source,headers:[{key:'Cache-Control',value:'private, no-store'},{key:'X-Frame-Options',value:'DENY'},{key:'Referrer-Policy',value:'no-referrer'},{key:'X-Robots-Tag',value:'noindex, nofollow'}]})),

@@ -22,6 +22,7 @@ export async function POST(request:Request,{params}:{params:Promise<{id:string}>
   if(!isSameOriginRequest(request))return reply("リクエスト元を確認できません。",403);
   const auth=await getOperatorAuth();if(auth.status!=="ok")return reply("運営者ログインが必要です。",auth.status==="unavailable"?503:auth.status==="unauthenticated"?401:403);
   if(process.env.NODE_ENV==="production"&&process.env.OPERATOR_ATOMIC_WRITES_ENABLED!=="true")return reply("承認済みDB設定の確認が必要です。",503);
+  if(process.env.SAKUPAGE_INTERNAL_LEGACY_TEST!=="true"||process.env.NODE_ENV==="production")return reply("カード確認を含む新しい申込フローを使用してください。/admin/operations で準備状況を確認できます。",409);
   if(!request.headers.get("content-type")?.startsWith("application/json"))return reply("JSON形式で送信してください。",415);
   const body=await readOperatorJson(request,20000);
   if(!body||typeof body!=="object"||Array.isArray(body))return reply("入力形式を確認してください。",400,true);

@@ -28,5 +28,5 @@ export function shareExpiryFromIso(expiresAt: string | null): ShareExpiryOption 
   const now = new Date();
   const diffDays = Math.round((exp.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   if (diffDays <= 8) return "7d";
-  return "30d";
+  return "7d";
 }

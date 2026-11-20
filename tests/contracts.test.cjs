@@ -1,3 +1,4 @@
+process.env.SAKUPAGE_INTERNAL_LEGACY_TEST='true';
 const {test}=require('node:test'),assert=require('node:assert/strict');const {load}=require('./load-ts.cjs');
 function setup({rpcCode=null,createFails=false,operator=true}={}){
  const operations=new Map(),calls={created:0,deleted:0,rpc:[]};

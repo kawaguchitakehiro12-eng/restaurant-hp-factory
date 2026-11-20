@@ -45,4 +45,4 @@ export function validateOperatorCustomer(value:unknown):CustomerAccount{
   if(!c.id||!String(c.name).trim()||!/^\S+@[^\s@]+\.[^\s@]+$/.test(String(c.contactEmail))||!Number.isFinite(Date.parse(String(c.createdAt))))throw new OperatorInputError("顧客情報を確認してください。");
   return c as CustomerAccount;
 }
-export function validateShareInput(body:Record<string,unknown>){if(body.expiryOption!==undefined)one(body.expiryOption,["7d","30d","never"]);if(body.demoSiteId!==undefined){text(body.demoSiteId,200);if(!body.demoSiteId)throw new OperatorInputError("案件を選択してください。");}if(body.action!==undefined)one(body.action,["revoke","regenerate","extend"]);}
+export function validateShareInput(body:Record<string,unknown>){if(body.expiryOption!==undefined)one(body.expiryOption,["7d"]);if(body.demoSiteId!==undefined){text(body.demoSiteId,200);if(!body.demoSiteId)throw new OperatorInputError("案件を選択してください。");}if(body.action!==undefined)one(body.action,["revoke","regenerate","extend"]);}

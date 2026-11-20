@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     validateShareInput(body as unknown as Record<string,unknown>);
     const share = await getDemoShareRepository().createOrReuse(
       body.demoSiteId,
-      body.expiryOption ?? "30d"
+      body.expiryOption ?? "7d"
     );
     return NextResponse.json({ share }, { status: 201 });
   } catch (error) {

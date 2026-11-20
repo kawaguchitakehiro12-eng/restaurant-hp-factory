@@ -42,7 +42,7 @@ function DemoShareModalInner({ demoSite, onClose, onShareUpdated }: DemoShareMod
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [share, setShare] = useState<DemoShare | null>(null);
   const [loading, setLoading] = useState(() => isSupabaseConfigured());
-  const [expiryOption, setExpiryOption] = useState<ShareExpiryOption>("30d");
+  const [expiryOption, setExpiryOption] = useState<ShareExpiryOption>("7d");
   const [copied, setCopied] = useState<string | null>(null);
   const [showQr, setShowQr] = useState(false);
   const [refreshedAt, setRefreshedAt] = useState<string | null>(null);
@@ -217,7 +217,7 @@ function DemoShareModalInner({ demoSite, onClose, onShareUpdated }: DemoShareMod
                 value={expiryOption}
                 onChange={(e) => setExpiryOption(e.target.value as ShareExpiryOption)}
               >
-                {SHARE_EXPIRY_OPTIONS.map((o) => (
+                {SHARE_EXPIRY_OPTIONS.filter(o=>o.id==="7d").map((o) => (
                   <option key={o.id} value={o.id}>
                     {o.label}
                   </option>
@@ -351,7 +351,7 @@ function DemoShareModalInner({ demoSite, onClose, onShareUpdated }: DemoShareMod
                   value={expiryOption}
                   onChange={(e) => setExpiryOption(e.target.value as ShareExpiryOption)}
                 >
-                  {SHARE_EXPIRY_OPTIONS.map((o) => (
+                  {SHARE_EXPIRY_OPTIONS.filter(o=>o.id==="7d").map((o) => (
                     <option key={o.id} value={o.id}>
                       {o.label}
                     </option>
