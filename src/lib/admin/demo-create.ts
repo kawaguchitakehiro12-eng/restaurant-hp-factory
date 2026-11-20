@@ -1,3 +1,4 @@
+import {minimumTermEndDate as fixedTermEndDate} from "@/lib/admin/minimum-term";
 import {resolveMinimumTermMonths} from "@/lib/admin/minimum-term";
 import type { CustomerAccount } from "@/types/admin";
 import type {
@@ -15,7 +16,6 @@ import {
 import { getSalesStatusLabel } from "@/lib/admin/demo-labels";
 import { createEmptyDemoContent, ensureDemoContent } from "@/types/demo-content";
 import {
-  addMonths,
   addCalendarMonths,
   APP_BASE_URL,
   generateId,
@@ -145,7 +145,7 @@ export function convertDemoToContract(
 } {
   const today = todayIso();
   const customerId = demoSite.customerId ?? generateId("cust");
-  const minimumTermEndDate = addMonths(form.contractStartDate, resolveMinimumTermMonths(form.minimumTermMonths));
+  const minimumTermEndDate = (resolveMinimumTermMonths(form.minimumTermMonths), fixedTermEndDate(form.contractStartDate));
   const password = form.initialPassword.trim() || generateTempPassword();
   const dashboardUrl = `${APP_BASE_URL}/customer`;
   const demoUrl = buildDemoUrl(demoSite.storeSlug);

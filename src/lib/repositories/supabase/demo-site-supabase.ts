@@ -12,6 +12,7 @@ import type { DemoSite } from "@/types/demo";
 import type { DemoSiteContent } from "@/types/demo-content";
 import { ensureDemoContent } from "@/types/demo-content";
 import { todayIso } from "@/lib/admin/form-utils";
+import {contractHasEnded} from '@/lib/operations/visibility';
 
 const SITE_SELECT = "*, store_content(content, site_id, updated_at)";
 
@@ -19,7 +20,8 @@ export function createSupabaseDemoSiteRepository(): DemoSiteRepository {
   const db = () => createAdminDbClient();
 
   async function rowToSite(row: DemoSiteWithContentRow): Promise<DemoSite> {
-    return {...rowToDemoSite(row, extractContentFromRow(row)),contentRevision:(Array.isArray(row.store_content)?row.store_content[0]:row.store_content)?.updated_at??null};
+    const site={...rowToDemoSite(row, extractContentFromRow(row)),contentRevision:(Array.isArray(row.store_content)?row.store_content[0]:row.store_content)?.updated_at??null};
+    return await contractHasEnded(row.id)?{...site,publishStatus:'suspended',siteContractStatus:'suspended'}:site;
   }
 
   async function syncPhotos(siteId: string, content: DemoSiteContent): Promise<void> {

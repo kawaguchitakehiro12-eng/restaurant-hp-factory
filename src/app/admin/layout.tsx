@@ -7,6 +7,7 @@ import { getOperatorAuth } from "@/lib/auth/operator";
 import "./admin.css";
 
 const adminNav = [
+  { href: "/admin/operations", label: "解約・請求・月次運用", icon: "billing" as const },
   { href: "/admin", label: "ダッシュボード", exact: true, icon: "dashboard" as const },
   { href: "/admin/customers", label: "顧客一覧", icon: "customers" as const },
   { href: "/admin/stores", label: "デモ・契約管理", icon: "stores" as const },

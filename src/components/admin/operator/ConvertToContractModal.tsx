@@ -1,4 +1,5 @@
 "use client";
+import {minimumTermEndDate as fixedTermEndDate} from "@/lib/admin/minimum-term";
 import {isMinimumTermMonths} from "@/lib/admin/minimum-term";
 
 import { Check, Copy, X } from "lucide-react";
@@ -8,7 +9,7 @@ import {
   DOMAIN_STATUS_OPTIONS,
   MINIMUM_TERM_MONTHS,
 } from "@/lib/admin/contract-templates";
-import { addMonths, parseAgreedMonthlyFee, generateTempPassword, isValidEmail, todayIso } from "@/lib/admin/form-utils";
+import { parseAgreedMonthlyFee, generateTempPassword, isValidEmail, todayIso } from "@/lib/admin/form-utils";
 import { formatDate } from "@/lib/admin/labels";
 import { isApiAuthError } from "@/lib/data/api-errors";
 import type { ConvertToContractForm, ConvertToContractResult } from "@/types/demo";
@@ -60,7 +61,7 @@ function ConvertToContractModalInner() {
   };
 
   const minimumTermEndDate = form.contractStartDate&&isMinimumTermMonths(form.minimumTermMonths)
-    ? addMonths(form.contractStartDate, form.minimumTermMonths)
+    ? fixedTermEndDate(form.contractStartDate)
     : "";
 
   const handleSubmit = async () => {
@@ -75,7 +76,7 @@ function ConvertToContractModalInner() {
     }
     const agreedFee=parseAgreedMonthlyFee(feeInput);
     if(agreedFee===null)nextErrors.monthlyFee="合意した月額料金を0〜1,000,000円の整数で入力してください";
-    if(!isMinimumTermMonths(form.minimumTermMonths))nextErrors.minimumTermMonths="合意した期間を1〜120か月の整数で入力してください";
+    if(!isMinimumTermMonths(form.minimumTermMonths))nextErrors.minimumTermMonths="最低利用期間は契約開始月を含む6か月です";
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0) return;
 
@@ -170,7 +171,7 @@ function ConvertToContractModalInner() {
                 />
                 {errors.monthlyFee&&<p className="admin-form-error">{errors.monthlyFee}</p>}
               </div>
-              <div className="admin-form-group"><label className="admin-form-label" htmlFor="convert-term-months">合意済み最低利用期間（月）</label><input id="convert-term-months" className="admin-form-input" type="number" min={1} max={120} step={1} value={Number.isFinite(form.minimumTermMonths)?form.minimumTermMonths:""} disabled={submitting} onChange={e=>setForm(prev=>({...prev,minimumTermMonths:e.target.valueAsNumber}))}/>{errors.minimumTermMonths&&<p className="admin-form-error">{errors.minimumTermMonths}</p>}</div>
+              <div className="admin-form-group"><label className="admin-form-label" htmlFor="convert-term-months">最低利用期間</label><input id="convert-term-months" className="admin-form-input" type="number" min={1} max={120} step={1} value={Number.isFinite(form.minimumTermMonths)?form.minimumTermMonths:""} disabled={submitting} onChange={e=>setForm(prev=>({...prev,minimumTermMonths:e.target.valueAsNumber}))}/>{errors.minimumTermMonths&&<p className="admin-form-error">{errors.minimumTermMonths}</p>}</div>
               <div className="admin-form-group">
                 <label className="admin-form-label">最低利用終了日</label>
                 <input

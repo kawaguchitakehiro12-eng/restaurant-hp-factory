@@ -1,4 +1,5 @@
 "use client";
+import {minimumTermEndDate as fixedTermEndDate} from "@/lib/admin/minimum-term";
 import {isMinimumTermMonths} from "@/lib/admin/minimum-term";
 
 import { Check, Copy, ExternalLink, X } from "lucide-react";
@@ -17,7 +18,6 @@ import {
 import { getBusinessTypeLabel } from "@/lib/admin/demo-labels";
 import { buildDemoUrl } from "@/lib/admin/demo-create";
 import {
-  addMonths,
   parseAgreedMonthlyFee,
   generateTempPassword,
   isValidEmail,
@@ -106,7 +106,7 @@ function PublishSiteFlowInner() {
     : "";
 
   const minimumTermEndDate = form.contractStartDate&&isMinimumTermMonths(form.minimumTermMonths)
-    ? addMonths(form.contractStartDate, form.minimumTermMonths)
+    ? fixedTermEndDate(form.contractStartDate)
     : "";
 
   const validateStep = (current: FlowStep): boolean => {
@@ -123,7 +123,7 @@ function PublishSiteFlowInner() {
     }
 
     if (current === 3) {
-      if(!isMinimumTermMonths(form.minimumTermMonths))nextErrors.minimumTermMonths="合意した期間を1〜120か月の整数で入力してください";
+      if(!isMinimumTermMonths(form.minimumTermMonths))nextErrors.minimumTermMonths="最低利用期間は契約開始月を含む6か月です";
       if(parseAgreedMonthlyFee(feeInput)===null)nextErrors.monthlyFee="合意した月額料金を0〜1,000,000円の整数で入力してください";
       if (!form.loginEmail.trim()) {
         nextErrors.loginEmail = "ログインメールを入力してください";
@@ -366,7 +366,7 @@ function PublishSiteFlowInner() {
                   {errors.monthlyFee&&<p className="admin-form-error">{errors.monthlyFee}</p>}
                 </div>
                 <div className="admin-form-group">
-                  <label className="admin-form-label" htmlFor="publish-term-months">合意済み最低利用期間（月）</label><input id="publish-term-months" className="admin-form-input" type="number" min={1} max={120} step={1} value={Number.isFinite(form.minimumTermMonths)?form.minimumTermMonths:""} disabled={submitting} onChange={e=>setForm(prev=>({...prev,minimumTermMonths:e.target.valueAsNumber}))}/>{errors.minimumTermMonths&&<p className="admin-form-error">{errors.minimumTermMonths}</p>}
+                  <label className="admin-form-label" htmlFor="publish-term-months">最低利用期間</label><input id="publish-term-months" className="admin-form-input" type="number" min={1} max={120} step={1} value={Number.isFinite(form.minimumTermMonths)?form.minimumTermMonths:""} disabled={submitting} onChange={e=>setForm(prev=>({...prev,minimumTermMonths:e.target.valueAsNumber}))}/>{errors.minimumTermMonths&&<p className="admin-form-error">{errors.minimumTermMonths}</p>}
                   <label className="admin-form-label">最低利用終了日</label>
                   <input
                     className="admin-form-input"

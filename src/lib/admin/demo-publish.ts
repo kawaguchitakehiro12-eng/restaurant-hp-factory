@@ -1,3 +1,4 @@
+import {minimumTermEndDate as fixedTermEndDate} from "@/lib/admin/minimum-term";
 import {resolveMinimumTermMonths} from "@/lib/admin/minimum-term";
 import type { CustomerAccount } from "@/types/admin";
 import {
@@ -5,7 +6,6 @@ import {
   getDomainStatusLabel,
 } from "@/lib/admin/contract-templates";
 import {
-  addMonths,
   addCalendarMonths,
   generateId,
   APP_BASE_URL,
@@ -44,7 +44,7 @@ export function publishDemoSite(
   }
 
   const customerId = demoSite.customerId ?? generateId("cust");
-  const minimumTermEndDate = addMonths(form.contractStartDate, resolveMinimumTermMonths(form.minimumTermMonths));
+  const minimumTermEndDate = (resolveMinimumTermMonths(form.minimumTermMonths), fixedTermEndDate(form.contractStartDate));
   const password = form.initialPassword.trim() || generateTempPassword();
   const loginEmail = form.loginEmail.trim();
   const publicUrl = buildDemoUrl(slug);

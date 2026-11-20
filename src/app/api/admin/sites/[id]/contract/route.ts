@@ -1,3 +1,4 @@
+import {minimumTermEndDate as fixedTermEndDate} from "@/lib/admin/minimum-term";
 import {resolveMinimumTermMonths} from "@/lib/admin/minimum-term";
 import {readOperatorJson,OperatorInputError} from "@/lib/api/operator-input";
 import {NextResponse} from "next/server";
@@ -5,7 +6,7 @@ import {isSameOriginRequest} from "@/lib/auth/request-origin";
 import {getOperatorAuth} from "@/lib/auth/operator";
 import {createAdminDbClient,createAdminAuthClient} from "@/lib/supabase/admin";
 import {getDemoSiteRepository,getCustomerRepository} from "@/lib/repositories";
-import {isValidEmail,isValidSlug,normalizeSlug,addMonths,addCalendarMonths} from "@/lib/admin/form-utils";
+import {isValidEmail,isValidSlug,normalizeSlug,addCalendarMonths} from "@/lib/admin/form-utils";
 import {isReservedSlug} from "@/lib/stores/demo-site-registry";
 import {getStoreBySlug} from "@/data/stores";
 import {createHash} from "node:crypto";
@@ -31,7 +32,7 @@ export async function POST(request:Request,{params}:{params:Promise<{id:string}>
   const slug=typeof body.storeSlug==="string"?normalizeSlug(body.storeSlug):"";
   const date=typeof body.contractStartDate==="string"?body.contractStartDate:"";
   if(!isValidEmail(email)||email.length>254||password.length<12||password.length>128||!isValidSlug(slug)||isReservedSlug(slug)||getStoreBySlug(slug)||!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date))||new Date(date).toISOString().slice(0,10)!==date||typeof body.monthlyFee!=="number"||!Number.isSafeInteger(body.monthlyFee)||body.monthlyFee<0||body.monthlyFee>1000000||!["unset","planned","configured"].includes(String(body.domainStatus)))return reply("メール、12文字以上のパスワード、公開URL、契約日、料金を確認してください。",400,true);
-  let termMonths:number;try{termMonths=resolveMinimumTermMonths(body.minimumTermMonths);}catch{return reply("最低利用期間は1〜120か月の整数で入力してください。",400,true);}
+  let termMonths:number;try{termMonths=resolveMinimumTermMonths(body.minimumTermMonths);}catch{return reply("最低利用期間は契約開始月を含む6か月です。",400,true);}
   const db=createAdminDbClient();
   const requestValues=[body.requestId,id,email,password,slug,date,body.monthlyFee,body.domainStatus];
   if(body.minimumTermMonths!==undefined)requestValues.push(termMonths);
@@ -56,7 +57,7 @@ export async function POST(request:Request,{params}:{params:Promise<{id:string}>
   const {error:recordError}=await db.from("contract_operations").update({state:"auth_created",auth_user_id:createdAuthId}).eq("id",operationId);
   if(recordError)return reply("アカウント準備後の状態確認が必要です。重ねて実行せず運営へご確認ください。",503);
   const customer={id:"cust-"+crypto.randomUUID(),name:target.prospectName,contactEmail:email,contactPhone:target.phone,contactPersonName:target.contactPersonName};
-  const contract={storeSlug:slug,contractStartDate:date,minimumTermEndDate:addMonths(date,termMonths),nextBillingDate:addCalendarMonths(date,1),monthlyFee:body.monthlyFee,domainStatus:body.domainStatus};
+  const contract={storeSlug:slug,contractStartDate:date,minimumTermEndDate:fixedTermEndDate(date),nextBillingDate:addCalendarMonths(date,1),monthlyFee:body.monthlyFee,domainStatus:body.domainStatus};
   const {error:completeError}=await db.rpc("complete_site_contract_v2",{p_operation_id:operationId,p_operator_id:auth.user.id,p_customer:customer,p_contract:contract,p_expected_updated_at:target.contentRevision??null});
   if(completeError){
    // 明確なDBロールバック時だけ、新規作成したアカウントを片付ける。
