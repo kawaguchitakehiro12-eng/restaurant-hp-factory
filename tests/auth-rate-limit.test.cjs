@@ -35,7 +35,7 @@ test('authenticated-looking data with 429 never bypasses operator role checking'
 test('customer editing retains draft and does not mark session expired or retry after Auth 429',async()=>{
  const b=backend(),route=load('src/app/api/customer/sites/[slug]/route.ts',b.mocks);
  const states=[],refs=[];let stateIndex=0,refIndex=0,networkCalls=0;const dirtyGuards=[];
- const react={useState:initial=>{const i=stateIndex++;if(!(i in states))states[i]=typeof initial==='function'?initial():initial;return[states[i],value=>{states[i]=typeof value==='function'?value(states[i]):value}]},useRef:initial=>{const i=refIndex++;return refs[i]??(refs[i]={current:initial})},useEffect:effect=>effect()};
+ const react={...require('react'),useState:initial=>{const i=stateIndex++;if(!(i in states))states[i]=typeof initial==='function'?initial():initial;return[states[i],value=>{states[i]=typeof value==='function'?value(states[i]):value}]},useRef:initial=>{const i=refIndex++;return refs[i]??(refs[i]={current:initial})},useEffect:effect=>effect()};
  const {CustomerSiteEditor}=load('src/components/customer/CustomerSiteEditor.tsx',{'react':react,'next/link':()=>null,'@/components/admin/ImageUploadField':{ImageUploadField:()=>null},'@/components/customer/CustomerBillingSummary':{CustomerBillingSummary:()=>null},'@/lib/browser/unsaved-changes':{installUnsavedChangesGuard:fn=>{dirtyGuards.push(fn);return()=>{}}}});
  const initial={id:'synthetic-site',slug:'a',name:'Synthetic',publishStatus:'published',content:load('src/types/demo-content.ts').createEmptyDemoContent(),revision:'2026-11-18T00:00:00Z',monthlyFee:0};
  function render(){stateIndex=0;refIndex=0;return CustomerSiteEditor({initial})}

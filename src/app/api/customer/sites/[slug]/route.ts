@@ -1,3 +1,6 @@
+import {mediaDevelopmentEnabled,prepareDevelopmentContent,syncDevelopmentPolicy} from '@/lib/media/development-service';
+import type {CustomerContent} from '@/types/customer-site';
+import {assertCustomerMedia} from '@/lib/media/customer-ownership';
 import {sanitizeLogo} from '@/lib/images/logo-server';
 import { NextResponse } from "next/server";
 import { CustomerAccessError, getCustomerSite, requireCustomerUser } from "@/lib/customer/server";
@@ -20,7 +23,7 @@ export async function PATCH(request:Request,{params}:Context) {
   if(!isSameOriginRequest(request)) return NextResponse.json({error:"リクエスト元を確認できません。"},{status:403,headers});
   if(!request.headers.get("content-type")?.toLowerCase().startsWith("application/json")) return NextResponse.json({error:"JSON形式で送信してください。"},{status:415,headers});
   const user=await requireCustomerUser(),slug=(await params).slug;
-  await getCustomerSite(user.id,slug);
+  const current=await getCustomerSite(user.id,slug);
   const max=4_000_000;
   if(Number(request.headers.get("content-length")??0)>max) return NextResponse.json({error:"画像を減らすか小さくしてください。"},{status:413,headers});
   const reader=request.body?.getReader();if(!reader)throw new CustomerInputError("入力がありません。");
@@ -29,6 +32,9 @@ export async function PATCH(request:Request,{params}:Context) {
   const bytes=new Uint8Array(length);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
   let body:unknown;try{body=JSON.parse(new TextDecoder().decode(bytes));}catch{throw new CustomerInputError("入力形式が正しくありません。");}
   const save=parseCustomerSave(body);
+  if(mediaDevelopmentEnabled())save.content=await prepareDevelopmentContent(save.content,user.id,current.id) as CustomerContent;
+  await assertCustomerMedia(save.content,current.id);
+  if(mediaDevelopmentEnabled())await syncDevelopmentPolicy(user.id,current.id,slug,save.content);
   try{save.content.photos.logo=await sanitizeLogo(save.content.photos.logo)}catch{throw new CustomerInputError("ロゴ画像を検証できません。形式・容量を確認してください。");}
   const {error}=await createAdminDbClient().rpc("save_customer_site_content",{p_user_id:user.id,p_slug:slug,p_content:save.content,p_expected_updated_at:save.revision});
   if(error){
@@ -36,6 +42,7 @@ export async function PATCH(request:Request,{params}:Context) {
     if(error.code==="42501")throw new CustomerAccessError(404);
     throw new CustomerAccessError(503);
   }
+  if(mediaDevelopmentEnabled())await syncDevelopmentPolicy(user.id,current.id,slug);
   return NextResponse.json(await getCustomerSite(user.id,slug),{headers});
  }catch(error){return failure(error);}
 }

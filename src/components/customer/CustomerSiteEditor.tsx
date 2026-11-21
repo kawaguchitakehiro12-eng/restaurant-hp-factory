@@ -3,6 +3,7 @@ import {browserApiFetch,apiErrorMessage,readApiJson} from "@/lib/browser/api-fet
 import {useEffect,useRef,useState} from "react";
 import {installUnsavedChangesGuard} from "@/lib/browser/unsaved-changes";
 import Link from "next/link";
+import {MediaUploadContext} from './MediaUploadContext';
 import {LogoUpload} from '@/components/customer/LogoUpload';
 import {ImageUploadField} from "@/components/admin/ImageUploadField";
 import {serializeSaveBody} from "@/lib/data/json-body";
@@ -41,7 +42,7 @@ export function CustomerSiteEditor({initial}:{initial:CustomerSite}) {
   }catch(error){setError(error instanceof Error?error.message:'保存できませんでした。時間をおいて再度お試しください。');}finally{inFlight.current=false;setSaving(false);}
  }
  function newId(){return crypto.randomUUID();}
- return <>
+ return <MediaUploadContext slug={site.slug}>
   <Link href="/customer">← 店舗一覧</Link>
   <div className="customer-title"><div><h1>{site.name}</h1><p className="customer-muted">店舗名・契約の変更は運営へご連絡ください。</p></div><a className="admin-btn admin-btn--secondary" href={`/${encodeURIComponent(site.slug)}`} target="_blank" rel="noopener noreferrer">保存済みのサイトを確認</a></div>
   <p className="customer-notice">① 編集する項目を選ぶ → ② 内容を変更 → ③「変更を保存」→ ④「サイトを確認」で保存済み内容を確認できます。</p>
@@ -56,5 +57,5 @@ export function CustomerSiteEditor({initial}:{initial:CustomerSite}) {
   {tab==='billing'&&<CustomerBillingSummary site={site}/>}
   </fieldset>
   <div className="customer-save"><span role="status">{saving?'保存しています…':dirty?'未保存の変更があります':'すべて保存済みです'}</span><button type="button" className="admin-btn admin-btn--primary" disabled={!dirty||saving||conflict||accessBlocked} onClick={()=>void save()}>{saving?'保存中…':'変更を保存'}</button></div>
- </>;
+ </MediaUploadContext>;
 }

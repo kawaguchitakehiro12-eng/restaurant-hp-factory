@@ -1,5 +1,6 @@
 "use client";
 import {ResilientImage} from "@/components/ui/ResilientImage";
+import {useMediaUpload} from '@/components/customer/MediaUploadContext';
 
 import { useEffect, useRef, useState } from "react";
 import { readImageFileAsDataUrl } from "@/lib/images/read-image-file";
@@ -12,6 +13,7 @@ type ImageUploadFieldProps = {
 };
 
 export function ImageUploadField({ label, value, onChange, hint }: ImageUploadFieldProps) {
+  const media=useMediaUpload();
   const latestOnChange = useRef(onChange);
   useEffect(() => { latestOnChange.current = onChange; }, [onChange]);
   const mounted = useRef(true);
@@ -26,7 +28,7 @@ export function ImageUploadField({ label, value, onChange, hint }: ImageUploadFi
     setLoading(true);
     setError(null);
     try {
-      const dataUrl = await readImageFileAsDataUrl(file);
+      const dataUrl = media?await media.upload(file):await readImageFileAsDataUrl(file);
       if (mounted.current) latestOnChange.current(dataUrl);
     } catch (e) {
       if (mounted.current) setError(e instanceof Error ? e.message : "アップロードに失敗しました");
@@ -43,7 +45,7 @@ export function ImageUploadField({ label, value, onChange, hint }: ImageUploadFi
       <div className="admin-image-upload-body">
         <div className="admin-image-upload-preview">
           {value ? (
-            <ResilientImage src={value} alt={`${label}プレビュー`} />
+            <ResilientImage src={media?.preview(value)??value} alt={`${label}プレビュー`} />
           ) : (
             <span className="admin-image-upload-placeholder">未登録</span>
           )}
