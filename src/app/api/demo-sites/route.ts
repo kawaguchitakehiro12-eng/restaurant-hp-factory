@@ -1,3 +1,6 @@
+import {mediaDevelopmentEnabled,prepareDevelopmentContent,runDevelopmentMediaSync} from '@/lib/media/development-service';
+import {assertCustomerMedia} from '@/lib/media/customer-ownership';
+import {createEmptyDemoContent,type DemoSiteContent} from '@/types/demo-content';
 import { readOperatorJson,validateOperatorSite,OperatorInputError } from "@/lib/api/operator-input";
 import { NextResponse } from "next/server";
 import { requireSupabaseAdmin } from "@/lib/api/supabase-route";
@@ -32,7 +35,7 @@ export async function POST(request: Request) {
     if(site.siteContractStatus!=="demo" || site.publishStatus!=="draft" || site.customerId || site.initialPassword) {
       return NextResponse.json({error:"新規デモ以外の作成には専用の契約処理を使用してください。"},{status:400});
     }
-    const created = await getDemoSiteRepository().create(site);
+    let created; if(mediaDevelopmentEnabled()&&site.content){const stub=await getDemoSiteRepository().create({...site,content:createEmptyDemoContent()});const content=await prepareDevelopmentContent(site.content,'operator',site.id) as DemoSiteContent;await assertCustomerMedia(content,site.id);created=await getDemoSiteRepository().update({...stub,content});await runDevelopmentMediaSync();}else created=await getDemoSiteRepository().create(site);
     return NextResponse.json(created, { status: 201 });
   } catch (error) {
     if(error&&typeof error==="object"&&"code" in error&&["PT409","23505"].includes(String(error.code)))return NextResponse.json({error:"別の画面で更新されたか、URLが重複しています。編集内容を控えて再読み込みしてください。"},{status:409});

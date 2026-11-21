@@ -1,5 +1,8 @@
 "use client";
 
+import {MediaUploadContext} from '@/components/customer/MediaUploadContext';
+import {MediaMigrationPanel} from './MediaMigrationPanel';
+import {LogoUpload} from '@/components/customer/LogoUpload';
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -196,7 +199,7 @@ export function DemoEditPageClient() {
   };
 
   return (
-    <>
+    <MediaUploadContext slug={draft.storeSlug} endpoint={`/api/admin/media/${encodeURIComponent(draft.id)}`}>
       <div ref={editorRef} className="admin-edit-page pb-24">
       <fieldset disabled={saving} style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }}>
       <PageHeader
@@ -378,6 +381,7 @@ export function DemoEditPageClient() {
         title="写真"
         description="取得写真の割り当て・画像アップロード（未登録はサンプル表示）"
       >
+        <LogoUpload value={content.photos.logo??''} onChange={logo=>patchContent({photos:{...content.photos,logo}})}/>
         <DemoPhotosEditor
           photos={content.photos}
           importedPhotos={photoLibrary}
@@ -589,8 +593,8 @@ export function DemoEditPageClient() {
           {saving ? "保存中…" : "変更を保存"}
         </button>
       </div>
-      </fieldset>
+      <MediaMigrationPanel site={draft.id}/></fieldset>
       </div>
-    </>
+    </MediaUploadContext>
   );
 }

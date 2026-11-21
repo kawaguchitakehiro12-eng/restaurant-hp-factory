@@ -5,6 +5,7 @@ import {identifier,objectKey,STORE_LIMIT,type MetadataStore,type ObjectStore,typ
 export class ImageWorkflow {
  constructor(private metadata:MetadataStore,private objects:ObjectStore,private authorize:(actor:string,site:string)=>Promise<boolean>,private clock=Date.now){}
  private async check(actor:string,site:string){identifier(site);if(!await this.authorize(actor,site))throw Error('MEDIA_DENIED');}
+ async verify(actor:string,site:string,id:string){await this.check(actor,site);const a=(await this.metadata.read(site)).assets.find(a=>a.id===id&&a.state==='ready');if(!a)throw Error('MEDIA_NOT_READY');const bytes=await this.objects.get(a.key);if(!bytes||bytes.length!==a.bytes||createHash('sha256').update(bytes).digest('hex')!==a.hash)throw Error('MEDIA_VERIFY');return a;}
  async upload(actor:string,site:string,input:Uint8Array,mime:string,logo=false){
  await this.check(actor,site);const result=await compressImage(input,mime,logo),id=randomUUID(),key=objectKey(site,id);
  const prior=(await this.metadata.read(site)).assets.find(a=>a.state==='ready'&&a.hash===result.hash);if(prior)return prior;

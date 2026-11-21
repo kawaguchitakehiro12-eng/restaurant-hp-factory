@@ -1,3 +1,4 @@
+import {mediaDevelopmentEnabled,runDevelopmentMediaSync} from '@/lib/media/development-service';
 import { readOperatorJson,validateShareInput,OperatorInputError } from "@/lib/api/operator-input";
 import { NextResponse } from "next/server";
 import { requireSupabaseAdmin } from "@/lib/api/supabase-route";
@@ -25,13 +26,13 @@ export async function PATCH(request: Request, context: RouteContext) {
     const repo = getDemoShareRepository();
 
     if (body.action === "revoke") {
-      await repo.revoke(id);
+      await repo.revoke(id);if(mediaDevelopmentEnabled())await runDevelopmentMediaSync();
       return NextResponse.json({ ok: true });
     }
 
     if (body.action === "extend") {
-      const share = await repo.extend(id, body.expiryOption ?? "30d");
-      return NextResponse.json({ share });
+      const share = await repo.extend(id, body.expiryOption ?? "7d");
+      if(mediaDevelopmentEnabled())await runDevelopmentMediaSync();return NextResponse.json({ share });
     }
 
     if (body.action === "regenerate") {
@@ -41,8 +42,8 @@ export async function PATCH(request: Request, context: RouteContext) {
       if (!demoSiteId) {
         return NextResponse.json({ error: "demoSiteId required" }, { status: 400 });
       }
-      const share = await repo.regenerate(demoSiteId, body.expiryOption ?? "30d");
-      return NextResponse.json({ share });
+      const share = await repo.regenerate(demoSiteId, body.expiryOption ?? "7d");
+      if(mediaDevelopmentEnabled())await runDevelopmentMediaSync();return NextResponse.json({ share });
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });

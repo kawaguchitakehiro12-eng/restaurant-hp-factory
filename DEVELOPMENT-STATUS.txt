@@ -92,3 +92,14 @@ preview URL page injection, operator uploader context, durable migration journal
 No flags were enabled; Worker deployment guard disabled; no heartbeat exists by default.
 Read MEDIA-DEVELOPMENT-RUNBOOK.txt before any activation. No production readiness claim.
 Original 442 manifest files and SQL007 rechecked unchanged. No push/deployment/data migration.
+
+MEDIA INTEGRATION V2 — 2026-11-21
+Baseline f507c2529dd2775959c94c3e265ae32464377f5c. Development flag still OFF.
+Stages 1-3 wired: change clock/catalog and paginated snapshot + differential sync;
+owner/operator/share capability previews and editor upload; durable migration journal,
+encrypted legacy preservation, atomic content/photos switch, explicit recovery.
+Unit/mocks: 403 PASS / 0 FAIL (28 new vs previous 375). New PG17 integration: 15 groups.
+Existing PG regression: media 8 groups; commerce 20 groups; all pass.
+No real Cloudflare, hosted Supabase, production settings, image migration or deletion.
+TypeScript/lint checked. Real build/browser E2E not run; prior EPERM remains unresolved.
+See latest Japanese v2 section of MEDIA-DEVELOPMENT-RUNBOOK.txt.

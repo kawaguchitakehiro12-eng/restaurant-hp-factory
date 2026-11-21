@@ -1,6 +1,9 @@
+import {mediaDevelopmentEnabled} from '@/lib/media/development-service';
+import {authorizedMediaDisplay} from '@/lib/media/authorized-display';
+import {effectiveShareExpiry} from '@/lib/admin/demo-share-utils';
 import { NextResponse } from "next/server";
 import { requireSupabaseAdmin } from "@/lib/api/supabase-route";
-import { loadSharedDemoPage } from "@/lib/share/load-shared-demo";
+import { loadSharedDemoPage,peekSharedDemoPage } from "@/lib/share/load-shared-demo";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +17,7 @@ export async function GET(_request: Request, context: RouteContext) {
 
   const { token } = await context.params;
   try {
-    const data = await loadSharedDemoPage(token);
+    const data = await (new URL(_request.url).searchParams.get('mediaRefresh')==='1'?peekSharedDemoPage(token):loadSharedDemoPage(token));
 
     if (data.status === "expired") {
       return publicJson({ status: "expired" });
@@ -28,7 +31,7 @@ export async function GET(_request: Request, context: RouteContext) {
       prospectLabel: data.prospectLabel,
       resolution: {
         status: "found",
-        store: data.store,
+        store: mediaDevelopmentEnabled()?await authorizedMediaDisplay(data.store,data.demoSite.id,'share',effectiveShareExpiry(data.share)):data.store,
         sampleFlags: data.sampleFlags,
         heroFit: data.heroFit,
         heroObjectPosition: data.heroObjectPosition,

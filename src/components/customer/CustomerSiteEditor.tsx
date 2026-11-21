@@ -44,7 +44,7 @@ export function CustomerSiteEditor({initial}:{initial:CustomerSite}) {
  function newId(){return crypto.randomUUID();}
  return <MediaUploadContext slug={site.slug}>
   <Link href="/customer">← 店舗一覧</Link>
-  <div className="customer-title"><div><h1>{site.name}</h1><p className="customer-muted">店舗名・契約の変更は運営へご連絡ください。</p></div><a className="admin-btn admin-btn--secondary" href={`/${encodeURIComponent(site.slug)}`} target="_blank" rel="noopener noreferrer">保存済みのサイトを確認</a></div>
+  <div className="customer-title"><div><h1>{site.name}</h1><p className="customer-muted">店舗名・契約の変更は運営へご連絡ください。</p></div><a className="admin-btn admin-btn--secondary" href={process.env.NEXT_PUBLIC_MEDIA_UPLOAD_ENABLED==='development'?`/customer/sites/${encodeURIComponent(site.slug)}/preview`:`/${encodeURIComponent(site.slug)}`} target="_blank" rel="noopener noreferrer">保存済みのサイトを確認</a></div>
   <p className="customer-notice">① 編集する項目を選ぶ → ② 内容を変更 → ③「変更を保存」→ ④「サイトを確認」で保存済み内容を確認できます。</p>
   <nav className="customer-tabs" aria-label="編集する内容">{tabs.map(([key,label])=><button key={key} className={tab===key?'active':''} onClick={()=>setTab(key)} aria-current={tab===key?'page':undefined}>{label}</button>)}</nav>
   {error&&<div className="customer-notice customer-error" role="alert"><p>{error}</p>{expired&&<a href="/customer/login" target="_blank" rel="noopener noreferrer">別タブでログイン</a>}{accessBlocked&&<a href="/customer" target="_blank" rel="noopener noreferrer">別タブで利用可能な店舗を確認</a>}{conflict&&<button className="admin-btn admin-btn--secondary" onClick={()=>{if(window.confirm('未保存の変更を破棄して最新情報を読み込みますか？')){discarding.current=true;window.location.reload();}}}>最新情報を読み込む</button>}</div>}

@@ -1,3 +1,4 @@
+import {mediaDevelopmentEnabled,runDevelopmentMediaSync} from '@/lib/media/development-service';
 import {issueOffer} from '@/lib/commerce/offers';
 import {getOperatorAuth} from '@/lib/auth/operator';
 import {isSameOriginRequest} from '@/lib/auth/request-origin';
@@ -19,5 +20,5 @@ export async function POST(request:Request){try{if(!isSameOriginRequest(request)
  if(action==='offer')return response(await issueOffer(actor,b.siteId,String(data.shareId??''),String(data.recipient??'')));
  if(action==='create')return response(await repo.create(actor,b.siteId,String(data.owner),String(data.title).slice(0,200)));
  if(action==='assign')return response(await repo.assign(actor,b.siteId,String(data.agent)));
- return response(await repo.execute(actor,b.siteId,action,data,b.requestId));
+ const result=await repo.execute(actor,b.siteId,action,data,b.requestId);if(mediaDevelopmentEnabled()&&['publish','stop','tick','cancel','withdraw'].includes(action))await runDevelopmentMediaSync();return response(result);
  }catch(e){if(e instanceof CommerceError)return response({error:e.message},e.status);return response({error:'処理結果を確認できません。入力を保持し、保存状態を確認してください。'},503);}}

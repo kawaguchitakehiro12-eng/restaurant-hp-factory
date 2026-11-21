@@ -39,6 +39,8 @@ export function SharePublicPage({ shareToken, applicationEnabled=false }: ShareP
     ShareApiResponse | "loading" | { status: "error"; message: string }
   >("loading");
 
+  const [mediaRefresh,setMediaRefresh]=useState(0);
+  useEffect(()=>{if(process.env.NEXT_PUBLIC_MEDIA_UPLOAD_ENABLED!=='development')return;const timer=setInterval(()=>setMediaRefresh(v=>v+1),120000);return()=>clearInterval(timer)},[]);
   useEffect(() => {
     let cancelled = false;
     const controller = new AbortController();
@@ -47,7 +49,7 @@ export function SharePublicPage({ shareToken, applicationEnabled=false }: ShareP
 
     async function load() {
       try {
-        const res = await fetch(apiPath, {
+        const res = await fetch(mediaRefresh?apiPath+'?mediaRefresh=1':apiPath, {
           cache: "no-store",
           signal: controller.signal,
         });
@@ -91,7 +93,7 @@ export function SharePublicPage({ shareToken, applicationEnabled=false }: ShareP
       controller.abort();
       window.clearTimeout(timeoutId);
     };
-  }, [shareToken]);
+  }, [shareToken,mediaRefresh]);
 
   if (state === "loading") {
     return (

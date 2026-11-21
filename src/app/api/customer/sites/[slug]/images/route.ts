@@ -2,6 +2,8 @@ import {requireCustomerUser,getCustomerSite,CustomerAccessError} from '@/lib/cus
 import {isSameOriginRequest} from '@/lib/auth/request-origin';
 import {developmentMedia,mediaDevelopmentEnabled} from '@/lib/media/development-service';
 import {mediaUrl} from '@/lib/media/reference';
+import {authorizedPreviewMap} from '@/lib/media/authorized-display';
+export async function GET(_request:Request,{params}:{params:Promise<{slug:string}>}){try{if(!mediaDevelopmentEnabled())throw Error();const user=await requireCustomerUser(),site=await getCustomerSite(user.id,(await params).slug);return Response.json({previews:await authorizedPreviewMap(site.id)},{headers:{'Cache-Control':'no-store','Referrer-Policy':'no-referrer'}});}catch(e){return Response.json({error:'プレビューを確認できません。'},{status:e instanceof CustomerAccessError?e.status:503,headers:{'Cache-Control':'no-store'}});}}
 export async function POST(request:Request,{params}:{params:Promise<{slug:string}>}){
  const headers={'Cache-Control':'no-store'};try{
  if(!mediaDevelopmentEnabled())return Response.json({error:'画像保存先の切替は未有効です。'},{status:503,headers});

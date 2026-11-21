@@ -1,3 +1,4 @@
+import {mediaDevelopmentEnabled,runDevelopmentMediaSync} from '@/lib/media/development-service';
 import { readOperatorJson,validateShareInput,OperatorInputError } from "@/lib/api/operator-input";
 import { NextResponse } from "next/server";
 import { requireSupabaseAdmin } from "@/lib/api/supabase-route";
@@ -20,7 +21,7 @@ export async function GET(request: Request) {
   try {
     const repo = getDemoShareRepository();
     const share = await repo.findLatestByDemoSiteId(demoSiteId);
-    return NextResponse.json({ share });
+    if(mediaDevelopmentEnabled())await runDevelopmentMediaSync();return NextResponse.json({ share });
   } catch (error) {
     if(error instanceof OperatorInputError)return NextResponse.json({error:error.message},{status:error.status});
     console.error("[GET /api/admin/demo-shares]");
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
       body.demoSiteId,
       body.expiryOption ?? "7d"
     );
-    return NextResponse.json({ share }, { status: 201 });
+    if(mediaDevelopmentEnabled())await runDevelopmentMediaSync();return NextResponse.json({ share }, { status: 201 });
   } catch (error) {
     if(error instanceof OperatorInputError)return NextResponse.json({error:error.message},{status:error.status});
     console.error("[POST /api/admin/demo-shares]");

@@ -1,3 +1,6 @@
+import {mediaDevelopmentEnabled,prepareDevelopmentContent,runDevelopmentMediaSync} from '@/lib/media/development-service';
+import {assertCustomerMedia} from '@/lib/media/customer-ownership';
+import type {DemoSiteContent} from '@/types/demo-content';
 import type { DemoSite } from "@/types/demo";
 import { readOperatorJson,checkOperatorMutation,validateOperatorSite,OperatorInputError } from "@/lib/api/operator-input";
 import { NextResponse } from "next/server";
@@ -45,7 +48,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     if(site.initialPassword || contractFields.some(key=>site[key]!==current[key]) || (site.siteContractStatus!==current.siteContractStatus && !(current.siteContractStatus==="demo" && site.siteContractStatus==="lost")) || site.publishStatus!==current.publishStatus) {
       return NextResponse.json({error:"契約・公開状態の変更には専用の契約処理を使用してください。"},{status:409});
     }
-    const updated = await getDemoSiteRepository().update(site);
+    if(mediaDevelopmentEnabled()&&site.content){site.content=await prepareDevelopmentContent(site.content,'operator',site.id) as DemoSiteContent;await assertCustomerMedia(site.content,site.id);}const updated = await getDemoSiteRepository().update(site);if(mediaDevelopmentEnabled())await runDevelopmentMediaSync();
     return NextResponse.json(updated);
   } catch (error) {
     if(error && typeof error==='object' && 'code' in error && ['PT409','23505'].includes(String(error.code)))return NextResponse.json({error:'別の画面で更新されたか、URLが重複しています。編集内容を控えて再読み込みしてください。'},{status:409});
