@@ -5,19 +5,20 @@
   "files": [
     {
       "path": "contract.html",
-      "sha256": "16c69808c6ba2e7d479e39c68aa434c4ee5dcbeaec8ce545840c8fcbb7d93965"
+      "sha256": "9d68fe5016e043976f6ab9dc8da0562bf8abe684933309ba867886d50f610ec4"
     },
     {
       "path": "payments.html",
-      "sha256": "4720730f39250a8950362a46cac1ad05eff26078ad66411823fdf37b2eedc687"
+      "sha256": "e64e8558ff15de18e8b78e9734ab984b4c69c2c68daf6efdf53537390d67a3a9"
     },
     {
       "path": "support.html",
-      "sha256": "e21cd69317cde5a992820e2d15bfd43e9003010858e9c2b5034777e3bf8586f7"
+      "sha256": "47b8ead8ef16e8c91dcfa29601509b0d73b0d6c76505f18f70a26dcd95d1d706"
     },
     {
       "path": "index.html",
       "sha256": "8ce0fd6136a653056da7966fbbcfd7f0ea07d3798ea0ffbc9df3cf09acde9856"
     }
-  ]
+  ],
+  "lineEndings": "LF"
 }
