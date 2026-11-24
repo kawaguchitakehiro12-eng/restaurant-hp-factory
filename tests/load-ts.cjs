@@ -7,6 +7,7 @@ exports.load=(entry,mocks={},options={})=>{
  const cache=new Map();
  function read(file,inheritedClient=false){
   const source=fs.readFileSync(file,'utf8');
+  if(path.extname(file)==='.json')return JSON.parse(source);
   const ast=ts.createSourceFile(file,source,ts.ScriptTarget.Latest,true);
   let directiveClient=false;
   for(const statement of ast.statements){if(!ts.isExpressionStatement(statement)||!ts.isStringLiteral(statement.expression))break;if(statement.expression.text==='use client')directiveClient=true;}

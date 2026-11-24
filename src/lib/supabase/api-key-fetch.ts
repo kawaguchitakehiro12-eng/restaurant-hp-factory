@@ -1,3 +1,5 @@
+import { assertPreviewRequest, previewBoundaryRequired } from "./preview-boundary";
+
 /** Shared browser/server code: never log keys or decode them as proof of authenticity. */
 export function apiKeyKind(key: string, role: "anon" | "service_role"): "legacy" | "opaque" {
   const fail = (): never => { throw new Error("Invalid Supabase API key configuration"); };
@@ -18,6 +20,8 @@ export function apiKeyKind(key: string, role: "anon" | "service_role"): "legacy"
 export function apiKeyFetch(key: string, role: "anon" | "service_role", transport: typeof fetch): typeof fetch {
   const kind = apiKeyKind(key, role);
   return (input, init = {}) => {
+    assertPreviewRequest(input);
+    if (previewBoundaryRequired()) init = { ...init, redirect: "error" };
     if (kind === "legacy") return transport(input, init);
     const headers = new Headers(input instanceof Request ? input.headers : undefined);
     new Headers(init.headers).forEach((value, name) => headers.set(name, value));

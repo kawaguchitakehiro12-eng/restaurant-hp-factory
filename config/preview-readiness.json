@@ -1,0 +1,10 @@
+{
+  "schema": "SAKU-PREVIEW-READINESS-1",
+  "status": "BLOCKED",
+  "projectId": "mesexqltlpybptifwsox",
+  "dbAuditSha256": "b65e545ff3a1f4e79825c76d11e0ac7e8a13b73c7b63989c416edc3b1f857d80",
+  "publicKeySha256": null,
+  "secretKeySha256": null,
+  "keyMembershipVerifiedAt": null,
+  "note": "Preview DB metadata audit passed on 2026-11-24. Key provenance and fingerprints remain unverified; status stays BLOCKED. No deployment authorization."
+}

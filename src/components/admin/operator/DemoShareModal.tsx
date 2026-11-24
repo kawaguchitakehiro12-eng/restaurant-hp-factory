@@ -27,6 +27,7 @@ import {
 import type { DemoSite } from "@/types/demo";
 import type { DemoShare, ShareExpiryOption } from "@/types/demo-share";
 import { SHARE_EXPIRY_OPTIONS } from "@/types/demo-share";
+import { tryCopyShareText } from "@/lib/admin/share-copy";
 
 type DemoShareModalProps = {
   demoSite: DemoSite | null;
@@ -44,6 +45,7 @@ function DemoShareModalInner({ demoSite, onClose, onShareUpdated }: DemoShareMod
   const [loading, setLoading] = useState(() => isSupabaseConfigured());
   const [expiryOption, setExpiryOption] = useState<ShareExpiryOption>("7d");
   const [copied, setCopied] = useState<string | null>(null);
+  const [copyNotice, setCopyNotice] = useState<string | null>(null);
   const [showQr, setShowQr] = useState(false);
   const [refreshedAt, setRefreshedAt] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -84,12 +86,13 @@ function DemoShareModalInner({ demoSite, onClose, onShareUpdated }: DemoShareMod
   };
 
   const copyText = async (label: string, text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
+    setCopyNotice(null);
+    if (await tryCopyShareText(text, navigator.clipboard)) {
       setCopied(label);
       window.setTimeout(() => setCopied(null), 2000);
-    } catch {
-      setError("クリップボードへのコピーに失敗しました");
+    } else {
+      setCopied(null);
+      setCopyNotice("自動コピーできませんでした。URL欄を選択し、端末のコピー操作を使用してください。送付前に共有URLの状態・有効期限を確認してください。");
     }
   };
 
@@ -243,7 +246,7 @@ function DemoShareModalInner({ demoSite, onClose, onShareUpdated }: DemoShareMod
               <div>
                 <dt>共有URL</dt>
                 <dd>
-                  <code className="admin-code admin-share-url">{shareUrl}</code>
+                  <input aria-label="共有URL（選択してコピー）" className="admin-form-input admin-share-url" value={shareUrl} readOnly onFocus={(event) => event.currentTarget.select()} />
                 </dd>
               </div>
               <div>
@@ -276,6 +279,7 @@ function DemoShareModalInner({ demoSite, onClose, onShareUpdated }: DemoShareMod
               </div>
             </dl>
             <p className="admin-form-hint">閲覧情報はページを開いた時点の記録です。現在の閲覧人数や滞在時間を示すものではありません。</p>
+            {copyNotice ? <p role="status" className="admin-form-hint">{copyNotice}</p> : null}
             {refreshedAt ? <p role="status" className="admin-form-hint">最終取得：{formatShareDateTime(refreshedAt)}{error ? "（更新できなかったため前回の情報です）" : ""}</p> : null}
 
             {!shareValid ? <p role="status" className="admin-form-error">このURLは先方へ送れません。期限・停止状態を確認し、延長または再発行してください。</p> : null}

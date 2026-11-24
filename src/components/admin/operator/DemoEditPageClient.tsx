@@ -15,7 +15,9 @@ import { useOperatorAdmin } from "@/components/admin/operator/OperatorAdminProvi
 import { SALES_STATUS_OPTIONS } from "@/lib/admin/demo-labels";
 import { buildOperatorPreviewUrl } from "@/lib/admin/demo-create";
 import { normalizeSlug, todayIso } from "@/lib/admin/form-utils";
-import { getTemplateLabel } from "@/lib/admin/contract-templates";
+import { CONTRACT_TEMPLATE_OPTIONS, getTemplateLabel } from "@/lib/admin/contract-templates";
+import { changeDemoTemplate } from "@/lib/admin/demo-template-change";
+import { shouldSyncDemoDraft } from "@/lib/admin/demo-editor-sync";
 import { isApiAuthError } from "@/lib/data/api-errors";
 import { buildPhotoLibrary } from "@/lib/admin/demo-photo-library";
 import { createEmptyMenuItem, createEmptyTopic } from "@/lib/stores/demo-samples";
@@ -59,14 +61,14 @@ export function DemoEditPageClient() {
 
   useEffect(() => {
     if (!source || !sourceSyncKey) return;
-    if (syncKeyRef.current === sourceSyncKey) return;
+    if (!shouldSyncDemoDraft({ currentSiteId: draft?.id ?? null, syncedKey: syncKeyRef.current, incomingSiteId: source.id, incomingKey: sourceSyncKey, dirty })) return;
     syncKeyRef.current = sourceSyncKey;
     setDraft({
       ...source,
       content: ensureDemoContent(source.content),
     });
     setDirty(false);
-  }, [source, sourceSyncKey, setDirty]);
+  }, [source, sourceSyncKey, setDirty, draft?.id, dirty]);
 
   if (!hydrated) {
     return (
@@ -217,6 +219,14 @@ export function DemoEditPageClient() {
           </a></div>
         }
       />
+
+      <SectionCard title="テンプレート" description="写真・文章・メニューは保持されます。変更後に保存し、表示を確認してください。">
+        <label className="admin-form-label" htmlFor="demo-template">デザインを選択</label>
+        <select id="demo-template" className="admin-form-input" value={draft.templateId}
+          onChange={(event) => { const next = changeDemoTemplate(draft, event.target.value); setDraft(next); setDirty(true); }}>
+          {CONTRACT_TEMPLATE_OPTIONS.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
+        </select>
+      </SectionCard>
 
       <SectionCard title="店舗基本情報" description="公開サイトに表示される基本情報">
         <div className="admin-form-grid">

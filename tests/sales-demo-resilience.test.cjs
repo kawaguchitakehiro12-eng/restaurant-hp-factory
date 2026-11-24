@@ -1,0 +1,12 @@
+const test=require('node:test'),assert=require('node:assert/strict'),{load}=require('./load-ts.cjs');
+const {shouldSyncDemoDraft}=load('src/lib/admin/demo-editor-sync.ts');
+const {tryCopyShareText}=load('src/lib/admin/share-copy.ts');
+const state={currentSiteId:'synthetic-a',syncedKey:'a:1',incomingSiteId:'synthetic-a',incomingKey:'a:2',dirty:true};
+test('remote refresh retains unsaved text, images and selected template',()=>assert.equal(shouldSyncDemoDraft(state),false));
+test('clean draft accepts a newly read server revision',()=>assert.equal(shouldSyncDemoDraft({...state,dirty:false}),true));
+test('initial load initializes the draft',()=>assert.equal(shouldSyncDemoDraft({...state,currentSiteId:null,syncedKey:null}),true));
+test('navigation to another store does not reuse previous draft',()=>assert.equal(shouldSyncDemoDraft({...state,incomingSiteId:'synthetic-b',incomingKey:'b:1'}),true));
+test('unchanged server revision does not reset clean or dirty editors',()=>{for(const dirty of [false,true])assert.equal(shouldSyncDemoDraft({...state,incomingKey:'a:1',dirty}),false)});
+test('successful clipboard copy writes exactly the selected synthetic text',async()=>{let value;assert.equal(await tryCopyShareText('https://example.invalid/share/synthetic',{async writeText(text){value=text}}),true);assert.equal(value,'https://example.invalid/share/synthetic')});
+test('clipboard denial does not expose exception details or invalidate a share',async()=>{const share={isActive:true,shareToken:'SYNTHETIC_ONLY'};assert.equal(await tryCopyShareText('synthetic',{async writeText(){throw Error('SYNTHETIC_PRIVATE_CANARY')}}),false);assert.equal(share.isActive,true)});
+test('clipboard unavailable has a manual-copy result rather than throwing',async()=>assert.equal(await tryCopyShareText('synthetic',undefined),false));
