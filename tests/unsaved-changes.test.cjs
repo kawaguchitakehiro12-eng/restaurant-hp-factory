@@ -1,0 +1,13 @@
+const {test}=require('node:test'),assert=require('node:assert/strict');
+const {shouldConfirmLink,installUnsavedChangesGuard,confirmBeforeLeaving}=require('./load-ts.cjs').load('src/lib/browser/unsaved-changes.ts');
+const current='https://fixture.invalid/edit';
+test('same-page anchors, new tabs and downloads preserve editor without a prompt',()=>{assert.equal(shouldConfirmLink('#menu','',false,current),false);assert.equal(shouldConfirmLink('/other','_blank',false,current),false);assert.equal(shouldConfirmLink('/file','',true,current),false);assert.equal(shouldConfirmLink('tel:0312345678','',false,current),false)});
+test('same-tab internal, external and query navigation require confirmation',()=>{for(const dest of ['/other','https://other.invalid/','?new=1'])assert.equal(shouldConfirmLink(dest,'',false,current),true)});
+function setup(t,{dirty=true,image=false,accept=false}={}){const previous={window:global.window,document:global.document};const win=new EventTarget(),doc=new EventTarget();let prompts=0;win.location={href:current};win.confirm=()=>{prompts++;return accept};doc.querySelector=()=>image?{}:null;doc.closest=()=>({href:'https://fixture.invalid/other',target:'',hasAttribute:()=>false});global.window=win;global.document=doc;const remove=installUnsavedChangesGuard(()=>dirty);t.after(()=>{remove();Object.assign(global,previous)});return{win,doc,prompts:()=>prompts,remove};}
+test('cancelled ordinary link prevents navigation before router receives it',t=>{const e=setup(t),click=new Event('click',{cancelable:true});Object.defineProperty(click,'button',{value:0});assert.equal(e.doc.dispatchEvent(click),false);assert.equal(e.prompts(),1)});
+test('clean editor permits logout without confirmation',t=>{const e=setup(t,{dirty:false});assert.equal(confirmBeforeLeaving(),true);assert.equal(e.prompts(),0)});
+test('cancelled logout action is rejected before sign-out',t=>{setup(t);assert.equal(confirmBeforeLeaving(),false)});
+test('accepted explicit leave action is allowed',t=>{setup(t,{accept:true});assert.equal(confirmBeforeLeaving(),true)});
+test('image processing is protected before any draft changes exist',t=>{setup(t,{dirty:false,image:true});assert.equal(confirmBeforeLeaving(),false)});
+test('reload or tab-close asks browser to protect unsaved edits',t=>{const e=setup(t),event=new Event('beforeunload',{cancelable:true});e.win.dispatchEvent(event);assert.equal(event.defaultPrevented,true)});
+test('removed guard does not interfere with later clean pages',t=>{const e=setup(t);e.remove();assert.equal(confirmBeforeLeaving(),true);assert.equal(e.prompts(),0)});
