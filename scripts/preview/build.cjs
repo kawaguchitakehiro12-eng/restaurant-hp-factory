@@ -1,6 +1,7 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process');
 const {validate,buildEnvironment}=require('./policy.cjs');
+const {scanArtifacts}=require('./scan-artifacts.cjs');
 function main(){
  const root=path.resolve(__dirname,'../..');
  if(fs.readdirSync(root).some(name=>/^\.env(?:\.|$)/i.test(name)&&name!=='.env.example'))throw Error('PREVIEW_ENV_FILE_REJECTED');
@@ -13,8 +14,7 @@ function main(){
  if(result.status!==0)throw Error('PREVIEW_NEXT_BUILD_FAILED');
  // Stop publication if the configured Secret appears in any generated artifact, including server output.
  const secret=Buffer.from(process.env.SUPABASE_SERVICE_ROLE_KEY,'utf8');
- function inspect(dir){for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const p=path.join(dir,entry.name);if(entry.isSymbolicLink())throw Error('PREVIEW_ARTIFACT_LINK_REJECTED');if(entry.isDirectory())inspect(p);else if(fs.readFileSync(p).includes(secret))throw Error('PREVIEW_SECRET_IN_ARTIFACT');}}
- inspect(path.join(root,'.next'));
+ scanArtifacts(root,secret);
  console.log('PASS: PREVIEW_BUILD_GUARDS_AND_SECRET_SCAN');
 }
 if(require.main===module){try{main()}catch(error){const message=String(error?.message??'');console.error(/^PREVIEW_[A-Z_]+$/.test(message)?message:'PREVIEW_BUILD_STOPPED');process.exitCode=1;}}
