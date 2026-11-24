@@ -1,10 +1,10 @@
 {
   "schema": "SAKU-PREVIEW-READINESS-1",
-  "status": "BLOCKED",
+  "status": "REVIEWED",
   "projectId": "mesexqltlpybptifwsox",
   "dbAuditSha256": "b65e545ff3a1f4e79825c76d11e0ac7e8a13b73c7b63989c416edc3b1f857d80",
-  "publicKeySha256": null,
-  "secretKeySha256": null,
-  "keyMembershipVerifiedAt": null,
-  "note": "Preview DB metadata audit passed on 2026-11-24. Key provenance and fingerprints remain unverified; status stays BLOCKED. No deployment authorization."
+  "publicKeySha256": "bfa58f4581da3f8b6039636faf207a880508c03db4fdce29646f346f4d89c454",
+  "secretKeySha256": "9f312a9e0ce281ba74d4e38448e54241f49f9b9ec1589d94694e72bac7852fde",
+  "keyMembershipVerifiedAt": "2026-11-24T00:08:15.370Z",
+  "note": "User authorized Preview deployment. Key provenance verified in the authenticated API Keys UI for mesexqltlpybptifwsox; fingerprints only, no credentials stored. Preview DB metadata audit passed on 2026-11-24."
 }
