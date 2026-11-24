@@ -1,19 +1,19 @@
 {
-  "sourceCommit": "c1c631324c0de735c31dba99d9ac44e52a8ecada",
+  "sourceCommit": "126ce0b9846e32911f27b95bd800b5add3eb9878",
   "branch": "verify/customer-portal-ui-20261125",
   "type": "SYNTHETIC_READ_ONLY_UI_NOT_AUTHENTICATED_APPLICATION_E2E",
   "files": [
     {
       "path": "contract.html",
-      "sha256": "9d68fe5016e043976f6ab9dc8da0562bf8abe684933309ba867886d50f610ec4"
+      "sha256": "86173f827c38466dbace387988641b29612796136972f05643d176c0798bc049"
     },
     {
       "path": "payments.html",
-      "sha256": "e64e8558ff15de18e8b78e9734ab984b4c69c2c68daf6efdf53537390d67a3a9"
+      "sha256": "76743dac33f84de5ec84ca789af65b51631f23c5851471867e85bc8974e8b0e0"
     },
     {
       "path": "support.html",
-      "sha256": "47b8ead8ef16e8c91dcfa29601509b0d73b0d6c76505f18f70a26dcd95d1d706"
+      "sha256": "8ced4ee0378ae71f835bbe32c2984916df9d3a0075efb7fe002f0523e71dde29"
     },
     {
       "path": "index.html",
