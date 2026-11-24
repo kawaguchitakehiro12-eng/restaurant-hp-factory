@@ -94,6 +94,12 @@ export function createDemoSiteFromForm(input: DemoSiteFormInput): {
   const storeId = generateId("store");
   const demoUrl = buildOperatorPreviewUrl(input.storeSlug);
   const adminUrl = buildAdminUrl(input.storeSlug);
+  const content = input.content ? ensureDemoContent(input.content) : createEmptyDemoContent();
+  // The registered store address is public information. Keep imported/edited
+  // content authoritative; never copy private sales contact fields here.
+  if (!content.basicInfo.address.trim()) {
+    content.basicInfo = { ...content.basicInfo, address: input.address.trim() };
+  }
 
   const demoSite: DemoSite = {
     id,
@@ -116,7 +122,7 @@ export function createDemoSiteFromForm(input: DemoSiteFormInput): {
     createdAt: today,
     lastUpdatedAt: today,
     isNewlyCreated: true,
-    content: input.content ? ensureDemoContent(input.content) : createEmptyDemoContent(),
+    content,
   };
 
   const result: CreateDemoSiteResult = {
