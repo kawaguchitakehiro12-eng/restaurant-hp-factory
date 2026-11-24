@@ -1,0 +1,3 @@
+const{test}=require('node:test'),assert=require('node:assert/strict'),{load}=require('./load-ts.cjs'),{parseAgreedMonthlyFee:parse}=load('src/lib/admin/form-utils.ts');
+test('agreed price is explicit including a deliberately chosen zero',()=>{assert.equal(parse(''),null);assert.equal(parse(' '),null);assert.equal(parse('0'),0);assert.equal(parse(' 4200 '),4200);assert.equal(parse('1000000'),1000000);});
+test('invalid amount cannot turn into a default or unbounded contract price',()=>{for(const x of ['-1','1.5','1e3','2,980','2980円','1000001','99999999','NaN','Infinity'])assert.equal(parse(x),null);});
