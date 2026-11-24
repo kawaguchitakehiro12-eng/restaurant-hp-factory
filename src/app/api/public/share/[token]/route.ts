@@ -1,6 +1,7 @@
 import {mediaDevelopmentEnabled} from '@/lib/media/development-service';
 import {authorizedMediaDisplay} from '@/lib/media/authorized-display';
 import {effectiveShareExpiry} from '@/lib/admin/demo-share-utils';
+import {safeSupabaseDiagnostic} from '@/lib/supabase/safe-diagnostic';
 import { NextResponse } from "next/server";
 import { requireSupabaseAdmin } from "@/lib/api/supabase-route";
 import { loadSharedDemoPage,peekSharedDemoPage } from "@/lib/share/load-shared-demo";
@@ -37,8 +38,8 @@ export async function GET(_request: Request, context: RouteContext) {
         heroObjectPosition: data.heroObjectPosition,
       },
     });
-  } catch {
-    console.error("[GET /api/public/share/[token]]");
+  } catch (error) {
+    console.error("[GET /api/public/share/[token]]", process.env.VERCEL_ENV === "preview" ? safeSupabaseDiagnostic(error) : "UPSTREAM_FAILURE");
     return publicJson({ error: "Failed to load shared site" }, { status: 500 });
   }
 }
