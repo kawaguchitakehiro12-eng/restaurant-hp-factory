@@ -1,0 +1,13 @@
+// Template only. No deployment, account or real bucket configured.
+{
+  "name": "sakupage-media-development-only",
+  "main": "index.ts",
+  "compatibility_date": "2026-11-20",
+  "workers_dev": false,
+  "vars": {"MEDIA_DEPLOYMENT_APPROVED": "disabled"},
+  "r2_buckets": [
+    {"binding": "IMAGES", "bucket_name": "REPLACE_WITH_ISOLATED_TEST_BUCKET"},
+    {"binding": "POLICIES", "bucket_name": "REPLACE_WITH_ISOLATED_POLICY_BUCKET"},
+    {"binding": "BACKUPS", "bucket_name": "REPLACE_WITH_ISOLATED_BACKUP_BUCKET"}
+  ]
+}

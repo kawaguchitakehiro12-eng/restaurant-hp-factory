@@ -1,0 +1,46 @@
+import {OptionalContactLink} from '@/components/public/OptionalContactLink';
+import { FadeIn } from "@/components/ui/FadeIn";
+import { LuxurySection } from "./LuxurySection";
+import { LuxurySectionHeading } from "./LuxurySectionHeading";
+import type { StoreInfo } from "@/types/luxury-izakaya";
+
+type StoreInfoSectionProps = {
+  store: StoreInfo;
+};
+
+const infoItems = (store: StoreInfo) => [
+  { label: "住所", value: store.address },
+  { label: "電話", value: store.phone },
+  { label: "営業", value: store.hours.dinner },
+  { label: "定休", value: store.hours.closed },
+  { label: "アクセス", value: store.access },
+];
+
+export function StoreInfo({ store }: StoreInfoSectionProps) {
+  return (
+    <LuxurySection id="info" narrow className="luxury-section--washi">
+      <LuxurySectionHeading
+        label="Information"
+        title="ご来店のまえに"
+        subtitle={store.exclusivity || "営業時間・アクセスのしおり"}
+      />
+
+      <FadeIn className="luxury-info-grid">
+        <dl>
+          {infoItems(store).map((item) => (
+            <div key={item.label} className="luxury-info-row">
+              <dt className="luxury-info-label">{item.label}</dt>
+              <dd className="luxury-info-value">{item.value}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <div id="reservation" className="luxury-info-reserve">
+          <OptionalContactLink href={store.reservationUrl} className="luxury-info-reserve-link">
+            御予約のお問い合わせ
+          </OptionalContactLink>
+        </div>
+      </FadeIn>
+    </LuxurySection>
+  );
+}

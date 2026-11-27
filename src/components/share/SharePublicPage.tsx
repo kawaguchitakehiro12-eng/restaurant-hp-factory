@@ -1,0 +1,130 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { PublicStoreView } from "@/components/public/PublicStoreView";
+import { ShareDemoBanner } from "@/components/share/ShareDemoBanner";
+import {
+  ShareExpiredPage,
+  ShareLoadErrorPage,
+  ShareNotFoundPage,
+} from "@/components/share/ShareStatusPages";
+import type { PublicStoreResolution } from "@/lib/stores/demo-to-store";
+import "@/app/bar/bar.css";
+import "@/app/cafe/cafe.css";
+import "@/app/izakaya/izakaya.css";
+import "@/app/bal/bal.css";
+
+const FETCH_TIMEOUT_MS = 15_000;
+
+type ShareApiResponse =
+  | { status: "expired" }
+  | { status: "not_found" }
+  | {
+      status: "found";
+      prospectLabel: string;
+      resolution: Extract<PublicStoreResolution, { status: "found" }>;
+    };
+
+type SharePublicPageProps = {
+  applicationEnabled?:boolean;
+  shareToken: string;
+};
+
+/**
+ * 共有ページは PublicStorePage と同様、クライアント取得後にテンプレートを描画する。
+ * fetch は必ず相対 URL（同一オリジン）のみ使用する。
+ */
+export function SharePublicPage({ shareToken, applicationEnabled=false }: SharePublicPageProps) {
+  const [state, setState] = useState<
+    ShareApiResponse | "loading" | { status: "error"; message: string }
+  >("loading");
+
+  const [mediaRefresh,setMediaRefresh]=useState(0);
+  useEffect(()=>{if(process.env.NEXT_PUBLIC_MEDIA_UPLOAD_ENABLED!=='development')return;const timer=setInterval(()=>setMediaRefresh(v=>v+1),120000);return()=>clearInterval(timer)},[]);
+  useEffect(() => {
+    let cancelled = false;
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+    const apiPath = `/api/public/share/${encodeURIComponent(shareToken)}`;
+
+    async function load() {
+      try {
+        const res = await fetch(mediaRefresh?apiPath+'?mediaRefresh=1':apiPath, {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+
+        if (res.status === 404) {
+          if (!cancelled) setState({ status: "not_found" });
+          return;
+        }
+
+        if (!res.ok) {
+          const message = `現在デモを取得できません（${res.status}）。時間をおいて再読み込みしてください。`;
+          console.error("[SharePublicPage] request failed");
+          if (!cancelled) setState({ status: "error", message });
+          return;
+        }
+
+        const data = (await res.json()) as ShareApiResponse;
+        if (data.status === "found" && !data.resolution) {
+          const message = "API レスポンスに resolution が含まれていません";
+          console.error("[SharePublicPage] invalid API response");
+          if (!cancelled) setState({ status: "error", message });
+          return;
+        }
+        if (!cancelled) setState(data);
+      } catch (error) {
+        const isAbort = error instanceof DOMException && error.name === "AbortError";
+        const message = isAbort
+          ? `${FETCH_TIMEOUT_MS / 1000}秒以内に応答がありませんでした`
+          : "現在接続できません。時間をおいて再読み込みしてください。";
+        console.error("[SharePublicPage] request unavailable");
+        if (!cancelled) setState({ status: "error", message });
+      } finally {
+        window.clearTimeout(timeoutId);
+      }
+    }
+
+    void load();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+      window.clearTimeout(timeoutId);
+    };
+  }, [shareToken,mediaRefresh]);
+
+  if (state === "loading") {
+    return (
+      <div className="share-status-page">
+        <div className="share-status-card">
+          <p>読み込み中…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (typeof state === "object" && state.status === "error") {
+    return <ShareLoadErrorPage message={state.message} />;
+  }
+
+  if (state.status === "not_found") {
+    return <ShareNotFoundPage />;
+  }
+
+  if (state.status === "expired") {
+    return <ShareExpiredPage />;
+  }
+
+  return (
+    <div className="share-page-root">
+      {applicationEnabled&&<p style={{padding:16,textAlign:'center'}}><a href={'/customer/apply#demo='+encodeURIComponent(shareToken)} rel="noreferrer">このデモを引き継いで申し込む（モック）</a></p>}
+      <PublicStoreView
+        resolution={state.resolution}
+        canonicalPath={`/share/${shareToken}`}
+        topBanner={<ShareDemoBanner prospectLabel={state.prospectLabel} />}
+      />
+    </div>
+  );
+}

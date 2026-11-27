@@ -1,0 +1,42 @@
+CUSTOMER PORTAL DEVELOPMENT - 2026-11-25
+Branch: feature/paid-service-readiness-20261125
+Scope: customer navigation/store switching, contract/publication/payment separation.
+No Production connection, deployment, payment, mail, domain purchase, migration apply.
+No deletion job or data retention duration added.
+
+Validation:
+TypeScript: PASS
+Changed source ESLint: PASS
+Customer/commerce/portal regression: 49 PASS, 0 FAIL
+Fresh synthetic single-user PostgreSQL 17: 23 PASS, 0 FAIL (no TCP listener)
+Browser visual/E2E: NOT RUN; browser automatic approval unavailable due usage limit.
+Full Next.js build: NOT RUN this change; no repeat of known Windows native-module restriction.
+
+Development DB prerequisites (NOT applied to any remote DB):
+Existing SQL001..007 + commerce-v2.sql + commerce-offers-v3.sql.
+New proposal supabase/proposals/customer-portal-access-v4.sql:
+- Allows owner content save for contracted stores even when publication is suspended.
+- Preserves row locks, CAS revisions, service-role-only RPC, ownership and input validation.
+- Denies content write after finished contract or deadline even if scheduled projection is delayed.
+- Denies ended/debt-free card mutation at DB layer.
+Original migration files and SQL007 unchanged. Do not blindly run proposal in Production.
+Contract price, payment dates, minimum term and cancellation dates remain unchanged.
+Unfinished application flow /customer/operations remains available separately.
+
+Actual integrated routes (requires isolated application and DB setup):
+/customer
+/customer/sites/{owned-slug}
+/customer/sites/{owned-slug}/edit
+/customer/sites/{owned-slug}/website
+/customer/sites/{owned-slug}/contract
+/customer/sites/{owned-slug}/payments
+/customer/sites/{owned-slug}/support
+/customer/sites/{owned-slug}/account
+
+Static UI sample, no authentication/save/payment, synthetic data only:
+node scripts/preview-customer-portal.cjs
+http://127.0.0.1:32749/customer/sites/synthetic-a/payments
+http://127.0.0.1:32749/customer/sites/synthetic-a/contract
+http://127.0.0.1:32749/customer/sites/synthetic-a/support
+Only loopback listening; only 3 static GET routes; CSP blocks network, scripts and form submission.
+This is not an authenticated application E2E result.

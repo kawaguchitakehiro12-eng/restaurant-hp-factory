@@ -1,0 +1,3 @@
+import Link from "next/link";
+import {listCustomerSites,requireCustomerUser} from "@/lib/customer/server";
+export default async function Page(){const user=await requireCustomerUser();const sites=await listCustomerSites(user.id);return <><h1>管理する店舗</h1><p className="customer-muted">店舗情報・メニュー・写真・お知らせを更新できます。</p>{sites.length===0?<div className="admin-card"><p>このアカウントに登録された店舗はありません。</p><p>契約済みの場合は、運営へアカウントの紐付けをご確認ください。</p></div>:<div className="customer-grid">{sites.map(site=><Link key={site.id} href={`/customer/sites/${encodeURIComponent(site.slug)}`} className="admin-card customer-store-card"><h2>{site.name}</h2><p>/{site.slug}</p><span className="admin-btn admin-btn--primary">店舗を管理</span></Link>)}</div>}</>;}

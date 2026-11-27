@@ -1,0 +1,2 @@
+/** Global freshness gate, checked before all byte/policy caches. */
+export function leaseGuard(handler:(r:Request)=>Promise<Response>,read:()=>Promise<number>,clock=Date.now){let until=0,refresh=0;return async(r:Request)=>{try{const now=clock();if(refresh<=now){const value=await read();if(!Number.isFinite(value)||value<=now||value>now+60000)throw Error();until=value;refresh=Math.min(now+30000,value);}if(until<=now)throw Error();return handler(r);}catch{return new Response(null,{status:503,headers:{'Cache-Control':'no-store'}});}};}

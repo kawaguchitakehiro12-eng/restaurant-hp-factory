@@ -1,0 +1,105 @@
+SAKUPAGE current-spec development — 2026-11-20
+Repository: work/sales-development-20261120, branch feature/sales-operations.
+This is an independent local repository, not the original fixed release.
+No remote push, production access, real messages/payments/domains or ACL changes.
+
+Latest approved business specification:
+2980 JPY net + 10% tax = 3278 JPY per store/month, no initial fee or first-month proration.
+Snapshot price/tax and agreement version/text/hash/doc reference per contract and invoice.
+Contract only after applicant + agreement + mock card verification; no operator contract approval.
+Six calendar months including contract month; cancellation from month seven; withdrawal before end.
+Final service month charged on following month's twentieth, debts retained after termination.
+Public shutdown at next-month day1 01:00 JST; renewal/public-domain use stop separately from expiry.
+No automatic public shutdown solely because payment failed.
+
+Implemented current-spec modules:
+src/lib/commerce/engine.ts: contracts, application, tax snapshots, billing, cancellation,
+withdrawal, reminders, invoices, payment claim/results/idempotency, domain states/history,
+support/notices, calls, costs/fees/metrics, adjustment records, audit.
+src/lib/commerce/repository.ts: server-only persistence via CAS RPC and verified actor identity.
+src/lib/commerce/providers.ts: adapter interfaces and mock implementations only.
+src/lib/commerce/jobs.ts: explicit scheduler entry, payment/message/domain work, no live provider.
+supabase/proposals/commerce-v2.sql: NEW local-only proposal, 3 RLS tables and 5 server-only RPCs.
+Direct anon/authenticated table access denied. Site ownership/agent assignment checked by RPC.
+Owner can switch multiple independent stores; agents see assigned sales records only.
+Old cardless contract API is disabled in production; legacy tests require an internal test switch.
+Old v1 operations SQL/API remain for regression comparison; do not enable them for new-spec sales.
+
+Runtime:
+SAKUPAGE_COMMERCE_MODE defaults OFF. Only mock is currently implemented.
+Mock requires literal HTTP loopback APP and Supabase URLs, exact synthetic local-only API keys,
+and no VERCEL marker. Real Supabase endpoints are explicitly rejected.
+COMMERCE_AGREEMENT_METHOD web/electronic and TERMS_VERSION/TEXT have no real default.
+COMMERCE_JOB_SECRET / COMMERCE_WORKER_ACTOR_ID and COMMERCE_WEBHOOK_SECRET are unset.
+No scheduler, provider, legal agreement or billing was enabled.
+Webhook validates HMAC over raw bounded body, then reconciles event/reference/amount.
+Signup accepts example.invalid users only, preserves credentials only in mock Auth service memory.
+
+Validation:
+npm test; npm run typecheck; npm run lint -- --max-warnings=0
+npm run test:commerce:postgres (fresh PG17 single-user synthetic DB, no network listener)
+npm run test:commerce:browser starts component + actual route handler harness on 127.0.0.1:32620.
+The browser harness mocks Auth and repository; it is NOT full Next/Auth/RLS E2E.
+Local component bundle compiled. Browser connection timed out; Windows UI URL verification
+was rejected by Computer Use safety controls. Browser interactions did not run.
+Next production build failed EPERM in alternate .next-sales output too.
+Precreating ordinary build directories did not resolve it. No ACL/elevation retries.
+Do not call production build or browser E2E PASS.
+The fixture server was stopped after the attempt.
+
+Remaining local work:
+Normal-permission successful full Next build + real browser integration with synthetic DB.
+Production-grade account/demo ownership invitation binding (currently operator binds existing Auth IDs).
+Logo editing and formal custom-host route verification are not newly implemented here.
+External provider adapter implementations after selection; scheduler deployment/configuration.
+Real Supabase Auth/role/managed-schema integration not verified by single-user PG tests.
+Full migration/backup/recovery approval package for new SQL, separate from frozen SQL007.
+For notifications, live-provider idempotency/ambiguous-outcome policy requires provider integration;
+only simulated delivery exists now. No real delivery retry policy is assumed.
+Contracts/legal/privacy/provider/retention/refund/retry decisions remain with the owner.
+Never push main before approved backup, DB change, audit, configuration and deployment gates.
+
+
+Demo/logo/provider continuation — 2026-11-20
+Completed locally: recipient-bound seven-day demo offers, verified-email account claim,
+multiple stores, atomic first-contract expiry/revocation guard and preserved demo content.
+Logo: PNG/JPEG/WebP, 2MiB limit, signature/decode/re-encode, 512px output, all five headers.
+Provider mocks: domain quote/availability/renewal stop; explicit SMS confirmation;
+mail failure/unknown states and explicit known-failure retry, no automatic unknown retry.
+Share validity caps historical long/unlimited links at seven days after creation;
+this changes visibility only after a future approved deployment. No live links modified.
+Tests: 341 passed / 0 failed; isolated PostgreSQL 17: 20 groups passed / 0 failed.
+Actual route/repository/SQL exercised with synthetic Auth and providers, not hosted Auth.
+TypeScript and lint: PASS. Component bundle: PASS, not browser E2E or production build.
+Production build: BLOCKED. Webpack EPERM mkdir in original and independent writable root;
+Turbopack did not complete and was stopped. No ACL change or privilege escalation.
+Browser E2E: NOT RUN; verified browser URL environment still required.
+Real providers, real Auth and hosted RLS verification remain pending approval/configuration.
+New commerce-offers-v3.sql is a local proposal only, never applied to Supabase.
+Original Desktop project: all 442 manifest hashes match; manifest SHA matches.
+SQL007 unchanged: a1650b5f4e0b72d94bf7114cc222c97a4a07f615a710be7e3a41fa29646ae127.
+
+MEDIA CONTINUATION — 2026-11-21
+Development-only R2/Worker path implemented. Defaults unchanged; no live connection.
+New modules under src/lib/media; Worker entry workers/media/index.ts; SQL proposal
+supabase/proposals/media-assets-v1.sql. Customer upload/context/save conversion wired
+behind development-only flags and existing loopback/synthetic-credential guard.
+Validation: 375 unit/mock tests PASS, 0 FAIL (341 prior + 34 new).
+PostgreSQL17: 8 NEW metadata/ACL groups PASS; 20 existing commerce groups rerun PASS.
+TypeScript and lint PASS. No real Next build, browser E2E, hosted RLS or R2 calls.
+Remaining: authoritative complete-snapshot scheduler + lifecycle integration, authorized
+preview URL page injection, operator uploader context, durable migration journal/review UI.
+No flags were enabled; Worker deployment guard disabled; no heartbeat exists by default.
+Read MEDIA-DEVELOPMENT-RUNBOOK.txt before any activation. No production readiness claim.
+Original 442 manifest files and SQL007 rechecked unchanged. No push/deployment/data migration.
+
+MEDIA INTEGRATION V2 — 2026-11-21
+Baseline f507c2529dd2775959c94c3e265ae32464377f5c. Development flag still OFF.
+Stages 1-3 wired: change clock/catalog and paginated snapshot + differential sync;
+owner/operator/share capability previews and editor upload; durable migration journal,
+encrypted legacy preservation, atomic content/photos switch, explicit recovery.
+Unit/mocks: 403 PASS / 0 FAIL (28 new vs previous 375). New PG17 integration: 15 groups.
+Existing PG regression: media 8 groups; commerce 20 groups; all pass.
+No real Cloudflare, hosted Supabase, production settings, image migration or deletion.
+TypeScript/lint checked. Real build/browser E2E not run; prior EPERM remains unresolved.
+See latest Japanese v2 section of MEDIA-DEVELOPMENT-RUNBOOK.txt.

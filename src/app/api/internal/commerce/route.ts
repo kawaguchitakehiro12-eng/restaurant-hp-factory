@@ -1,0 +1,4 @@
+import {timingSafeEqual} from 'node:crypto';
+import {assertMockMode} from '@/lib/commerce/providers';
+import {runJobs} from '@/lib/commerce/jobs';
+export async function POST(request:Request){try{assertMockMode();const secret=process.env.COMMERCE_JOB_SECRET,actor=process.env.COMMERCE_WORKER_ACTOR_ID,token=request.headers.get('authorization')?.replace(/^Bearer /,'')??'';if(!secret||!actor)return Response.json({error:'定時処理は未設定です。'},{status:503});if(Buffer.byteLength(token)!==Buffer.byteLength(secret)||!timingSafeEqual(Buffer.from(token),Buffer.from(secret)))return Response.json({error:'Unauthorized'},{status:401});return Response.json(await runJobs({id:actor,role:'operator',email:''}),{headers:{'Cache-Control':'no-store'}})}catch{return Response.json({error:'定時処理を停止しました。結果を確認してください。'},{status:503})}}

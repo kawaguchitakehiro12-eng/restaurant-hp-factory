@@ -1,0 +1,32 @@
+P0 development handoff (browser acceptance belongs to Muse)
+Baseline: feature/paid-service-readiness-20261125 / 126ce0b.
+Muse environment: verify/sales-demo-runtime-20261124 / 671fdcbe0044b22c3c31d5e94c0bff231b5a5f1b; frozen candidate source f80a0fc.
+These sources differ. No existing Muse store was edited during investigation.
+
+Confirmed source defects:
+1. createEmptyTopic() creates YYYY.MM; operator validation delegates to the day-only customer validator. Hidden/blank rows remain validated. Fixed compatibility without inventing a day.
+2. Old simulated customer settings/menu/topics were disconnected display forms with SaveBar onSave missing. Reused the actual customer content editor with the existing operator-authorized content API for this operator-only simulation route.
+3. updateContent() discarded the freshly persisted revision. Fixed to return the repository result.
+4. Readback-missing saves returned the submitted draft. Removed this false success path.
+5. Toast-only operator errors disappeared after 6 seconds. Added durable inline failure and explicit status.
+6. Operator menu/topic deletion was absent. Added confirmed draft deletion, using existing atomic save.
+7. Image selection opened the OS file picker, not a photo library. Separated library selection from file upload; per-store library data only.
+
+Incident attribution limits:
+Preview RPC metadata exists; five Muse stores each retain small saved content. The audit did not change them.
+Preview logs on the QA date: five operator-save RPC requests were 204 (these cannot be attributed to a particular UI attempt from aggregates). No customer-save RPC event in that query. Generic 42P01 events exist but were not attributable to this incident. Vercel available log window did not include the reported attempt. Do not claim every timeout is conclusively explained or equate it with old permission errors.
+New generic save failures log fixed operation + SQLSTATE + random request reference only, no body/credentials.
+
+Database: no Production or Preview schema/role/RLS changes made. Local synthetic PG17 only for execution tests. Existing SQL007 not modified.
+Existing customer-portal-access-v4.sql remains a separate UNAPPLIED proposal; do not apply it silently.
+Payments, automatic mail/SMS, new R2 and commerce providers remain disabled.
+
+Muse validation scope after deployment:
+Operator /login -> /admin/demo/{slug}/edit (existing five stores preserved).
+Customer /customer/login -> own linked synthetic store /customer/sites/{slug}/edit.
+Changes, deletions, image selection, uploads and URL registration are drafts until Save.
+Confirm save result, reload/relogin persistence, stored-content previews and unchanged other stores.
+Deletion does not physically remove image files. Do not formally publish QA stores.
+New UI photo library can only select photos provided for the current editor; customer does not receive operator-only imported provenance.
+
+P1 not implemented. See P1-EDITOR-PROPOSALS-20261127.txt.

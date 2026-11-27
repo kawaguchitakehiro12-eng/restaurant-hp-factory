@@ -1,0 +1,164 @@
+SAKUPAGE MEDIA DEVELOPMENT HANDOFF — 2026-11-21
+
+STATUS: Development implementation / synthetic tests. NOT a production rollout.
+Existing files are not migrated or deleted. Default save mode remains the existing path.
+
+IMPLEMENTED
+- ImageWorkflow validates/decompresses/re-encodes PNG/JPEG/WebP with sharp, strips metadata,
+  fits photos inside 1440px and logos inside 512px, WebP quality 78, output <=500KB.
+- 50,000,000-byte per-store quota includes reserved/review/retired objects. Concurrent
+  updates use metadata CAS, no automatic replay on unknown acknowledgements.
+- R2 conditional create, readback/hash verification; immutable random keys.
+- Durable Supabase metadata adapter and NEW media-assets-v1.sql proposal (not applied).
+- HMAC body/path/time-bound app -> Worker control; separate preview signature secret.
+- Worker reads private R2; no Supabase query per image. Authorize before byte cache.
+- HTTP responses no-store; internal byte cache long-lived. Disable all outer Worker
+  response caching / Workers Caching / Cache Everything rules on this route.
+- Per-site policy cached <=30s; demo expiry and contractEnds evaluated on every request.
+- Global lease cached <=30s, valid <=60s. Any unknown sync blocks lease renewal.
+- Batch sync changes only changed/expiring policy records, NOT all stores every 30s.
+  Source must exhaust pagination, include stopped/deleted stores as tombstones, and
+  confirm complete=true only after all authoritative queries succeed.
+- Customer upload endpoint, logo/photo/menu/gallery editor context, save-time conversion,
+  canonical reference validation and ownership checking. Existing mode stays default.
+- Migration coordinator prepares copies, preserves source, verifies objects, stages
+  publication before content CAS; no physical cleanup on failure.
+- Retire is logical only. No delete endpoint or automatic old-object garbage collection.
+
+DEVELOPMENT CONFIGURATION (names only; no values/secrets stored here)
+MEDIA_STORAGE_MODE=development; NEXT_PUBLIC_MEDIA_UPLOAD_ENABLED=development
+NEXT_PUBLIC_MEDIA_ORIGIN: explicit HTTPS Worker origin (public, build-time).
+MEDIA_CONTROL_SECRET: server + Worker only, >=32 random characters; never NEXT_PUBLIC.
+MEDIA_PREVIEW_SECRET: separate Worker/server secret for authorized share/owner preview.
+The development service requires the EXISTING assertMockMode loopback/synthetic-key
+checks, rejects NODE_ENV=production and VERCEL. Do not weaken those checks.
+No actual environment was set by this change.
+Worker template: workers/media/wrangler.example.jsonc. Real account/bucket/route absent.
+Worker MEDIA_DEPLOYMENT_APPROVED remains disabled; it is not permission to deploy.
+IMAGES and POLICIES are separate private R2 bindings. Keep public domains and r2.dev
+bucket access OFF. Use a Worker domain, not a public bucket domain.
+Do not add media origin to Next remotePatterns: direct native image delivery is intended.
+Browser native image path preserves all five templates; logo allows only configured
+canonical media URL; customer server checks same-site ready metadata before saving.
+
+REMAINING INTEGRATION / NOT VERIFIED
+- Actual Cloudflare account/buckets/domain, credentials and permission scope.
+- Full authoritative snapshot scheduler -> syncMediaBatch -> signed control publication,
+  including publish/stop/contract expiry/share revocation events and 30s heartbeat.
+  Batch engine is implemented/tested; no real scheduler or lifecycle job was enabled.
+  Until this is connected, no global lease exists and Worker intentionally returns 503.
+- Existing demo/share and owner-preview pages need authorized short-lived preview token
+  URL injection. Token generation/verification and Worker gate are implemented, but
+  those page integrations are not enabled. Never make draft images public to bypass it.
+- Operational/admin demo uploader does not yet use new upload context; customer editor
+  does. Existing admin imports remain compatible. Base64 migration is an explicit job,
+  not a hidden automatic scan of production data.
+- Durable migration journal persistence/resume UI and orphan review/cleanup tooling.
+  Current coordinator accepts caller's journal; development save deduplicates ready
+  image hashes but must not be used as an unattended production migration command.
+- Smaller responsive variants/srcset and AVIF are not implemented; current single WebP
+  output is bounded. Measure quality/performance, including mobile, before rollout.
+- Real Next build/browser E2E and Cloudflare runtime/cache tests not done in this task.
+  Previous production build EPERM is unresolved. No extra retry or ACL change attempted.
+- Real Supabase Auth/hosted RLS, real image migration, failure recovery at provider level.
+
+BEFORE A SEPARATELY APPROVED ROLLOUT
+1. Complete missing lifecycle scheduler/preview/admin integration and durable journal.
+2. Validate SQL in independent Supabase, RPC signatures, service-only ACL and RLS.
+3. Provision TEST R2/Worker with separate approval; validate CORS, secret scopes,
+   content types, conditional writes, cache/lease failures and no bypass bucket URL.
+4. Complete production build, five-template browser tests and mobile measurements.
+5. Establish encrypted DB + object backup and independent restoration verification.
+6. Inventory legacy references without outputting image/customer payloads. Preserve
+   original byte/hash -> processed object hash -> content revision migration journal.
+7. Copy/verify/stage assets; switch one store with content CAS; on failure leave old
+   references untouched. If content CAS succeeded but follow-up sync failed, inspect
+   DB revision before any retry. Do not overwrite, delete or blindly rerun.
+8. Reconcile store_content AND photos table mirrors and any demo/import references.
+   External URLs require permission/fetch checks. GIF migration currently stops safely.
+9. Keep old source backup until all references, templates and restore tests pass.
+   Retention/deletion period remains owner decision; physical deletion separate approval.
+
+COST AND MONITORING (estimates, not measurements)
+Prior model: 10 requests and 1.5MB per PV, 20MB retained per store, 90% object cache hits,
+2ms Worker CPU/request. 1000 stores x3000PV: about $12/month images + Worker before
+extra control/policy reads/processing; reserve $15-25 initially. At 10000PV: model $36;
+no image-cache hits about $68. Additional lease/control requests and image compression
+compute are not free. Global 30s lease writes ~86,400/month, not x store count.
+Track R2 Class A/B, stored bytes, Worker CPU/requests, cache hits, policy/lease failures,
+upload failures, outstanding review bytes, per-store usage and provider spend daily.
+Set account alerts and Workers spending limit only after separate approval. R2 is not
+covered by Workers limit. Metering delay means no absolute invoice cap. If attacked,
+limit source/store before global shutdown; never bypass authorization for availability.
+No logs containing bodies, tokens, signed URLs, secrets or original image data.
+
+=== 連携実装 v2（2026-11-21、この節が旧REMAINING欄に優先） ===
+基準: f507c2529dd2775959c94c3e265ae32464377f5c
+
+第1段階・公開同期
+- media_change_clockで公開・共有失効・契約・画像参照変更を検出。
+- media_sync_sitesは削除済みメタデータの同期対象も保持し、旧Workerポリシーを失効。
+- カーソルページングは空ページまで読む。1,000店舗超・APIページ上限の縮小を考慮。
+- metadata/公開情報/契約/有効共有だけを読む。画像本体と共有トークンは同期で取得しない。
+- 既存publicationAllowed/shutdownAtを再利用。契約終了の翌月1日01:00 JSTをWorkerにも保持。
+- 共有は作成から最大7日。失効時に署名epochを変更。
+- 変更がなければDB全走査とポリシー再書込を省く。変更時もWorker差分のみ更新。
+- 同期途中のDB変更、ページ欠落、Worker応答不明なら60秒リースを更新しない。
+- 既存commerce APIの公開/停止/解約/取消と定時jobs、共有変更APIに同期を接続。
+- 開発専用POST /api/media/sync。運営認証＋同一Origin、または別のMEDIA_SYNC_SECRET。
+- scripts/media-sync-development.cjsは明示起動時だけ30秒間隔でループバックへPOST。
+  今回は起動していない。本番・Vercelは禁止。失敗時は停止し自動再試行しない。
+
+第2段階・画面連携
+- 管理者デモ編集の写真/ロゴ/メニュー/ギャラリーを新アップロードContextに接続。
+- 新規デモは空コンテンツの下書きを作り、画像変換後に保存。新方式で画像本体をDBに入れない。
+  途中失敗時は下書きが残る可能性がある。再作成せず一覧と保存状態を確認する。
+- 顧客編集では保存時にも旧画像の保全を先行。顧客/運営のプレビューMapは認可後に取得。
+- 編集用署名と共有用署名を分離。共有署名は期限と失効epoch、全署名は店舗と世代に固定。
+- Workerは公開前の画像を無署名では配信しない。公開停止後も認可済み運営の確認は別経路。
+- 再読込用の短期署名はDBへ保存しない。顧客/管理者画面と共有画面で定期更新。
+- 顧客プレビュー: /customer/sites/{slug}/preview。管理者プレビューと共有APIにも接続。
+- 有効な新しい署名の場合のみ、古いWorkerポリシーキャッシュを再確認する。
+- 5テンプレート共通の表示は維持。画像はVercel画像最適化へ追加しない。
+
+第3段階・永続台帳と復旧
+- 新SQL提案: supabase/proposals/media-integration-v2.sql（実Supabase未適用）。
+- media_migration_jobsは元更新時刻・DB側SHA・進捗・参照先・保全指紋を記録する。
+- 状態: planned/prepared/switched/conflict/review。競合と結果不明は自動修復しない。
+- 旧Base64コンテンツはgzip＋AES-256-GCM暗号化し、非公開BACKUPSへ条件付き新規保存。
+  DBへ旧画像本体を新たに保存しない。キーはMEDIA_MIGRATION_BACKUP_KEY（64桁hex、サーバーのみ）。
+  このキーを失うと旧画像保全を復号できない。本人の安全な鍵管理と別の復旧準備が必要。
+- 全保全ファイルを読み戻し・復号・照合してから画像変換・参照切替へ進む。
+- 切替は元更新時刻/SHAを照合し、store_content/photos/公開画像参照/台帳を同一トランザクションで更新。
+- 切替成功後に応答が失われてもswitchedを再読込し、同じ切替を再実行しない。
+- reviewの再開は明示操作だけ。保存済み画像を再取得しハッシュ確認。欠落・改ざんは停止。
+- 通常編集で既存Base64を変換する場合も、旧内容を先に暗号化保全する。
+- 管理者編集に「画像移行（開発検証専用）」を追加。開始/台帳読込/明示再開。
+- API: /api/admin/media/{id}/migration。運営専用。台帳/保全ファイルの自動削除なし。
+- 物理的な旧画像削除や本番の復旧実行は今回の実装に含めない。
+
+追加設定名（実際の値は未取得・未設定）
+MEDIA_SYNC_SECRET: 同期プロセス→アプリ専用。NEXT_PUBLICにしない。
+MEDIA_PREVIEW_SECRET: 短期署名専用。MEDIA_CONTROL_SECRETと別にする。
+MEDIA_MIGRATION_BACKUP_KEY: 旧画像保全の暗号鍵。Workerへ渡さない。
+BACKUPS: 画像/ポリシーと別の非公開R2バケットbinding。
+MEDIA_SYNC_RUN、MEDIA_SYNC_LOCAL_URL: 明示的な開発同期プロセス用。
+既存MEDIA_STORAGE_MODE、NEXT_PUBLIC_MEDIA_UPLOAD_ENABLEDは変更せず無効のまま。
+
+検証の範囲
+単体・通信モック403成功/0失敗（前回375＋今回28）。
+新PostgreSQL17連携15グループ成功。うち実圧縮→実台帳RPC→実DB参照切替も検証。
+既存media PostgreSQL8グループとcommerce20グループを再実行、全成功。
+実Auth/実Cloudflare/実CDNの配信・伝播速度は未検証。実データ移行なし。
+本番Nextビルドは今回未実施。以前のEPERMは未解消でACL/権限の再試行をしない。
+ブラウザE2Eは未実施。モック/SSR描画テストをブラウザ動作確認として扱わない。
+
+本番接続前の次工程
+1. ビルド可能な通常権限の環境で本番ビルドとブラウザE2Eを完了。
+2. 独立検証DBへSQL提案を別承認で適用。実Auth・RLS・権限を確認。
+3. 別承認の独立R2/Workerでbinding/署名/Cache API/30秒同期/停止を実測。
+4. 暗号鍵・非公開保全領域・復旧手順を確認。旧メタデータがある場合は公開参照の初期照合も行う。
+5. 本番用資格・接続ガード・同期実行基盤・予算制御を別レビューする。
+   現行developmentMediaのループバック/架空キー/Vercel拒否ガードは緩和していない。
+6. 本番バックアップと復元確認後、店舗単位の本番移行を別承認で実施。
+今回の完了をSQL適用・本番接続・デプロイ・画像移行・削除の許可として扱わない。

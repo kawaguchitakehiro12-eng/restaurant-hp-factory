@@ -1,0 +1,2 @@
+'use client';import {isMediaDisplayUrl} from '@/lib/media/reference';import {safeLogo} from '@/lib/images/logo';import {ResilientImage} from '@/components/ui/ResilientImage';
+export function StoreLogo({src,name}:{src?:string;name:string}){let valid='';try{valid=src&&isMediaDisplayUrl(src)?src:safeLogo(src)}catch{}return valid?<ResilientImage src={valid} alt={name} style={{display:'block',width:'auto',height:44,maxWidth:'min(180px,42vw)',objectFit:'contain'}}/>:<>{name}</>;}

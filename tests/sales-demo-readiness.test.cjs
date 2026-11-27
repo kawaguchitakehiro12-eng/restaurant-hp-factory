@@ -1,0 +1,21 @@
+const test=require('node:test'),assert=require('node:assert/strict');
+const {load}=require('./load-ts.cjs');
+const {changeDemoTemplate}=load('src/lib/admin/demo-template-change.ts');
+const {CONTRACT_TEMPLATE_OPTIONS}=load('src/lib/admin/contract-templates.ts');
+const {createDemoSiteFromForm,buildCustomerProposalText}=load('src/lib/admin/demo-create.ts');
+const original=createDemoSiteFromForm({storeName:'架空店舗',storeSlug:'synthetic-sales',businessType:'cafe',sourceUrl:'',address:'架空住所',templateId:'cafe',prospectName:'架空店舗',contactPersonName:'',phone:'',email:'fixture@example.invalid',salesStatus:'considering',salesMemo:'内部メモ'}).demoSite;
+original.content.basicInfo.concept='架空店舗の紹介文';
+original.content.photos.hero='/branding/site-placeholder.svg';
+original.content.menus=[{id:'synthetic-menu',name:'架空メニュー',price:'900円',description:'架空説明',imageUrl:'/branding/site-placeholder.svg',visible:true,sortOrder:0}];
+const {resolveDemoStore}=load('src/lib/stores/demo-content-resolver.ts');
+for(const option of CONTRACT_TEMPLATE_OPTIONS)test('template switch preserves stored content and identifiers: '+option.id,()=>{
+ const before=JSON.stringify(original),next=changeDemoTemplate(original,option.id);
+ assert.equal(next.templateId,option.id);assert.equal(next.templateType,option.templateType);
+ assert.deepEqual({...next,templateId:original.templateId,templateType:original.templateType},original);
+ assert.equal(JSON.stringify(original),before);
+ const reloaded=JSON.parse(JSON.stringify(next));assert.deepEqual(reloaded.content,original.content);
+ const resolved=resolveDemoStore(reloaded);assert.equal(resolved.store.templateExtensions.templateType,option.templateType);
+ assert.ok(JSON.stringify(resolved.store).includes('架空メニュー'));assert.ok(JSON.stringify(resolved.store).includes('架空店舗の紹介文'));
+});
+test('unknown template is rejected without changing the draft',()=>{const before=JSON.stringify(original);for(const id of ['', 'unknown','__proto__'])assert.throws(()=>changeDemoTemplate(original,id));assert.equal(JSON.stringify(original),before);});
+test('sales proposal states per-site tax-exclusive and tax-inclusive fee',()=>{const text=buildCustomerProposalText({contactPersonName:'架空担当',demoUrl:'https://example.invalid/demo/synthetic'});assert.match(text,/1店舗・1HP/);assert.match(text,/2,980円（税別/);assert.match(text,/3,278円税込/);});

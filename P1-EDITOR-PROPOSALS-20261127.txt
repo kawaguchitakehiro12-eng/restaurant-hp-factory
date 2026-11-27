@@ -1,0 +1,19 @@
+P1 proposals - NOT IMPLEMENTED / approval required
+
+Menu categories:
+Add per-site categories with stable IDs, display names and order. Add nullable categoryId to each menu item. Existing items migrate to null (uncategorized); no implicit category inference. Category deletion should detach items to uncategorized in the same save, never delete dishes. Keep item IDs/order and use the same grouping in all five adapters. API validates category ownership and references. Prefer existing content JSON first; typed relational projections require a separately reviewed migration if used.
+
+Price presentation:
+Existing DemoMenuItem.price is already a string (max 80); do not force numeric conversion. Some legacy UI is numeric/prototype-only. Proposed next schema: display mode text/hidden with optional numeric amount for machine use; preserve legacy numeric rows as formatted text, never strip ranges or invent zero. Strings such as 800円, 1,200円〜, 3,000〜5,000円, 時価, お問い合わせください are display text, separate from service billing. Hidden price uses explicit mode. No new price modes enabled in P0.
+
+Topic dates:
+Existing operator uses YYYY.MM; current customer editor already supports calendar dates. P0 only preserves legacy month-only values and unused blank rows so unrelated saves work. Proposed approved format: YYYY-MM-DD, JST today initial value, descending date order, display YYYY.MM.DD. For legacy month-only rows preserve month precision (display YYYY.MM) until the owner chooses a day; do not auto-invent the first day. Mixed-precision sorting must be explicitly defined before rollout.
+
+Owner/chef section:
+Optional enabled flag, title/name/introduction/photo within editable content; disabled by default; customer and operator own existing scopes; never infer biography from template data. Five adapters require optional-section rendering, without layout editing.
+
+Business-specific sample photos:
+Maintain licensed sample assets indexed by business type and slot with provenance and clear sample labels. Retain current demo samples pending decision; P0 disables fictional phone/map/reservation actions and removes platform promotional copy from body. Formal sites only use registered images or neutral placeholders. Do not silently substitute a different restaurant photo.
+
+Few-photo layout:
+Hide empty galleries, omit optional photo panels, use a restrained text layout or neutral brand placeholder for mandatory hero slots. Do not repeat one photo as a large gallery. Preserve templates and offer optional sections rather than forcing completeness 100 percent. Needs Muse visual acceptance; no wholesale template redesign in P0.
